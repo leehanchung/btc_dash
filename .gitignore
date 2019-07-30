@@ -1,0 +1,8 @@
+venv
+*.pyc
+.DS_Store
+.env
+settings.json
+*.db
+*.bak
+*checkpoint.ipynb

@@ -1,0 +1,1 @@
+web: gunicorn --pythonpath btc_dash/app app:server
