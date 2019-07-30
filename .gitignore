@@ -1,3 +1,4 @@
+.ipynb_checkpoints
 venv
 *.pyc
 .DS_Store
@@ -5,4 +6,3 @@ venv
 settings.json
 *.db
 *.bak
-*checkpoint.ipynb
