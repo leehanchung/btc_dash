@@ -3,7 +3,7 @@ import sqlite3
 import pandas as pd
 import numpy as np
 
-DB_FILE = pathlib.Path(__file__).resolve().parent.joinpath("wind-data.db").resolve()
+
 CSV_FILE = pathlib.Path(__file__).resolve().parent.joinpath("btcusd.csv").resolve()
 OUT_FILE = pathlib.Path(__file__).resolve().parent.joinpath("btcusd_predict.csv").resolve()
 OOS_START = 1500
@@ -38,29 +38,3 @@ def get_ohlcv_data(start, end):
 		return df.tail(50)
 	else:
 		return df.iloc[OOS_START + start:OOS_START + end, :]
-
-
-def get_ohlcv_data_by_id(id):
-    """
-    Query a row from the Wind Table
-    :params id: a row id
-    :returns: pandas dataframe object 
-    """
-
-    con = sqlite3.connect(str(DB_FILE))
-    statement = f'SELECT * FROM Wind WHERE rowid = "{id}";'
-    df = pd.read_sql_query(statement, con)
-    return df
-	
-
-def get_wind_data_by_id(id):
-	"""
-	Query a row from the Wind Table
-	:params id: a row id
-	:returns: pandas dataframe object 
-	"""
-
-	con = sqlite3.connect(str(DB_FILE))
-	statement = f'SELECT * FROM Wind WHERE rowid = "{id}";'
-	df = pd.read_sql_query(statement, con)
-	return df

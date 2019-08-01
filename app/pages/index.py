@@ -3,6 +3,7 @@ import pathlib
 import numpy as np
 import pandas as pd
 import datetime as dt
+import talib
 
 import dash
 import dash_bootstrap_components as dbc
@@ -15,7 +16,7 @@ import plotly.figure_factory as ff
 
 from dash.exceptions import PreventUpdate
 from dash.dependencies import Input, Output, State
-from db.api import get_wind_data_by_id, get_ohlcv_data, get_ohlcv_data_by_id
+from db.api import get_ohlcv_data
 
 from sklearn.metrics import confusion_matrix
 from statsmodels.tsa.arima_model import ARIMA
@@ -26,7 +27,9 @@ from app import app
 GRAPH_INTERVAL = os.environ.get("GRAPH_INTERVAL", 5000)
 app_color = {"graph_bg": "#082255", "graph_line": "#007ACE"}
 
-# pred output df. Ideally this should go to some dB.
+"""
+pred output df. Ideally this should go to some dB instead of being on this app.
+"""
 df_pred = pd.DataFrame(columns=['pred_log_ret', 'pred_Close'])
 
 
@@ -122,7 +125,7 @@ layout = dbc.Row([column1, column2])
 
 
 """
-Plotting functions with callbacks.
+Plotting functions with callbacks on every interval ticks.
 """
 @app.callback(
     Output("btcusd-ohlcv", "figure"), [Input("btcusd-ohlcv-update", "n_intervals")]
@@ -134,14 +137,16 @@ def gen_ohlcv(interval):
 	:params interval: update the graph based on an interval
 	
 	"""
-	print("\nStarting gen_ohlcv, interval {}...\n".format(interval))
+	# hack to wrap interval around available data.  OOS starts at 1500, df has a 
+	# total of 2274 rows after processing to wrap around 2274-1500 ~ 750.
+	interval = interval % 750
 	
 	# read data from source
 	df = get_ohlcv_data(interval - 100, interval)
 	df['log_ret'] = np.log(df.Close) - np.log(df.Close.shift(1))
 	
 	model = ARIMA(df.tail(60)["log_ret"], order=(3,1,0), freq='D').fit(disp=0)
-	pred = model.forecast()[0] # forecast() returns (forecast, standard error, ci), taking the first
+	pred = model.forecast()[0] 
 	df_pred.loc[df.tail(1).index[0]+pd.Timedelta('1 day')] = [pred[0], (np.exp(pred)*df.tail(1).Close.values)[0]]
 	
 	# plotting ohlc candlestick
@@ -159,7 +164,7 @@ def gen_ohlcv(interval):
 	# plotting prediction line
 	trace_line = go.Scatter(
 		x = df_pred.index,
-		y = df_pred.pred_Close,#y = np.exp(pred) * df.tail
+		y = df_pred.pred_Close,
 		line_color='yellow',
 		mode="lines+markers",
 		name="Predicted Close"
@@ -184,7 +189,7 @@ def gen_ohlcv(interval):
 			"title": "Price (USD$)"
 		},
 	)
-	print("returning gen_ohlcv...")
+	
 	return go.Figure(data=[trace_ohlc, trace_line], layout=layout)
 
 
@@ -193,51 +198,114 @@ def gen_ohlcv(interval):
 )
 def gen_momentum_gauge(interval):
 	"""
-	Generate BTCUSD Momentum Gauge.
+	Generate 5 period lag RSI on BTCUSD Close and plot it as Momentum Gauge
 
 	:params interval: update the graph based on an interval
 	"""
+	
+	# hack to wrap interval around available data.  OOS starts at 1500, df has a 
+	# total of 2274 rows after processing to wrap around 2274-1500 ~ 750.
+	interval = interval % 750
 
-	now = dt.datetime.now()
-	total_time = (now.hour * 3600) + (now.minute * 60) + (now.second)
+	# read data from source and calculate RSI.  RSI ranges between 0 and 100.
+	df = get_ohlcv_data(interval - 6, interval)
+	rsi = int(round(talib.RSI(df.Close.values, 5)[-1]))
+	
+	# Let's subdivide RSI into 10s to reduce plotting dial triangle complexity
+	angle = round(rsi, -1)
+	# center of dial coordinate is 0.24 0.5. We plot left top and right coordinates of a triangle
+	dials_dict = { 0: 'M 0.24 0.4950 L 0.09 0.5 L 0.24 0.505 Z',
+				  10: 'M 0.2384 0.4952 L 0.0973 0.5463 L 0.2415 0.5047 Z',
+				  20: 'M 0.2370 0.4959 L 0.1186 0.5881 L 0.2429 0.5040 Z',
+				  30: 'M 0.2359 0.4970 L 0.1518 0.6213 L 0.2440 0.5029 Z',
+				  40: 'M 0.2352 0.4985 L 0.1936 0.6247 L 0.2447 0.5015 Z',
+				  50: 'M 0.235 0.5 L 0.24 0.65 L 0.245 0.5 Z', # confirmed)
+				  60: 'M 0.2352 0.5015 L 0.2863 0.6426 L 0.2447 0.4984 Z',
+				  70: 'M 0.2359 0.5029 L 0.3281 0.6213 L 0.244 0.497 Z',
+				  80: 'M 0.2370 0.5040 L 0.3613 0.5881 L 0.2429 0.4959 Z',
+				  90: 'M 0.2384 0.5047 L 0.3826 0.5463 L 0.2415 0.4952 Z',
+				  100: 'M 0.24 0.505 L 0.39 0.50 L 0.24 0.495 Z',
+	}
+	
+	# first we trace the dial using pie chart, hiding bottom half.
+	trace1 = go.Pie(
+		values=[50, 10, 10, 10, 10, 10],
+		labels=["RSI Index", "HODL", "HELP", "MEH", "NICE", "FOMO"],
+		domain={"x": [0, .48]},
+		marker_colors=[
+				app_color["graph_bg"],
+				'rgb(232,226,202)',
+				'rgb(226,210,172)',
+				'rgb(223,189,139)',
+				'rgb(223,162,103)',
+				'rgb(226,126,64)'
+			],
+		name="Gauge",
+		hole=.3,
+		direction="clockwise",
+		rotation=90,
+		showlegend=False,
+		hoverinfo="none",
+		textinfo="label",
+		textposition="inside"
+	)
 
-	df = get_wind_data_by_id(total_time)
-	val = df["Speed"].iloc[-1]
-	direction = [0, (df["Direction"][0] - 20), (df["Direction"][0] + 20), 0]
-
-	traces_scatterpolar = [
-		{"r": [0, val, val, 0], "fillcolor": "#084E8A"},
-		{"r": [0, val * 0.65, val * 0.65, 0], "fillcolor": "#B4E1FA"},
-		{"r": [0, val * 0.3, val * 0.3, 0], "fillcolor": "#EBF5FA"},
-	]
-
-	data = [
-		go.Scatterpolar(
-			r=traces["r"],
-			theta=direction,
-			mode="lines",
-			fill="toself",
-			fillcolor=traces["fillcolor"],
-			line={"color": "rgba(32, 32, 32, .6)", "width": 1},
-		)
-		for traces in traces_scatterpolar
-	]
+	# then we add numerical labels to the same pie chart
+	trace2 = go.Pie(
+		values=[40, 10, 10, 10, 10, 10, 10],
+		labels=[".", "0", "20", "40", "60", "80", "100"],
+		domain={"x": [0, .48]},
+		marker_colors=['rgba(255, 255, 255, 0)']*7,
+		hole=.4,
+		direction="clockwise",
+		rotation=108,
+		showlegend=False,
+		hoverinfo="none",
+		textinfo="label",
+		textposition="outside"
+	)
 
 	layout = go.Layout(
-		height=350,
+		height = 350,
 		plot_bgcolor=app_color["graph_bg"],
 		paper_bgcolor=app_color["graph_bg"],
 		font={"color": "#fff"},
-		autosize=False,
-		polar={
-			"bgcolor": app_color["graph_line"],
-			"radialaxis": {"range": [0, 45], "angle": 45, "dtick": 10},
-			"angularaxis": {"showline": False, "tickcolor": "white"},
-		},
-		showlegend=False,
+		autosize=True,
+		margin=dict(l=200, autoexpand=True),
+		xaxis=dict(
+			showticklabels=False,
+			showgrid=False,
+			zeroline=False,
+		),
+		yaxis=dict(
+			showticklabels=False,
+			showgrid=False,
+			zeroline=False,
+		),
+		# this is the hand/triangle on the dial.
+		# https://plot.ly/python/gauge-charts/#dial center is 0.24, 0.5.
+		# ^ and the above coordinate is not exactly correct so the angles
+		# and magnitutdes are off.
+		shapes=[dict(
+					type='path',
+					path=dials_dict[angle],
+					fillcolor='rgba(44, 160, 101, 0.5)',
+					line_width=1,
+					xref='paper',
+					yref='paper')
+		],
+		annotations=[
+			dict(xref='paper',
+				 yref='paper',
+				 x=0.23,
+				 y=0.45,
+				 text=rsi,
+				 showarrow=False
+			)
+		]
 	)
 
-	return go.Figure(data=data, layout=layout)
+	return go.Figure(data=[trace1, trace2], layout=layout)
 
 
 @app.callback(
@@ -254,45 +322,33 @@ def gen_confusion_matrix(interval, ohlcv_figure):
 	:params interval: upadte the graph based on an interval
 	:params ohlcv_figure: current ohlcv chart, not used. LOL.
 	"""
-	print("Starting gen_confusion_matrix...")
-	df = get_ohlcv_data(interval - 100, interval)
+		
+	# hack to wrap interval around available data.  OOS starts at 1500, df has a 
+	# total of 2274 rows after processing to wrap around 2274-1500 ~ 750.
+	interval = interval % 750
+	
+	df = get_ohlcv_data(interval - 50, interval)
 	df['log_ret'] = np.log(df.Close) - np.log(df.Close.shift(1))
-	#print(df.log_ret.tail(30))
-	#print(df_pred.shape)#, df_pred.tail(30))
 	
 	if df_pred.shape[0] < 30:
 		p = df_pred.shape[0]
-		#print(p, df.log_ret.tail(p).shape)
-		#print(df_pred.pred_log_ret.shape)
 		cm = confusion_matrix(np.sign(df.log_ret.tail(p).values), 
 							  np.sign(df_pred.pred_log_ret.tail(p).values))
-		print(len(cm))
+		#print(len(cm))
 		if len(cm) == 0 or len(cm) == 1:
 			cm = [[1, 1], [1, 1]]
-		#if cm == (list([]) or list([[1]]) or list([[0]])):
-		#	cm = [[0, 0], [0, 0]]
+		
 		cm = np.array(cm)/p
 	else:
 		cm = confusion_matrix(np.sign(df.log_ret.tail(30).values),
 							  np.sign(df_pred.pred_log_ret.tail(30).values))
 		cm = np.array(cm)/30
 							  
-	print(cm)
+	
 	cm_text = np.around(cm, decimals=2)
-	#x = ["Predicted Down", "Predicted Up"],
-	#y = ["Actual Up", "Actual Down"],
-			
-	#data = ff.create_annotated_heatmap(cm, x=x, y=y, annotation_text=cm_text)
-	#annotations = go.Annotations()
-	#for n, row in enumerate(cm):
-		#for m, val in enumerate(row):
-			#annotations.append(go.Annotation(text=str(cm[n][m]), x=x[m], y=y[n],
-											 #xref='x1', yref='y1', showarrow=False))
 											 
 	data = go.Heatmap(
 			z = cm,
-			#z=[[1, 20 ],
-			#	[20, 1]],
 			x = ["Predicted Down", "Predicted Up"],
 			y = ["Actual Up", "Actual Down"],
 			zmin=0.,
@@ -306,7 +362,6 @@ def gen_confusion_matrix(interval, ohlcv_figure):
 		plot_bgcolor=app_color["graph_bg"],
 		paper_bgcolor=app_color["graph_bg"],
 		font={"color": "#fff"},
-		#annotations=annotations,
 		autosize=True,
 		hovermode="closest",
 		legend={
@@ -317,6 +372,5 @@ def gen_confusion_matrix(interval, ohlcv_figure):
 			#"x": 0.5,
 		},
 	)
-	#data.layout.update(layout)
-	print("Returning confusion matrix...")
+	
 	return go.Figure(data=data, layout=layout)
