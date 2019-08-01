@@ -16,6 +16,7 @@ ta-lib = "*"
 seaborn = "*"
 statsmodels = "*"
 dash-bootstrap-components = "*"
+joblib = "*"
 
 [requires]
 python_version = "3.7"

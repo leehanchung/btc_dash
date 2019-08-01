@@ -35,7 +35,7 @@ h6 {
     margin-top: 20px;
 }
 
-.wind__speed__container {
+.ohlcv__chart__container {
     display: flex;
     flex-direction: column;
     background-color: #082255;
@@ -92,10 +92,6 @@ h6 {
     margin-left: 15px;
 }
 
-#wind-direction {
-    display: flex;
-    justify-content: center;
-}
 
 @media only screen and (max-width: 600px) {
     .histogram__direction {

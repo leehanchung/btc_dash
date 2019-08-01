@@ -12,6 +12,13 @@ column1 = dbc.Col(
             """
         
             ## Process
+			
+			At this superhuman BTCUSD Price prediction tool, we are using deep learning,* artificial intelligence,** and methods inspired by quantum mechanics*** to make an optimized price prediction.
+			
+			
+			* ARIMA(3,1,0). 
+			** also ARIMA(3,1,0)
+			*** again, ARIMA(3,1,0) Why (3,1,0)? Because we like it.
             """
         ),
 
