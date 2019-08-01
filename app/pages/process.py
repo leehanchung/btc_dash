@@ -17,7 +17,7 @@ column1 = dbc.Col(
 
 >    -- Nils Bohr, Nobel laureate in Physics
 
-At this superhuman BTCUSD Price prediction tool, we are using deep learning[1], artificial intelligence[2], and methods inspired by quantum mechanics[3] to make an optimized price prediction.
+For this awesome BTCUSD Price prediction app, we are using deep learning[1], artificial intelligence[2], and methods inspired by quantum mechanics[3] to make an optimized price prediction. No tea leaves were hurt during the making.
 
 
 
