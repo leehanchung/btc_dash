@@ -27,7 +27,7 @@ from app import app
 # set interval at 5000ms, or 5s. need 5s for everything to render.
 # 8/1/19: prediction line skipping back and forth different time periods.
 #         change to 10s to give heroku ample time for compute
-GRAPH_INTERVAL = os.environ.get("GRAPH_INTERVAL", 10000)
+GRAPH_INTERVAL = os.environ.get("GRAPH_INTERVAL", 13000)
 app_color = {"graph_bg": "#082255", "graph_line": "#007ACE"}
 
 """
