@@ -13,7 +13,7 @@ navbar = dbc.NavbarSimple(
     brand='BTCUSD Predictor',
     brand_href='/', 
     children=[
-        dbc.NavItem(dcc.Link('Process', href='/process', className='nav-link')), 
+        dbc.NavItem(dcc.Link('About', href='/about', className='nav-link')), 
     ],
     sticky='top',
     color="#082255",
@@ -55,9 +55,7 @@ app.layout = html.Div([
 def display_page(pathname):
     if pathname == '/':
         return index.layout
-    elif pathname == '/insights':
-        return insights.layout
-    elif pathname == '/process':
+    elif pathname == '/about':
         return process.layout
     else:
         return dcc.Markdown('## Page not found')

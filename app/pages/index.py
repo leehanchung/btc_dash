@@ -24,8 +24,10 @@ from statsmodels.tsa.arima_model import ARIMA
 
 from app import app
 
-# set interval at 5000ms, or 5s.
-GRAPH_INTERVAL = os.environ.get("GRAPH_INTERVAL", 5000)
+# set interval at 5000ms, or 5s. need 5s for everything to render.
+# 8/1/19: prediction line skipping back and forth different time periods.
+#         change to 10s to give heroku ample time for compute
+GRAPH_INTERVAL = os.environ.get("GRAPH_INTERVAL", 10000)
 app_color = {"graph_bg": "#082255", "graph_line": "#007ACE"}
 
 """
@@ -139,7 +141,8 @@ def gen_ohlcv(interval):
 	
 	"""
 	# hack to wrap interval around available data.  OOS starts at 1500, df has a 
-	# total of 2274 rows after processing to wrap around 2274-1500 ~ 750.
+	# total of 2274 rows after processing to wrap around 2274-1500 ~ 750. Reset
+	# prediction data to empty df.
 	interval = interval % 750
 	
 	# read data from source
@@ -195,6 +198,20 @@ def gen_ohlcv(interval):
 
 
 def RSI(series, period):
+	"""
+	Custom RSI function calculating relative strength indicator (RSI) instead of using 
+	TA-Lib. Heroku have a hard time import TA-Lib due to gcc compilation errors.
+	
+	Parameters:
+	===========
+	series: pd.Series. time series data to calculate RSI
+	period: int. number of periods used to calculate RSI.
+	
+	
+	Output:
+	==========
+	rsi: float. value of relative strength indicator.
+	"""
 	delta = series.diff().dropna()
 	u = delta * 0
 	d = u.copy()
@@ -211,8 +228,6 @@ def RSI(series, period):
 	#pd.stats.moments.ewma(d, com=period-1, adjust=False)
 	return 100 - 100 / (1 + rs)
 
-
-
 @app.callback(
     Output("momentum-gauge", "figure"), [Input("btcusd-ohlcv-update", "n_intervals")]
 )
@@ -220,7 +235,13 @@ def gen_momentum_gauge(interval):
 	"""
 	Generate 5 period lag RSI on BTCUSD Close and plot it as Momentum Gauge
 
-	:params interval: update the graph based on an interval
+	Parameters:
+	===========
+	interval: integer. update the graph based on an interval
+	
+	Output: 
+	===========
+	Plotly graph object figure.
 	"""
 	
 	# hack to wrap interval around available data.  OOS starts at 1500, df has a 
@@ -347,9 +368,10 @@ def gen_confusion_matrix(interval, ohlcv_figure):
 	"""
 		
 	# hack to wrap interval around available data.  OOS starts at 1500, df has a 
-	# total of 2274 rows after processing to wrap around 2274-1500 ~ 750.
+	# total of 2274 rows after processing to wrap around 2274-1500 ~ 750. Reset
+	# prediction data to empty df.
 	interval = interval % 750
-	
+		
 	df = get_ohlcv_data(interval - 50, interval)
 	df['log_ret'] = np.log(df.Close) - np.log(df.Close.shift(1))
 	
