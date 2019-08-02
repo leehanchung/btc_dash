@@ -155,11 +155,11 @@ def gen_ohlcv(interval):
 	
 	# plotting ohlc candlestick
 	trace_ohlc = go.Candlestick(
-		x=df.index,
-		open=df['Open'], 
-		close=df['Close'], 
-		high=df['High'], 
-		low=df['Low'], 
+		x=df.tail(50).index,
+		open=df['Open'].tail(50), 
+		close=df['Close'].tail(50), 
+		high=df['High'].tail(50), 
+		low=df['Low'].tail(50), 
 		opacity=0.5,
 		hoverinfo="skip",
 		name="BTCUSD",
@@ -167,8 +167,8 @@ def gen_ohlcv(interval):
 	
 	# plotting prediction line
 	trace_line = go.Scatter(
-		x = df_pred.index,
-		y = df_pred.pred_Close,
+		x = df_pred.tail(50).index,
+		y = df_pred.pred_Close.tail(50),
 		line_color='yellow',
 		mode="lines+markers",
 		name="Predicted Close"
