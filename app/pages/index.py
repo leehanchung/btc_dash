@@ -146,6 +146,8 @@ def gen_ohlcv(interval):
 	# prediction data to empty df.
 	interval = interval % 10#750
 	
+	print("interva is {}...".format(interval))
+	
 	# read data from source
 	df = get_ohlcv_data(interval - 100, interval)
 	df['log_ret'] = np.log(df.Close) - np.log(df.Close.shift(1))
@@ -156,10 +158,11 @@ def gen_ohlcv(interval):
 	pred = model.forecast()[0] 
 	
 	print("\nprediction ended, writing to output df...")
+	
 	# save forecast to output dataframe. should be dB irl.
 	next_dt = df.tail(1).index[0]+pd.Timedelta('1 day')
 	df_pred.loc[next_dt] = [pred[0], (np.exp(pred)*df.tail(1).Close.values)[0]]
-	
+	print("\nnext datetime is {}...".format(next_dt))
 	# get index location of period.
 	loc = df_pred.index.get_loc(next_dt)+1
 	print("\nloc is {}...".format(loc))
