@@ -28,7 +28,7 @@ from app import app
 # 8/1/19: prediction line skipping back and forth different time periods.
 #         change to 10s to give heroku ample time for compute. at 13s heroku
 #         still slows down dramaticall causing lines to jump back and forth.
-GRAPH_INTERVAL = os.environ.get("GRAPH_INTERVAL", 15000)
+GRAPH_INTERVAL = os.environ.get("GRAPH_INTERVAL", 5000)
 app_color = {"graph_bg": "#082255", "graph_line": "#007ACE"}
 
 """
@@ -150,20 +150,23 @@ def gen_ohlcv(interval):
 	df = get_ohlcv_data(interval - 100, interval)
 	df['log_ret'] = np.log(df.Close) - np.log(df.Close.shift(1))
 	
+	print("\ndata df loaded, starting prediction...\n")
 	# online training and forecast.
 	model = ARIMA(df.tail(60)["log_ret"], order=(3,1,0), freq='D').fit(disp=0)
 	pred = model.forecast()[0] 
 	
+	print("\nprediction ended, writing to output df...")
 	# save forecast to output dataframe. should be dB irl.
 	next_dt = df.tail(1).index[0]+pd.Timedelta('1 day')
 	df_pred.loc[next_dt] = [pred[0], (np.exp(pred)*df.tail(1).Close.values)[0]]
 	
 	# get index location of period.
 	loc = df_pred.index.get_loc(next_dt)+1
-	print("\n\n{}\n\n".format(loc))
+	print("\nloc is {}...".format(loc))
 	
 	# slices for the past N periods perdiction for plotting
 	df_pred_plot = df_pred.iloc[slice(max(0, loc-30), min(loc, len(df)))].sort_index()
+	print("\n set pred df for plotting...\n", df_pred_plot)
 	
 	# plotting ohlc candlestick
 	trace_ohlc = go.Candlestick(
