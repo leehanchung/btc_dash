@@ -28,7 +28,7 @@ from app import app
 # 8/1/19: prediction line skipping back and forth different time periods.
 #         change to 10s to give heroku ample time for compute. at 13s heroku
 #         still slows down dramaticall causing lines to jump back and forth.
-GRAPH_INTERVAL = os.environ.get("GRAPH_INTERVAL", 5000)
+GRAPH_INTERVAL = os.environ.get("GRAPH_INTERVAL", 10000)
 app_color = {"graph_bg": "#082255", "graph_line": "#007ACE"}
 
 """
@@ -144,7 +144,7 @@ def gen_ohlcv(interval):
 	# hack to wrap interval around available data.  OOS starts at 1500, df has a 
 	# total of 2274 rows after processing to wrap around 2274-1500 ~ 750. Reset
 	# prediction data to empty df.
-	interval = interval % 750
+	interval = interval % 10#750
 	
 	# read data from source
 	df = get_ohlcv_data(interval - 100, interval)
