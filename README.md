@@ -22,3 +22,18 @@ BTCDash includes a real time pseudo live prediction update chart as follows:
 - Directional prediction confusion metrics
 
 ![alt text](app/assets/btcdash1.gif)
+
+## Statistics
+
+We establish our baseline using the previous period log returns for RMSE and directional accurcy calculation. 
+
+| Baseline | RMSE | Directional Accuracy |
+| ------------- |-------------:| -----:|
+| Baseline      | 0.056 | 0.4884 |
+| Univariate ARIMA      | 0.0512 |   0.5125 |
+
+## TODO
+- Hooking Timescale dB for historical data and prediction data.
+- Walkforward performance statistics using vectorized backtester.
+- More models, including fourier decomposition/FFT, multivariate ARIMA, LSTM, and WaveNet.
+- Fix prediction plot time skipping/wrapping problem.
