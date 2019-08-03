@@ -160,9 +160,10 @@ def gen_ohlcv(interval):
 	
 	# get index location of period.
 	loc = df_pred.index.get_loc(next_dt)+1
+	print("\n\n{}\n\n".format(loc))
 	
 	# slices for the past N periods perdiction for plotting
-	df_pred_plot = df_pred.iloc[slice(max(0, loc-30), min(loc, len(df)))]
+	df_pred_plot = df_pred.iloc[slice(max(0, loc-30), min(loc, len(df)))].sort_index()
 	
 	# plotting ohlc candlestick
 	trace_ohlc = go.Candlestick(
