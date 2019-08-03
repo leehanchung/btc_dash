@@ -26,8 +26,9 @@ from app import app
 
 # set interval at 5000ms, or 5s. need 5s for everything to render.
 # 8/1/19: prediction line skipping back and forth different time periods.
-#         change to 10s to give heroku ample time for compute
-GRAPH_INTERVAL = os.environ.get("GRAPH_INTERVAL", 13000)
+#         change to 10s to give heroku ample time for compute. at 13s heroku
+#         still slows down dramaticall causing lines to jump back and forth.
+GRAPH_INTERVAL = os.environ.get("GRAPH_INTERVAL", 5000)
 app_color = {"graph_bg": "#082255", "graph_line": "#007ACE"}
 
 """
@@ -143,20 +144,30 @@ def gen_ohlcv(interval):
 	# hack to wrap interval around available data.  OOS starts at 1500, df has a 
 	# total of 2274 rows after processing to wrap around 2274-1500 ~ 750. Reset
 	# prediction data to empty df.
-	interval = interval % 750
+	interval = interval % 5#750
 	
 	# read data from source
 	df = get_ohlcv_data(interval - 100, interval)
 	df['log_ret'] = np.log(df.Close) - np.log(df.Close.shift(1))
 	
+	# online training and forecast.
 	model = ARIMA(df.tail(60)["log_ret"], order=(3,1,0), freq='D').fit(disp=0)
 	pred = model.forecast()[0] 
-	df_pred.loc[df.tail(1).index[0]+pd.Timedelta('1 day')] = [pred[0], (np.exp(pred)*df.tail(1).Close.values)[0]]
+	
+	# save forecast to output dataframe. should be dB irl.
+	next_dt = df.tail(1).index[0]+pd.Timedelta('1 day')
+	df_pred.loc[next_dt] = [pred[0], (np.exp(pred)*df.tail(1).Close.values)[0]]
+	
+	# get index location of period.
+	loc = df_pred.index.get_loc(next_dt)+1
+	
+	# slices for the past N periods perdiction for plotting
+	df_pred_plot = df_pred.iloc[slice(max(0, loc-30), min(loc, len(df)))]
 	
 	# plotting ohlc candlestick
 	trace_ohlc = go.Candlestick(
 		x=df.tail(50).index,
-		open=df['Open'].tail(50), 
+		open=df['Open'].tail(50),
 		close=df['Close'].tail(50), 
 		high=df['High'].tail(50), 
 		low=df['Low'].tail(50), 
@@ -167,8 +178,8 @@ def gen_ohlcv(interval):
 	
 	# plotting prediction line
 	trace_line = go.Scatter(
-		x = df_pred.tail(50).index,
-		y = df_pred.pred_Close.tail(50),
+		x = df_pred_plot.index,
+		y = df_pred_plot.pred_Close,
 		line_color='yellow',
 		mode="lines+markers",
 		name="Predicted Close"
@@ -328,7 +339,7 @@ def gen_momentum_gauge(interval):
 		),
 		# this is the hand/triangle on the dial.
 		# https://plot.ly/python/gauge-charts/#dial center is 0.24, 0.5.
-		# ^ and the above coordinate is not exactly correct so the angles
+		# 2019/08/01: ^ and the above coordinate is not exactly correct so the angles
 		# and magnitutdes are off.
 		shapes=[dict(
 					type='path',
@@ -389,7 +400,8 @@ def gen_confusion_matrix(interval, ohlcv_figure):
 							  np.sign(df_pred.pred_log_ret.tail(30).values))
 		cm = np.array(cm)/30
 							  
-	
+	# generate text for confusion metics. dont know how to display 
+	# text on plotly go
 	cm_text = np.around(cm, decimals=2)
 											 
 	data = go.Heatmap(
