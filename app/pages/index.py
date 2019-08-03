@@ -144,7 +144,7 @@ def gen_ohlcv(interval):
 	# hack to wrap interval around available data.  OOS starts at 1500, df has a 
 	# total of 2274 rows after processing to wrap around 2274-1500 ~ 750. Reset
 	# prediction data to empty df.
-	interval = interval % 5#750
+	interval = interval % 750
 	
 	# read data from source
 	df = get_ohlcv_data(interval - 100, interval)
