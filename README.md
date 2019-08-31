@@ -30,7 +30,7 @@ We establish our baseline using the previous period log returns for RMSE and dir
 | Baseline | RMSE | Directional Accuracy |
 | ------------- |-------------:| -----:|
 | Baseline      | 0.056 | 0.4884 |
-| Univariate ARIMA      | 0.0512 |   0.5125 |
+| Univariate ARIMA      | 0.051 |   0.5125 |
 
 ## TODO
 - Hooking Timescale dB for historical data and prediction data.
