@@ -1,3 +1,43 @@
+import dash
+import dash_bootstrap_components as dbc
+
+from btc_dash import server
+
+print("dash_app")
+external_stylesheets = [
+    # Bootswatch theme
+    dbc.themes.BOOTSTRAP,
+    # for social media icons
+    "https://use.fontawesome.com/releases/v5.9.0/css/all.css",
+]
+
+
+meta_tags = [
+    {
+        "name": "description",
+        "content": ("BTCUSD Prediction Dashboard with real time inferencing "
+                    "on 5 minute delayed data, with momentum gauges and "
+                    "prediction confusion metrix"),
+    },
+    {
+        "name": "viewport",
+        "content": "width=device-width, initial-scale=1.0",
+    }
+]
+
+
+app = dash.Dash(
+    __name__,
+    server=server,
+    external_stylesheets=external_stylesheets,
+    meta_tags=meta_tags,
+    routes_pathname_prefix='/',
+)
+
+app.config.suppress_callback_exceptions = True
+app.title = "BTCUSD Forecast"
+print("dash_app end")
+
 # Imports from 3rd party libraries
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
@@ -6,8 +46,8 @@ from dash.dependencies import Input, Output
 
 # Imports from this application
 # from app import app, server
-from dash_app import app
-from dash_layouts import index, process
+# from dash_app import app
+from btc_dash.dash_layouts import index, process
 
 navbar = dbc.NavbarSimple(
     brand="BTCUSD Predictor",
@@ -105,5 +145,5 @@ def display_page(pathname):
         return dcc.Markdown("## Page not found")
 
 
-if __name__ == "__main__":
-    app.run_server(debug=True)
+# if __name__ == "__main__":
+#     app.run_server(debug=True)

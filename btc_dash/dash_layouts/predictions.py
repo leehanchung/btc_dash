@@ -5,15 +5,13 @@ import dash_core_components as dcc
 column1 = dbc.Col(
     [
         dcc.Markdown(
-            """
-        
-            ## Insights
+            """       
+            ## Predictions
             """
         ),
     ],
     md=4,
 )
-
 
 column2 = dbc.Col([])
 
