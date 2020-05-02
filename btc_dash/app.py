@@ -38,14 +38,18 @@ dbc.themes.YETI
 """
 
 external_stylesheets = [
-    dbc.themes.BOOTSTRAP, # Bootswatch theme
-    'https://use.fontawesome.com/releases/v5.9.0/css/all.css', # for social media icons
+    dbc.themes.BOOTSTRAP,  # Bootswatch theme
+    "https://use.fontawesome.com/releases/v5.9.0/css/all.css",  # for social media icons
 ]
 
 
-app = dash.Dash(__name__, 
-				external_stylesheets=external_stylesheets,
-				meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],)
+app = dash.Dash(
+    __name__,
+    external_stylesheets=external_stylesheets,
+    meta_tags=[
+        {"name": "viewport", "content": "width=device-width, initial-scale=1"}
+    ],
+)
 app.config.suppress_callback_exceptions = True
-app.title = 'BTCUSD Forecast' # appears in browser title bar
+app.title = "BTCUSD Forecast"  # appears in browser title bar
 server = app.server

@@ -18,10 +18,6 @@ column1 = dbc.Col(
     md=4,
 )
 
-column2 = dbc.Col(
-    [
-        
-    ]
-)
+column2 = dbc.Col([])
 
 layout = dbc.Row([column1, column2])

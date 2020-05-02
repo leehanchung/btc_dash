@@ -78,9 +78,8 @@ The content of this website is for entertainment purposes only.
 
             """
         ),
-
     ],
-	className = "body",
+    className="body",
 )
 
 layout = dbc.Row([column1])

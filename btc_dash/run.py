@@ -10,16 +10,16 @@ from app import app, server
 from pages import index, predictions, insights, process
 
 navbar = dbc.NavbarSimple(
-    brand='BTCUSD Predictor',
-    brand_href='/', 
+    brand="BTCUSD Predictor",
+    brand_href="/",
     children=[
-        dbc.NavItem(dcc.Link('About', href='/about', className='nav-link')), 
+        dbc.NavItem(dcc.Link("About", href="/about", className="nav-link")),
     ],
-    sticky='top',
+    sticky="top",
     color="#082255",
     dark=True,
-	fluid=True,
-	className='h1',
+    fluid=True,
+    className="h1",
 )
 """
 
@@ -56,39 +56,54 @@ footer = dbc.Container(
         dbc.Col(
             html.P(
                 [
-                    html.Span('Hanchung Lee      ', className='mr-2'), 
-                    html.A(html.I(className='fas fa-envelope-square mr-3'), href='mailto:lee.hanchung@gmail.com'), 
-                    html.A(html.I(className='fab fa-github-square mr-3'), href='https://github.com/leehanchung/btc_dash'), 
-                    html.A(html.I(className='fab fa-linkedin mr-3'), href='https://www.linkedin.com/in/hanchunglee/'), 
-                    html.A(html.I(className='fab fa-twitter-square mr-3'), href='https://twitter.com/hanchunglee'), 
-                ], 
-                className='h1'#'lead'
+                    html.Span("Hanchung Lee      ", className="mr-2"),
+                    html.A(
+                        html.I(className="fas fa-envelope-square mr-3"),
+                        href="mailto:lee.hanchung@gmail.com",
+                    ),
+                    html.A(
+                        html.I(className="fab fa-github-square mr-3"),
+                        href="https://github.com/leehanchung/btc_dash",
+                    ),
+                    html.A(
+                        html.I(className="fab fa-linkedin mr-3"),
+                        href="https://www.linkedin.com/in/hanchunglee/",
+                    ),
+                    html.A(
+                        html.I(className="fab fa-twitter-square mr-3"),
+                        href="https://twitter.com/hanchunglee",
+                    ),
+                ],
+                className="h1",  #'lead'
             )
         )
     ),
-	fluid=True
+    fluid=True,
 )
 
-# For more explanation, see: 
+# For more explanation, see:
 # Plotly Dash User Guide, URL Routing and Multiple Apps
 # https://dash.plot.ly/urls
-app.layout = html.Div([
-    dcc.Location(id='url', refresh=False), 
-    navbar, 
-    dbc.Container(id='page-content', className='mt-4', fluid=True), 
-    html.Hr(), 
-    footer
-])
+app.layout = html.Div(
+    [
+        dcc.Location(id="url", refresh=False),
+        navbar,
+        dbc.Container(id="page-content", className="mt-4", fluid=True),
+        html.Hr(),
+        footer,
+    ]
+)
 
-@app.callback(Output('page-content', 'children'),
-              [Input('url', 'pathname')])
+
+@app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def display_page(pathname):
-    if pathname == '/':
+    if pathname == "/":
         return index.layout
-    elif pathname == '/about':
+    elif pathname == "/about":
         return process.layout
     else:
-        return dcc.Markdown('## Page not found')
+        return dcc.Markdown("## Page not found")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.run_server(debug=True)
