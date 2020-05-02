@@ -1,0 +1,38 @@
+name: Push
+
+on: push
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: STEP 1. Check out repo
+      uses: actions/checkout@v2
+    #===============================================#
+    - name: STEP 2. Set up Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    #===============================================#
+    - name: STEP 3. Install pipenv dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pipenv
+        python -m pipenv install --dev --system
+    #===============================================#
+    - name: STEP 4. Lint with black and flake8
+      run: |
+        pipenv run black --line-length=80 app btc_predictor data
+        pipenv run flake8
+    #===============================================#
+    - name: STEP 5. Test with pytest
+      run: |
+        coverage run --omit */.virtualenvs/* -m pytest
+    #===============================================#
+    - name: STEP 6. Generate coverage reports
+      env:
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN}}
+      run: |
+        coveralls

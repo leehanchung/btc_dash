@@ -1,0 +1,32 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pytest = "*"
+black = "*"
+flake8 = "*"
+jupyter = "*"
+mypy = "*"
+
+[packages]
+category-encoders = "==2.2.2"
+dash = "==1.11.0"
+gunicorn = "==20.0.4"
+numpy = "==1.18.3"
+pandas = "==1.0.3"
+plotly = "==4.6.0"
+plotly-express = "==0.4.1"
+scikit-learn = "==0.22.2"
+scipy = "==1.4.1"
+xgboost = "==1.0.2"
+Flask = "==1.1.1"
+python-dotenv = "*"
+dash-bootstrap-components = "*"
+
+[requires]
+python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true

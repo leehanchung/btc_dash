@@ -1,5 +1,6 @@
 from sklearn.model_selection import _BaseKFold
 
+
 Class PurgedKFold(_BaseKFold):
 """
 Extend KFold class to work with labels that span intervals.
@@ -30,7 +31,3 @@ from Advances in Financial Machine Learning by Lopez de Prado
 			if maxT1Idex < X.shape[0]: # right train (with embargo)
 				train_indices = np.concatenate((train_indices, indices[maxT1Idx+mbrg:]))
 			yield train_indices, test_indices
-			
-			
-		
-		
