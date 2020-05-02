@@ -1,1 +1,1 @@
-web: gunicorn --chdir app run:server 
+web: gunicorn --workers=3 --chdir btc_dash app run:server 
