@@ -9,11 +9,10 @@ from btc_dash import config
 
 
 def register_confusion_callback(app):
-
     @app.callback(
         Output("confusion-matrix", "figure"),
         [Input("btcusd-ohlcv-update", "n_intervals")],
-        [State("btcusd-ohlcv", "figure"),],
+        [State("btcusd-ohlcv", "figure")],
     )
     def gen_confusion_matrix(interval, ohlcv_figure):
         """
@@ -23,9 +22,9 @@ def register_confusion_callback(app):
         :params ohlcv_figure: current ohlcv chart, not used. LOL.
         """
 
-        # hack to wrap interval around available data.  OOS starts at 1500, df has a
-        # total of 2274 rows after processing to wrap around 2274-1500 ~ 750. Reset
-        # prediction data to empty df.
+        # hack to wrap interval around available data.  OOS starts at 1500, df
+        # has a total of 2274 rows after processing to wrap around
+        # 2274-1500 ~ 750. Reset prediction data to empty df.
         interval = interval % 750
 
         df = get_ohlcv_data(interval - 50, interval)
@@ -51,7 +50,7 @@ def register_confusion_callback(app):
 
         # generate text for confusion metics. dont know how to display
         # text on plotly go
-        cm_text = np.around(cm, decimals=2)
+        # cm_text = np.around(cm, decimals=2)
 
         data = go.Heatmap(
             z=cm,

@@ -7,7 +7,6 @@ from btc_dash import config
 
 
 def register_momentum_callback(app):
-
     @app.callback(
         Output("momentum-gauge", "figure"),
         [Input("btcusd-ohlcv-update", "n_intervals")],
@@ -25,20 +24,24 @@ def register_momentum_callback(app):
         Plotly graph object figure.
         """
 
-        # hack to wrap interval around available data.  OOS starts at 1500, df has a
-        # total of 2274 rows after processing to wrap around 2274-1500 ~ 750.
+        # hack to wrap interval around available data.  OOS starts at 1500,
+        # df has a total of 2274 rows after processing to wrap around
+        # 2274-1500 ~ 750.
         interval = interval % 750
 
-        # read data from source and calculate RSI.  RSI ranges between 0 and 100.
+        # read data from source and calculate RSI.
+        # RSI ranges between 0 and 100.
         df = get_ohlcv_data(interval - 6, interval)
         # rsi = int(round(talib.RSI(df.Close.values, 5)[-1]))
         # print(rsi)
         rsi2 = int(round(RSI(df.Close, 5)[-1]))
         # print(rsi2)
 
-        # Let's subdivide RSI into 10s to reduce plotting dial triangle complexity
+        # Let's subdivide RSI into 10s to reduce plotting
+        # dial triangle complexity
         angle = round(rsi2, -1)
-        # center of dial coordinate is 0.24 0.5. We plot left top and right coordinates of a triangle
+        # center of dial coordinate is 0.24 0.5. We plot left top and
+        # right coordinates of a triangle
         dials_dict = {
             0: "M 0.24 0.4950 L 0.09 0.5 L 0.24 0.505 Z",
             10: "M 0.2384 0.4952 L 0.0973 0.5463 L 0.2415 0.5047 Z",
@@ -102,8 +105,8 @@ def register_momentum_callback(app):
             yaxis=dict(showticklabels=False, showgrid=False, zeroline=False,),
             # this is the hand/triangle on the dial.
             # https://plot.ly/python/gauge-charts/#dial center is 0.24, 0.5.
-            # 2019/08/01: ^ and the above coordinate is not exactly correct so the angles
-            # and magnitutdes are off.
+            # 2019/08/01: ^ and the above coordinate is not exactly correct
+            # so the angles and magnitutdes are off.
             shapes=[
                 dict(
                     type="path",
@@ -131,8 +134,9 @@ def register_momentum_callback(app):
 
 def RSI(series, period):
     """
-    Custom RSI function calculating relative strength indicator (RSI) instead of using 
-    TA-Lib. Heroku have a hard time import TA-Lib due to gcc compilation errors.
+    Custom RSI function calculating relative strength indicator (RSI) instead
+    of using TA-Lib. Heroku have a hard time import TA-Lib due to gcc
+    compilation errors.
 
     Parameters:
     ===========
@@ -148,13 +152,11 @@ def RSI(series, period):
     d = u.copy()
     u[delta > 0] = delta[delta > 0]
     d[delta < 0] = -delta[delta < 0]
-    u[u.index[period - 1]] = np.mean(
-        u[:period]
-    )  # first value is sum of avg gains
+    # first value is sum of avg gains
+    u[u.index[period - 1]] = np.mean(u[:period])
     u = u.drop(u.index[: (period - 1)])
-    d[d.index[period - 1]] = np.mean(
-        d[:period]
-    )  # first value is sum of avg losses
+    # first value is sum of avg losses
+    d[d.index[period - 1]] = np.mean(d[:period])
     d = d.drop(d.index[: (period - 1)])
     rs = (
         u.ewm(com=period - 1, adjust=False).mean()

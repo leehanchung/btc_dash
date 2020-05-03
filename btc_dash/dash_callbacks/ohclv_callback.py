@@ -9,7 +9,6 @@ from btc_dash import config
 
 
 def register_ohlcv_callback(app):
-
     @app.callback(
         Output("btcusd-ohlcv", "figure"),
         [Input("btcusd-ohlcv-update", "n_intervals")],
@@ -21,9 +20,9 @@ def register_ohlcv_callback(app):
         :params interval: update the graph based on an interval
 
         """
-        # hack to wrap interval around available data.  OOS starts at 1500, df has a
-        # total of 2274 rows after processing to wrap around 2274-1500 ~ 750. Reset
-        # prediction data to empty df.
+        # hack to wrap interval around available data.  OOS starts at 1500,
+        # df has a total of 2274 rows after processing to wrap around
+        # 2274-1500 ~ 750. Reset prediction data to empty df.
         interval = interval % 750
 
         print("interva is {}...".format(interval))
@@ -34,7 +33,9 @@ def register_ohlcv_callback(app):
 
         print("\ndata df loaded, starting prediction...\n")
         # online training and forecast.
-        model = ARIMA(df.tail(60)["log_ret"], order=(3, 1, 0), freq="D").fit(disp=0)
+        model = ARIMA(df.tail(60)["log_ret"], order=(3, 1, 0), freq="D",).fit(
+            disp=0
+        )
         pred = model.forecast()[0]
 
         print("\nprediction ended, writing to output df...")
