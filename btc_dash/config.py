@@ -1,11 +1,11 @@
 import os
 import pathlib
+import pandas as pd
 from dotenv import load_dotenv
 
 
 load_dotenv()
 PACKAGE_ROOT = pathlib.Path(__file__).resolve().parent.parent
-print(PACKAGE_ROOT)
 
 
 class DataReadingError(Exception):
@@ -31,6 +31,10 @@ class BaseConfig:
 
     DEBUG = True
     TESTING = True
+
+    GRAPH_INTERVAL = os.environ.get("GRAPH_INTERVAL", 5000)
+    app_color = {"graph_bg": "#082255", "graph_line": "#007ACE"}
+    df_pred = pd.DataFrame(columns=["pred_log_ret", "pred_Close"])
 
 
 config = BaseConfig

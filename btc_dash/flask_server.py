@@ -1,10 +1,11 @@
 import flask
 
 from btc_dash import config
-# from btc_dash.routes import sitemap
-# from btc_dash.routes import robots
+from btc_dash.routes.sitemap_route import sitemap
+from btc_dash.routes.robots_route import robots
+# from btc_dash.routes import about
 
-print("flask_server")
+
 ###############################################################################
 #
 #    Initialize Flask server
@@ -12,9 +13,10 @@ print("flask_server")
 ###############################################################################
 server = flask.Flask(
     __name__,
-    static_folder='btc_dash/assets',
+    static_folder='assets',
 )
 server.config['TESTING'] = config.TESTING
 
-# server.register_blueprint(sitemap)
-print("flask_server end")
+server.register_blueprint(sitemap)
+server.register_blueprint(robots)
+# server.register_blueprint(about)

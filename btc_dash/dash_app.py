@@ -1,9 +1,17 @@
 import dash
 import dash_bootstrap_components as dbc
+import dash_core_components as dcc
+import dash_html_components as html
+
+from dash.dependencies import Input, Output
 
 from btc_dash import server
+from btc_dash.dash_callbacks import register_display_pages_callback
+from btc_dash.dash_callbacks import register_confusion_callback
+from btc_dash.dash_callbacks import register_ohlcv_callback
+from btc_dash.dash_callbacks import register_momentum_callback
 
-print("dash_app")
+
 external_stylesheets = [
     # Bootswatch theme
     dbc.themes.BOOTSTRAP,
@@ -36,18 +44,7 @@ app = dash.Dash(
 
 app.config.suppress_callback_exceptions = True
 app.title = "BTCUSD Forecast"
-print("dash_app end")
 
-# Imports from 3rd party libraries
-import dash_bootstrap_components as dbc
-import dash_core_components as dcc
-import dash_html_components as html
-from dash.dependencies import Input, Output
-
-# Imports from this application
-# from app import app, server
-# from dash_app import app
-from btc_dash.dash_layouts import index, process
 
 navbar = dbc.NavbarSimple(
     brand="BTCUSD Predictor",
@@ -134,16 +131,7 @@ app.layout = html.Div(
     ]
 )
 
-
-@app.callback(Output("page-content", "children"), [Input("url", "pathname")])
-def display_page(pathname):
-    if pathname == "/":
-        return index.layout
-    elif pathname == "/about":
-        return process.layout
-    else:
-        return dcc.Markdown("## Page not found")
-
-
-# if __name__ == "__main__":
-#     app.run_server(debug=True)
+register_momentum_callback(app)
+register_confusion_callback(app)
+register_ohlcv_callback(app)
+register_display_pages_callback(app)
