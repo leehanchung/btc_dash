@@ -18,11 +18,11 @@ OOS_START = 1500
 
 def get_ohlcv_data(start, end):
     """
-	Query wind data rows between two ranges
-	:params start: start row id
-	:params end: end row id
-	:returns: pandas dataframe object 
-	"""
+    Query wind data rows between two ranges
+    :params start: start row id
+    :params end: end row id
+    :returns: pandas dataframe object
+    """
 
     # con = sqlite3.connect(str(DB_FILE))
     # statement = f'SELECT Speed, SpeedError, Direction FROM Wind WHERE rowid > "{start}" AND rowid <= "{end}";'
@@ -44,4 +44,4 @@ def get_ohlcv_data(start, end):
     if (OOS_START + end) > df.shape[0]:
         return df.tail(50)
     else:
-        return df.iloc[OOS_START + start : OOS_START + end, :]
+        return df.iloc[OOS_START + start: OOS_START + end, :]

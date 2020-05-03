@@ -25,6 +25,7 @@ Flask = "==1.1.1"
 python-dotenv = "*"
 dash-bootstrap-components = "*"
 pyarrow = "*"
+tensorflow = "*"
 
 [requires]
 python_version = "3.7"
