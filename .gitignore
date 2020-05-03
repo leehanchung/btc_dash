@@ -1,5 +1,9 @@
 settings.json
+
+# Data files
 *.db
+*.csv
+*.parquet
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

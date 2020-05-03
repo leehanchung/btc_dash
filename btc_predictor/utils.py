@@ -5,19 +5,18 @@ import numpy as np
 
 
 def preproc(df: pd.DataFrame) -> pd.DataFrame:
+    """Convenience function for cleaning up .csv file scrapped from
+    Coinmarketcap.com and bitstamp.
+
+    Args:
+        df : input dataframe, with columns as
+        {Date, Open, High, Low, Close, Volume}.
+        Everything in text format. Unknown values are marked as '-'
+
+    Returns:
+        Original dataframe cleaned and parsed into numerics. Unknown as NaN.
+
     """
-	Convenience function for cleaning up .csv file scrapped from Coinmarketcap.com
-	
-	Parameters
-	==========
-	df : input dataframe, with columns as {Date, Open, High, Low, Close, Volume, 
-	and Market Cap. Everything in text format. Unknown values are marked as '-'
-	
-	Returns
-	==========
-	df : original dataframe cleaned and parsed into numerics. Unknown as NaN.
-	
-	"""
     df.Date = pd.to_datetime(df.Date)
     df = df.sort_values(by="Date")
     df.set_index("Date", inplace=True)

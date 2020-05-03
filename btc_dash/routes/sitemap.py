@@ -3,7 +3,11 @@ from urllib.parse import urlparse
 from flask import Blueprint, render_template, make_response, request
 
 
-sitemap = Blueprint("sitemap", __name__, template_folder="templates",)
+sitemap = Blueprint(
+    "sitemap",
+    __name__,
+    template_folder="templates",
+)
 
 
 @sitemap.route("/sitemap")
@@ -13,6 +17,13 @@ def sitemap_route():
     """Route to dynamically generate a sitemap of your website/application.
     lastmod and priority tags omitted on static pages. lastmod included on
     dynamic content such as blog posts.
+
+    Args:
+        None
+
+    Returns:
+        Flask response
+
     """
 
     host_components = urlparse(request.host_url)

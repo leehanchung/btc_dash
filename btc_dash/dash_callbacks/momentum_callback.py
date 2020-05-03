@@ -1,3 +1,4 @@
+from dash import Dash
 from dash.dependencies import Input, Output
 import numpy as np
 import plotly.graph_objs as go
@@ -6,24 +7,31 @@ from btc_dash.db import get_ohlcv_data
 from btc_dash import config
 
 
-def register_momentum_callback(app):
+def register_momentum_callback(app: Dash):
+    """Wrapper function for registering callback to generate momentum
+    indicator figure using plotly
+
+    Args:
+        dash app object
+
+    Returns:
+        None
+
+    """
     @app.callback(
         Output("momentum-gauge", "figure"),
         [Input("btcusd-ohlcv-update", "n_intervals")],
     )
-    def gen_momentum_gauge(interval):
+    def gen_momentum_gauge(interval: int):
+        """Generate 5 period lag RSI on BTCUSD Close and plot it as Momentum Gauge
+
+        Args:
+            interval: integer. update the graph based on an interval
+
+        Returns:
+            Plotly graph object figure.
+
         """
-        Generate 5 period lag RSI on BTCUSD Close and plot it as Momentum Gauge
-
-        Parameters:
-        ===========
-        interval: integer. update the graph based on an interval
-
-        Output:
-        ===========
-        Plotly graph object figure.
-        """
-
         # hack to wrap interval around available data.  OOS starts at 1500,
         # df has a total of 2274 rows after processing to wrap around
         # 2274-1500 ~ 750.
@@ -138,14 +146,13 @@ def RSI(series, period):
     of using TA-Lib. Heroku have a hard time import TA-Lib due to gcc
     compilation errors.
 
-    Parameters:
-    ===========
-    series: pd.Series. time series data to calculate RSI
-    period: int. number of periods used to calculate RSI.
+    Args:
+        series: pd.Series. time series data to calculate RSI
+        period: int. number of periods used to calculate RSI.
 
-    Output:
-    ==========
-    rsi: float. value of relative strength indicator.
+    Returns:    
+        rsi: float. value of relative strength indicator.
+
     """
     delta = series.diff().dropna()
     u = delta * 0

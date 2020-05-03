@@ -1,3 +1,4 @@
+from dash import Dash
 import numpy as np
 import pandas as pd
 from dash.dependencies import Input, Output
@@ -8,16 +9,26 @@ from btc_dash.db import get_ohlcv_data
 from btc_dash import config
 
 
-def register_ohlcv_callback(app):
+def register_ohlcv_callback(app: Dash):
+    """Wrapper function for registering callback to generate momentum
+    indicator figure using plotly
+
+    Args:
+        dash app object
+
+    Returns:
+        None
+
+    """
     @app.callback(
         Output("btcusd-ohlcv", "figure"),
         [Input("btcusd-ohlcv-update", "n_intervals")],
     )
-    def gen_ohlcv(interval):
-        """
-        Generate OHLCV Chart for BTCUSD with predicted price overlay.
+    def gen_ohlcv(interval: int) -> go.Figure:
+        """Generate OHLCV Chart for BTCUSD with predicted price overlay.
 
-        :params interval: update the graph based on an interval
+        Args:
+            interval: update the graph based on an interval
 
         """
         # hack to wrap interval around available data.  OOS starts at 1500,
@@ -83,7 +94,11 @@ def register_ohlcv_callback(app):
             paper_bgcolor=config.app_color["graph_bg"],
             font={"color": "#fff"},
             height=700,
-            xaxis={"showline": False, "showgrid": False, "zeroline": False,},
+            xaxis={
+                "showline": False,
+                "showgrid": False,
+                "zeroline": False,
+            },
             yaxis={
                 "showgrid": True,
                 "showline": True,

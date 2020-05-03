@@ -1,5 +1,5 @@
-from btc_dash import server
+from btc_dash import app
 
 
 if __name__ == "__main__":
-    server.run(debug=True, port=8050)
+    app.run(debug=True, port=8050)

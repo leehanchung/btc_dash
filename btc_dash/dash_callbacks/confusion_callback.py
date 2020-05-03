@@ -1,3 +1,4 @@
+from dash import Dash
 import numpy as np
 from dash.dependencies import Input, Output
 from dash.dependencies import State
@@ -8,20 +9,33 @@ from btc_dash.db import get_ohlcv_data
 from btc_dash import config
 
 
-def register_confusion_callback(app):
+def register_confusion_callback(app: Dash):
+    """Wrapper function for registering callback to generate
+    confusion matrix.
+
+    Args:
+        dash app object
+
+    Returns:
+        None
+
+    """
     @app.callback(
         Output("confusion-matrix", "figure"),
         [Input("btcusd-ohlcv-update", "n_intervals")],
         [State("btcusd-ohlcv", "figure")],
     )
-    def gen_confusion_matrix(interval, ohlcv_figure):
+    def gen_confusion_matrix(interval, ohlcv_figure) -> go.Figure:
         """
         Genererate confusion matrix of prediction directions.
 
-        :params interval: upadte the graph based on an interval
-        :params ohlcv_figure: current ohlcv chart, not used. LOL.
-        """
+        Args:
+            interval: upadte the graph based on an interval
+            ohlcv_figure: current ohlcv chart, not used. LOL.
 
+        Returns:
+            plotly graph objects figure.
+        """
         # hack to wrap interval around available data.  OOS starts at 1500, df
         # has a total of 2274 rows after processing to wrap around
         # 2274-1500 ~ 750. Reset prediction data to empty df.
