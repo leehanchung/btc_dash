@@ -17,16 +17,17 @@ class DataReader:
     Data can be accessed with .pd for pandas format or .tfds for tensorflow
     dataset format.
     """
+
     def __init__(self, *, data_file: str) -> None:
-        if data_file.split('.')[-1] == "csv":
-            self.source_type = 'csv'
-        elif data_file.split('.')[-1] == 'parquet':
-            self.source_type = 'parquet'
+        if data_file.split(".")[-1] == "csv":
+            self.source_type = "csv"
+        elif data_file.split(".")[-1] == "parquet":
+            self.source_type = "parquet"
         else:
             raise DataReadingError("Invalid datatype")
 
         # Read the data into pandas dataframe
-        if self.source_type == 'csv':
+        if self.source_type == "csv":
             self.data = self.read_csv(data_file)
         else:
             self.data = self.read_parquet(data_file)

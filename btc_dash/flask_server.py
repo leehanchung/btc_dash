@@ -15,11 +15,11 @@ def register_blueprints(*, server: Flask) -> None:
         None
 
     """
-    for name in find_modules('btc_dash.routes'):
+    for name in find_modules("btc_dash.routes"):
         # it doesnt like to import robots from btc_dash.routes.robots
         # so hack around the import string.
-        name = name.split('.')
-        name = '.'.join(name + [name[-1]])
+        name = name.split(".")
+        name = ".".join(name + [name[-1]])
         module = import_string(name)
         server.register_blueprint(module)
         # if hasattr(module, 'blueprint'):

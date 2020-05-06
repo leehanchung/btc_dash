@@ -40,7 +40,8 @@ class PurgedKFold(_BaseKFold):
                 self.t1[self.t1 <= t0].index
             )
             if maxT1Idx < X.shape[0]:  # right train (with embargo)
+                m_idx = maxT1Idx + mbrg
                 train_indices = np.concatenate(
-                    (train_indices, indices[maxT1Idx + mbrg :])
+                    (train_indices, indices[m_idx:])
                 )
             yield train_indices, test_indices

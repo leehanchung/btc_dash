@@ -15,6 +15,7 @@ def register_display_pages_callback(app: Dash):
         None
 
     """
+
     @app.callback(
         Output("page-content", "children"), [Input("url", "pathname")]
     )

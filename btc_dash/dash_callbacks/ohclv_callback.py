@@ -20,6 +20,7 @@ def register_ohlcv_callback(app: Dash):
         None
 
     """
+
     @app.callback(
         Output("btcusd-ohlcv", "figure"),
         [Input("btcusd-ohlcv-update", "n_intervals")],
@@ -94,11 +95,7 @@ def register_ohlcv_callback(app: Dash):
             paper_bgcolor=config.app_color["graph_bg"],
             font={"color": "#fff"},
             height=700,
-            xaxis={
-                "showline": False,
-                "showgrid": False,
-                "zeroline": False,
-            },
+            xaxis={"showline": False, "showgrid": False, "zeroline": False},
             yaxis={
                 "showgrid": True,
                 "showline": True,

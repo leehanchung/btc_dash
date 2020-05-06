@@ -20,6 +20,7 @@ def register_confusion_callback(app: Dash):
         None
 
     """
+
     @app.callback(
         Output("confusion-matrix", "figure"),
         [Input("btcusd-ohlcv-update", "n_intervals")],

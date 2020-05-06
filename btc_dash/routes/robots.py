@@ -2,10 +2,7 @@ from flask import Blueprint, current_app
 
 
 robots = Blueprint(
-    "robots",
-    __name__,
-    static_folder="assets",
-    static_url_path="/static",
+    "robots", __name__, static_folder="assets", static_url_path="/static",
 )
 
 

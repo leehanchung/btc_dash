@@ -1,3 +1,4 @@
+# flake8: noqa
 from .dash_navbar import navbar
 from .dash_footer import footer
 from .main_dash import dashboard

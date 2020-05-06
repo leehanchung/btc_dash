@@ -1,5 +1,4 @@
-import sys, os
-from pathlib import Path
+import datetime as dt
 import pandas as pd
 import numpy as np
 
@@ -73,7 +72,7 @@ def cvScore(
             prob = fit.predict(X.iloc[test, :])
             score_ = accuracy_score(
                 y.iloc[test],
-                pred,
+                prob,
                 sample_weights=sample_weight.iloc[test].values,
             )
         score.append(score_)

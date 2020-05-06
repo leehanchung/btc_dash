@@ -1,3 +1,4 @@
+# flake8: noqa
 from .ohclv_callback import register_ohlcv_callback
 from .confusion_callback import register_confusion_callback
 from .momentum_callback import register_momentum_callback

@@ -18,6 +18,7 @@ def register_momentum_callback(app: Dash):
         None
 
     """
+
     @app.callback(
         Output("momentum-gauge", "figure"),
         [Input("btcusd-ohlcv-update", "n_intervals")],
@@ -150,7 +151,7 @@ def RSI(series, period):
         series: pd.Series. time series data to calculate RSI
         period: int. number of periods used to calculate RSI.
 
-    Returns:    
+    Returns:
         rsi: float. value of relative strength indicator.
 
     """
