@@ -9,6 +9,8 @@ black = "*"
 flake8 = "*"
 jupyter = "*"
 mypy = "*"
+coverage = "*"
+coveralls = "*"
 
 [packages]
 category-encoders = "==2.2.2"
