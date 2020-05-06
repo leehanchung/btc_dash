@@ -7,7 +7,7 @@
 [![pandas 1.0.3](https://img.shields.io/badge/pandas-1.0.3-blue.svg)](https://github.com/pandas-dev/pandas)
 [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
 [![CodeFactor](https://www.codefactor.io/repository/github/leehanchung/btc_dash/badge)](https://www.codefactor.io/repository/github/leehanchung/btc_dash)
-
+[![Coverage Status](https://coveralls.io/repos/github/leehanchung/btc_dash/badge.svg?branch=master)](https://coveralls.io/github/leehanchung/btc_dash?branch=master)
 
 [**Website**](https://dry-shore-97069.herokuapp.com/)
 
