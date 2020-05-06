@@ -1,5 +1,4 @@
 import pathlib
-import sqlite3
 import pandas as pd
 import numpy as np
 
@@ -17,16 +16,16 @@ OOS_START = 1500
 
 
 def get_ohlcv_data(start, end):
-    """
-	Query wind data rows between two ranges
-	:params start: start row id
-	:params end: end row id
-	:returns: pandas dataframe object 
-	"""
+    """Query OHLCV data rows between two ranges
 
-    # con = sqlite3.connect(str(DB_FILE))
-    # statement = f'SELECT Speed, SpeedError, Direction FROM Wind WHERE rowid > "{start}" AND rowid <= "{end}";'
-    # df = pd.read_sql_query(statement, con)
+    Args:
+        start: start row id
+        end: end row id
+
+    Returns:
+        pandas dataframe object
+
+    """
     df = pd.read_csv(CSV_FILE)
     df.Date = pd.to_datetime(df.Date)
     df = df.sort_values(by="Date")
@@ -44,4 +43,6 @@ def get_ohlcv_data(start, end):
     if (OOS_START + end) > df.shape[0]:
         return df.tail(50)
     else:
-        return df.iloc[OOS_START + start : OOS_START + end, :]
+        s = OOS_START + start
+        e = OOS_START + end
+        return df.iloc[s:e, :]

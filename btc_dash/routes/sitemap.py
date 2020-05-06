@@ -13,6 +13,13 @@ def sitemap_route():
     """Route to dynamically generate a sitemap of your website/application.
     lastmod and priority tags omitted on static pages. lastmod included on
     dynamic content such as blog posts.
+
+    Args:
+        None
+
+    Returns:
+        Flask response
+
     """
 
     host_components = urlparse(request.host_url)

@@ -35,7 +35,8 @@ column1 = dbc.Col(
         html.Div(
             [
                 html.H6(
-                    "BTCUSD ($) 50 Day Rolling Chart", className="graph__title",
+                    "BTCUSD ($) 50 Day Rolling Chart",
+                    className="graph__title",
                 ),
             ]
         ),
@@ -63,7 +64,7 @@ column2 = dbc.Col(
         html.Div(
             [
                 html.Div(
-                    [html.H6("MOMENTUM GAUGE", className="graph__title",),],
+                    [html.H6("MOMENTUM GAUGE", className="graph__title")],
                 ),
                 dcc.Graph(
                     id="momentum-gauge",

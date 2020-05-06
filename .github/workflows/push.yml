@@ -1,4 +1,4 @@
-name: Push
+name: build
 
 on: push
 
@@ -24,8 +24,8 @@ jobs:
     #===============================================#
     - name: STEP 4. Lint with black and flake8
       run: |
-        pipenv run black --line-length=80 app btc_predictor data
-        pipenv run flake8
+        pipenv run black --line-length=79 btc_dash btc_predictor
+        pipenv run flake8 btc_dash btc_predictor
     #===============================================#
     - name: STEP 5. Test with pytest
       run: |

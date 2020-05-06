@@ -9,6 +9,8 @@ black = "*"
 flake8 = "*"
 jupyter = "*"
 mypy = "*"
+coverage = "*"
+coveralls = "*"
 
 [packages]
 category-encoders = "==2.2.2"
@@ -25,6 +27,7 @@ Flask = "==1.1.1"
 python-dotenv = "*"
 dash-bootstrap-components = "*"
 pyarrow = "*"
+tensorflow = "*"
 
 [requires]
 python_version = "3.7"
