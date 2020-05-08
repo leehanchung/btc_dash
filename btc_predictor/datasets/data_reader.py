@@ -28,11 +28,11 @@ class DataReader:
 
         # Read the data into pandas dataframe
         if self.source_type == "csv":
-            self.data = self.read_csv(data_file)
+            self.data = self.read_csv(csv_file=data_file)
         else:
-            self.data = self.read_parquet(data_file)
+            self.data = self.read_parquet(parquet_file=data_file)
 
-    def read_csv(self, *, csv_file: str, header: Any = None) -> None:
+    def read_csv(self, *, csv_file: str) -> None:
         """Read parquet data file using pyarrow into a pandas dataframe
 
         Args:
@@ -42,7 +42,7 @@ class DataReader:
             Pandas dataframe containing data in the csv file
 
         """
-        return pd.read_csv(csv_file, header=header)
+        return pd.read_csv(csv_file, thousands=',')
 
     def read_parquet(self, parquet_file: str) -> None:
         """Read parquet data file using pyarrow into a pandas dataframe
