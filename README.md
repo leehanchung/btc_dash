@@ -34,9 +34,3 @@ We establish our baseline using the previous period log returns for RMSE and dir
 | ------------- |-------------:| -----:|
 | Baseline      | 0.056 | 0.4884 |
 | Univariate ARIMA      | 0.051 |   0.5125 |
-
-## TODO
-- Hooking Timescale dB for historical data and prediction data.
-- Walkforward performance statistics using vectorized backtester.
-- More models, including fourier decomposition/FFT, multivariate ARIMA, LSTM, and WaveNet.
-- Fix prediction plot time skipping/wrapping problem.

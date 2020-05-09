@@ -1,16 +1,14 @@
-# import numpy as np
+from typing import Dict
 import pandas as pd
-
 from statsmodels.tsa.arima_model import ARIMA
 
 # from statsmodels.tsa.arima_model import ARIMAResults
 # from sklearn.metrics import accuracy_score, mean_absolute_error
 # from sklearn.metrics import mean_squared_error, confusion_matrix
-
 # import joblib
 
 
-def arima(df: pd.DataFrame) -> pd.DataFrame:
+def arima(*, df: pd.DataFrame, config: Dict) -> pd.DataFrame:
     clone = df.copy()
     start = 1700
     end = 2031

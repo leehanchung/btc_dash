@@ -33,7 +33,7 @@ def preproc(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def cvScore(
+def cv_score(
     clf,
     X,
     y,
