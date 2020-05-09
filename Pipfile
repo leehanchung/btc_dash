@@ -29,6 +29,7 @@ python-dotenv = "*"
 dash-bootstrap-components = "*"
 pyarrow = "*"
 tensorflow = "*"
+pmdarima = "*"
 
 [requires]
 python_version = "3.7"
