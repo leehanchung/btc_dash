@@ -1,2 +1,2 @@
 # flake8: noqa
-from .arima import arima
+from .arima import stepwise_arima

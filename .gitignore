@@ -1,5 +1,8 @@
 settings.json
 
+# Model files
+*.pkl
+
 # Data files
 *.db
 *.csv

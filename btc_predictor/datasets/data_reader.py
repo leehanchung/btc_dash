@@ -1,4 +1,4 @@
-from typing import Any
+# from typing import Any
 
 import pandas as pd
 import pyarrow.parquet as pq
@@ -42,9 +42,9 @@ class DataReader:
             Pandas dataframe containing data in the csv file
 
         """
-        data = pd.read_csv(csv_file, thousands=',')
-        
-        data['Date'] = pd.to_datetime(data['Date'])
+        data = pd.read_csv(csv_file, thousands=",")
+
+        data["Date"] = pd.to_datetime(data["Date"])
         data = data.sort_values(by="Date")
         data.set_index("Date", inplace=True)
         return data
