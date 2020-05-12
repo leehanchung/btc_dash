@@ -42,7 +42,12 @@ class DataReader:
             Pandas dataframe containing data in the csv file
 
         """
-        return pd.read_csv(csv_file, thousands=',')
+        data = pd.read_csv(csv_file, thousands=',')
+        
+        data['Date'] = pd.to_datetime(data['Date'])
+        data = data.sort_values(by="Date")
+        data.set_index("Date", inplace=True)
+        return data
 
     def read_parquet(self, parquet_file: str) -> None:
         """Read parquet data file using pyarrow into a pandas dataframe

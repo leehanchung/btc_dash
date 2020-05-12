@@ -3,7 +3,7 @@
 [![Flask 1.11](https://img.shields.io/badge/flask-1.1.1-blue.svg)](https://flask.palletsprojects.com/en/1.1.x/)
 [![Dash 1.11](https://img.shields.io/badge/dash-1.11.0-blue.svg)](https://github.com/plotly/dash/)
 [![Plotly 1.11](https://img.shields.io/badge/plotly-4.6.0-blue.svg)](https://github.com/plotly/plotly.py)
-[![Tensorflow 2.2.0](https://img.shields.io/badge/tensorflow-2.2.0rc4-blue.svg)](https://github.com/tensorflow/tensorflow)
+[![Tensorflow 2.2.0](https://img.shields.io/badge/tensorflow-2.2.0-blue.svg)](https://github.com/tensorflow/tensorflow)
 [![pandas 1.0.3](https://img.shields.io/badge/pandas-1.0.3-blue.svg)](https://github.com/pandas-dev/pandas)
 [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
 [![CodeFactor](https://www.codefactor.io/repository/github/leehanchung/btc_dash/badge)](https://www.codefactor.io/repository/github/leehanchung/btc_dash)
@@ -32,5 +32,7 @@ We establish our baseline using the previous period log returns for RMSE and dir
 
 | Baseline | RMSE | Directional Accuracy |
 | ------------- |-------------:| -----:|
-| Baseline      | 0.056 | 0.4884 |
-| Univariate ARIMA      | 0.051 |   0.5125 |
+| Baseline      | 0.0616 | 0.4912 |
+| AR      | 0.0427 | 0.5262 |
+| Univariate ARIMA      | 0.0754 |   0.5333 |
+
