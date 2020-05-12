@@ -32,7 +32,7 @@ We establish our baseline using the previous period log returns for RMSE and dir
 
 | Baseline | RMSE | Directional Accuracy |
 | ------------- |-------------:| -----:|
-| Baseline      | 0.0616 | 0.4912 |
-| AR      | 0.0427 | 0.5262 |
-| Univariate ARIMA      | 0.0754 |   0.5333 |
+| Baseline      | 0.0597 | 0.4724 |
+| AR      | 0.0340 | 0.5333 |
+| Univariate ARIMA      | 0.0268 |   0.7143 |
 

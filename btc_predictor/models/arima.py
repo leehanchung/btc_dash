@@ -1,27 +1,44 @@
 from typing import Dict
 import pandas as pd
-from statsmodels.tsa.arima_model import ARIMA
-
-# from statsmodels.tsa.arima_model import ARIMAResults
-# from sklearn.metrics import accuracy_score, mean_absolute_error
-# from sklearn.metrics import mean_squared_error, confusion_matrix
-# import joblib
+import pmdarima as pm
+from pmdarima.arima import auto_arima
 
 
-def arima(*, df: pd.DataFrame, config: Dict) -> pd.DataFrame:
-    clone = df.copy()
-    start = 1700
-    end = 2031
-    window = 60
-    y_rolling_arima = pd.Series([])
-    p = range(start - window, end, 9)
+def stepwise_arima(*, df: pd.Series, config: Dict) -> pm.arima.arima.ARIMA:
+    """Read parquet data file using pyarrow into a pandas dataframe
 
-    p_start = p - window
-    p_end = p + 9
-    ptrain = clone.iloc[p_start:p, :]["log_ret"]
-    ptest = clone.iloc[p:p_end, :]["log_ret"]
-    model = ARIMA(ptrain, order=(3, 1, 0), freq="D").fit(disp=0)
-    predict = model.predict(ptest.index[0], ptest.index[-1], dynamic=True)
-    y_rolling_arima = y_rolling_arima.append(predict)
+    Args:
+        df: endogenous variable in the form of pandas dataframe/series
+        config: configuration dictionary for model search parameters
 
-    return df
+    Returns:
+        PMD ARIMA model, ready to be fitted.
+
+    """
+    stepwise_arima = auto_arima(
+        df,
+        start_p=0,
+        start_q=0,
+        max_d=5,
+        max_p=16,
+        max_q=5,
+        m=12,
+        scoring="mse",
+        start_P=0,
+        max_order=20,
+        random_state=78,
+        seasonal=False,
+        d=1,
+        D=1,
+        trace=True,
+        information_criterion="aic",
+        error_action="ignore",
+        stationary=False,
+        suppress_warnings=True,
+        with_intercept=False,
+        stepwise=True,
+        maxiter=100,
+        n_jobs=24,
+    )
+
+    return stepwise_arima

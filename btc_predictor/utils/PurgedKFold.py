@@ -1,10 +1,11 @@
 import numpy as np
 import pandas as pd
+
 # for some reason cant import _BaseKFold
 # from sklearn.model_selection import _BaseKFold
 
 
-class PurgedKFold:#(_BaseKFold):
+class PurgedKFold:  # (_BaseKFold):
     """
     Extend KFold class to work with labels that span intervals.
     The train is purged of observations overlapping test-label intervals.
