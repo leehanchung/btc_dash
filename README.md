@@ -35,4 +35,3 @@ We establish our baseline using the previous period log returns for RMSE and dir
 | Baseline      | 0.0597 | 0.4724 |
 | AR      | 0.0340 | 0.5333 |
 | Univariate ARIMA      | 0.0268 |   0.7143 |
-
