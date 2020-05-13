@@ -21,6 +21,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install pipenv
         python -m pipenv install --dev --system
+        pipenv install .\TA_Lib-0.4.18-cp37-cp37m-win_amd64.whl
     #===============================================#
     - name: STEP 4. Lint with black and flake8
       run: |
