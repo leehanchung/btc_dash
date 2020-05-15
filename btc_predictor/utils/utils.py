@@ -4,7 +4,33 @@ import datetime as dt
 import pandas as pd
 import numpy as np
 from sklearn.metrics import accuracy_score, mean_squared_error
+from tensorflow.python.keras.callbacks import History
 import matplotlib.pyplot as plt
+
+
+def plot_train_history(*, history: History, title: str) -> plt:
+    """Plot Keras training and validation curve
+
+    Args:
+        history: Keras training history from .fit()
+        title: title of the chart
+
+    Returns:
+        A matplotlib pyplot chart object
+    """
+    loss = history.history['loss']
+    val_loss = history.history['val_loss']
+
+    epochs = range(len(loss))
+
+    plt.figure()
+
+    plt.plot(epochs, loss, 'b', label='Training loss')
+    plt.plot(epochs, val_loss, 'r', label='Validation loss')
+    plt.title(title)
+    plt.legend()
+
+    return plt
 
 
 def show_plot(*,
