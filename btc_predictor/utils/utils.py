@@ -1,6 +1,85 @@
+from typing import List
 import datetime as dt
+
 import pandas as pd
 import numpy as np
+from sklearn.metrics import accuracy_score, mean_squared_error
+import matplotlib.pyplot as plt
+
+
+def show_plot(*,
+              plot_data: List[np.ndarray],
+              delta: int = 0,
+              title: str,
+              labels: List[str] = ['History', 'True Future', 'Prediction'],
+              marker: List[str] = ['.-', 'rx', 'go']) -> plt:
+    """Plot time series historical and walk-fowards data on the same chart.
+
+    Args:
+        plot_data: List of numpy arrays to be plotted, with historical data at
+            as the first element
+        delta: Walk-forward delta to be plotted
+        title: title of the chart
+        label: labels of the individual series
+        market: markers of the individual series
+
+    Returns:
+        A matplotlib pyplot chart object
+    """
+    def create_time_steps(length):
+        return list(range(-length, 0))
+
+    time_steps = create_time_steps(plot_data[0].shape[0])
+    if delta:
+        future = delta
+    else:
+        future = 0
+
+    plt.title(title)
+    for i, x in enumerate(plot_data):
+        if i:
+            if not delta:
+                # plot single step forward in the future
+                plt.plot(future,
+                         plot_data[i].flatten(),
+                         marker[i],
+                         markersize=10,
+                         label=labels[i])
+            else:
+                # plot multi step forward in the future
+                plt.plot(range(future),
+                         plot_data[i].flatten(),
+                         marker[i],
+                         markersize=10,
+                         label=labels[i])
+        else:
+            # plot the historical data
+            plt.plot(time_steps,
+                     plot_data[i].flatten(),
+                     marker[i],
+                     label=labels[i])
+    plt.legend()
+    plt.xlim([time_steps[0], (future+10)])
+    plt.xlabel('Time-Step')
+
+    return plt
+
+
+def print_metrics(*,
+                  y_true: List[np.ndarray],
+                  y_pred: List[np.ndarray]) -> None:
+    """Convenience function for displaying RMSE and directional accuracy
+
+    Args:
+        y_true: numpy array, shape (N,)
+        y_pred: numpy array, shape (N,)
+
+    Returns:
+        Original dataframe cleaned and parsed into numerics. Unknown as NaN.
+    """
+    mse = np.sqrt(mean_squared_error(y_true, y_pred))
+    accuracy = accuracy_score(np.sign(y_true), np.sign(y_pred))
+    print(f"Prediction RMSE: {mse:.4f}, directional accuracy: {accuracy:.4f}")
 
 
 def preproc(df: pd.DataFrame) -> pd.DataFrame:
@@ -14,7 +93,6 @@ def preproc(df: pd.DataFrame) -> pd.DataFrame:
 
     Returns:
         Original dataframe cleaned and parsed into numerics. Unknown as NaN.
-
     """
     df.Date = pd.to_datetime(df.Date)
     df = df.sort_values(by="Date")
