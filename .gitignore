@@ -2,6 +2,7 @@ settings.json
 
 # Model files
 *.pkl
+*.sav
 
 # Data files
 *.db
