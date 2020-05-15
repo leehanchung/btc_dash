@@ -124,7 +124,7 @@ def cv_score(
 ):
     if scoring not in ["neg_log_loss", "accuracy"]:
         raise Exception("wrong scoring method.")
-    from sklearn.metrics import log_loss, accuracy_score
+    from sklearn.metrics import log_loss
     from clfSequential import PurgedKFold  # ???????
 
     if cvGen is None:
