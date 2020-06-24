@@ -1,6 +1,8 @@
-name: build
+name: build_predictor
 
 on: [push, pull request]
+  path:
+    - 'btc_predictor/**.py'
 
 jobs:
   build:

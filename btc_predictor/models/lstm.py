@@ -1,5 +1,6 @@
 from typing import Tuple
 import tensorflow as tf
+from btc_predictor.models import BaseModel
 
 
 class LSTM_Model(tf.keras.Model):
@@ -51,3 +52,8 @@ class LSTM_Model(tf.keras.Model):
         x = self.dropout(x)
         out = self.dense(x)
         return out
+
+
+class LSTMModel(BaseModel):
+    def __init__(self, model: LSTM_Model):
+        self.model = model
