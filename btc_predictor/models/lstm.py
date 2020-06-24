@@ -1,4 +1,5 @@
 from typing import Tuple
+import numpy as np
 import tensorflow as tf
 from btc_predictor.models import BaseModel
 
@@ -28,7 +29,6 @@ class LSTM_Model(tf.keras.Model):
             tf.keras.layers.Dropout(0.4),
             tf.keras.layers.Dense(1)
         ])
-
     """
     def __init__(self,
                  *,
@@ -55,5 +55,33 @@ class LSTM_Model(tf.keras.Model):
 
 
 class LSTMModel(BaseModel):
+    """Wrapper class to convert LSTM_Model BaseModel API
+    """
+    RANDOM_SEED = 78
+
     def __init__(self, model: LSTM_Model):
         self.model = model
+        self.TRAIN_SIZE = 1680
+        self.VAL_SIZE = 180
+        self.WINDOW_SIZE = 16
+        self.BATCH_SIZE = 256
+        self.EPOCHS = 15
+        self.EVALUATION_INTERVAL = 64
+        self.VALIDATION_STEPS = 64
+        self.WALK_FORWARD = 30
+
+    def predict(self):
+        raise NotImplementedError
+
+    def fit(self):
+
+        raise NotImplementedError
+
+    def eval(self):
+        raise NotImplementedError
+
+    def load(self):
+        raise NotImplementedError
+
+    def save(self):
+        raise NotImplementedError

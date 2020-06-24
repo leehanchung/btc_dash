@@ -1,13 +1,3 @@
-import pytest
-from .models.base import BaseModel
-
-
-@pytest.fixture
-def model_fixture():
-    model = BaseModel(model=None)
-    yield model
-
-
 def test_methods(model_fixture):
     assert (hasattr(model_fixture, 'fit') and
             callable(getattr(model_fixture, 'fit')))
