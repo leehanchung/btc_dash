@@ -1,6 +1,6 @@
 name: build_dash
 
-on: [push, pull request]
+on: [push, pull_request]
   paths:
     - 'btc_dash/**.py'
 
