@@ -1,7 +1,13 @@
 name: build_predictor
 
-on: [push, pull request]
-  path:
+on: 
+  pull_request:
+    branchs:
+    - master
+    paths:
+    - 'btc_predictor/**.py'  
+  push:
+    paths:
     - 'btc_predictor/**.py'
 
 jobs:
