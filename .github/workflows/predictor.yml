@@ -1,5 +1,6 @@
 name: build_predictor
 
+<<<<<<< HEAD
 on: 
   pull_request:
     branchs:
@@ -8,6 +9,10 @@ on:
     - 'btc_predictor/**.py'  
   push:
     paths:
+=======
+on: [push, pull_request]
+  path:
+>>>>>>> 93c760eeb65531427bb2d7336eb770e60766bfae
     - 'btc_predictor/**.py'
 
 jobs:
