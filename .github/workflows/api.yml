@@ -1,11 +1,13 @@
 name: build_predictor_api
 
-on: [push, pull_request]
-<<<<<<< HEAD
-  paths:
-=======
-  path:
->>>>>>> 93c760eeb65531427bb2d7336eb770e60766bfae
+on: 
+  pull_request:
+    branches:
+    - master
+    paths:
+    - 'btc_predictor_api/**.py'  
+  push:
+    paths:
     - 'btc_predictor_api/**.py'
 
 jobs:

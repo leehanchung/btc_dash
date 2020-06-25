@@ -1,7 +1,13 @@
 name: build_dash
 
-on: [push, pull_request]
-  paths:
+on: 
+  pull_request:
+    branches:
+    - master
+    paths:
+    - 'btc_dash/**.py'  
+  push:
+    paths:
     - 'btc_dash/**.py'
 
 jobs:
