@@ -1,7 +1,8 @@
-from typing import Tuple
+from typing import Tuple, Dict, Callable
 import numpy as np
 import tensorflow as tf
 from btc_predictor.models import BaseModel
+from btc_predictor.utils import print_metrics
 
 
 class LSTM_Model(tf.keras.Model):
@@ -59,7 +60,13 @@ class LSTMModel(BaseModel):
     """
     RANDOM_SEED = 78
 
-    def __init__(self, model: LSTM_Model):
+    def __init__(self, *, dataset: Callable, model: Callable,
+                 dataset_args: Dict = None, model_args: Dict = None):
+        super().__init__(dataset=dataset,
+                         model=model,
+                         dataset_args=dataset_args,
+                         model_args=model_args)
+
         self.model = model
         self.TRAIN_SIZE = 1680
         self.VAL_SIZE = 180
@@ -74,8 +81,60 @@ class LSTMModel(BaseModel):
         raise NotImplementedError
 
     def fit(self):
+        # load data
+        df = self.data.pd
+        df['log_ret'] = np.log(df.Close) - np.log(df.Close.shift(1))
+        df.dropna(inplace=True)
 
-        raise NotImplementedError
+        # preprocess
+        time_series_data = np.diff(df['log_ret'].to_numpy()).astype('float32')
+        train = time_series_data[:self.TRAIN_SIZE]
+        val = time_series_data[self.TRAIN_SIZE:self.VAL_SIZE+self.TRAIN_SIZE]
+        # test = time_series_data[self.VAL_SIZE+self.TRAIN_SIZE:]
+
+        train_tfds = self.data.create_tfds_from_np(
+            data=train,
+            window_size=self.WINDOW_SIZE,
+            batch_size=self.BATCH_SIZE
+        )
+        val_tfds = self.data.create_tfds_from_np(
+            data=val,
+            window_size=self.WINDOW_SIZE,
+            batch_size=self.BATCH_SIZE
+        )
+        # test_tfds = self.data.create_tfds_from_np(
+        #     data=test,
+        #     window_size=self.WINDOW_SIZE,
+        #     batch_size=1
+        # )
+        print(f'Total daily data: {df.shape[0]} days')
+
+        lstm_model = self.model(
+            input_shape=(self.WINDOW_SIZE-1, 1),
+            dropout=0.4,
+            num_forward=1,
+        )
+        lstm_model.compile(
+            optimizer='adam',
+            loss='mse'
+        )
+
+        train_history = lstm_model.fit(
+            train_tfds,
+            epochs=self.EPOCHS,
+            steps_per_epoch=self.EVALUATION_INTERVAL,
+            validation_data=val_tfds,
+            validation_steps=self.VALIDATION_STEPS
+        )
+
+        return train_history
 
     def eval(self):
-        raise NotImplementedError
+        test_y_true = np.array([])
+        test_y_pred = np.array([])
+        for x, y in test_tfds.take(config.WALK_FORWARD):
+            test_y_true = np.append(test_y_true, y[0].numpy())
+            test_y_pred = np.append(test_y_pred, lstm_model.predict(x)[0])
+
+        print_metrics(y_true=test_y_true, y_pred=test_y_pred)
+        return None
