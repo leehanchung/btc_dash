@@ -2,6 +2,7 @@ from typing import Tuple, Dict, Callable
 import numpy as np
 import tensorflow as tf
 from btc_predictor.models import BaseModel
+from btc_predictor.datasets import DataReader
 from btc_predictor.utils import print_metrics
 
 
@@ -60,14 +61,10 @@ class LSTMModel(BaseModel):
     """
     RANDOM_SEED = 78
 
-    def __init__(self, *, dataset: Callable, model: Callable,
-                 dataset_args: Dict = None, model_args: Dict = None):
-        super().__init__(dataset=dataset,
-                         model=model,
-                         dataset_args=dataset_args,
+    def __init__(self, *,  model: Callable, model_args: Dict = None):
+        super().__init__(model=model,
                          model_args=model_args)
 
-        self.model = model
         self.TRAIN_SIZE = 1680
         self.VAL_SIZE = 180
         self.WINDOW_SIZE = 16
@@ -80,9 +77,19 @@ class LSTMModel(BaseModel):
     def predict(self):
         raise NotImplementedError
 
-    def fit(self):
+    def fit(self, *, data: DataReader) -> None:
+        """Function that accept input training data and train the model
+
+        Args:
+            data: Features required by the model to generate a
+            prediction. Numpy array of shape (1, n) where n is the dimension
+            of the feature vector.
+
+        Returns:
+            None
+        """
         # load data
-        df = self.data.pd
+        df = data.pd
         df['log_ret'] = np.log(df.Close) - np.log(df.Close.shift(1))
         df.dropna(inplace=True)
 
@@ -90,14 +97,14 @@ class LSTMModel(BaseModel):
         time_series_data = np.diff(df['log_ret'].to_numpy()).astype('float32')
         train = time_series_data[:self.TRAIN_SIZE]
         val = time_series_data[self.TRAIN_SIZE:self.VAL_SIZE+self.TRAIN_SIZE]
-        # test = time_series_data[self.VAL_SIZE+self.TRAIN_SIZE:]
+        # self.test = time_series_data[self.VAL_SIZE+self.TRAIN_SIZE:]
 
-        train_tfds = self.data.create_tfds_from_np(
+        train_tfds = data.create_tfds_from_np(
             data=train,
             window_size=self.WINDOW_SIZE,
             batch_size=self.BATCH_SIZE
         )
-        val_tfds = self.data.create_tfds_from_np(
+        val_tfds = data.create_tfds_from_np(
             data=val,
             window_size=self.WINDOW_SIZE,
             batch_size=self.BATCH_SIZE
@@ -127,14 +134,26 @@ class LSTMModel(BaseModel):
             validation_steps=self.VALIDATION_STEPS
         )
 
-        return train_history
+        self.history = train_history
+        return None
 
-    def eval(self):
+    def eval(self, *, data: DataReader):
+        """Function that accept input training data and train the model
+
+        Args:
+            data: Features required by the model to generate a
+            prediction. Numpy array of shape (1, n) where n is the dimension
+            of the feature vector.
+
+        Returns:
+            eval_scores: a tuple of MSE and MAE scores.
+        """
+
         test_y_true = np.array([])
         test_y_pred = np.array([])
-        for x, y in test_tfds.take(config.WALK_FORWARD):
+        for x, y in self.test_tfds.take(self.WALK_FORWARD):
             test_y_true = np.append(test_y_true, y[0].numpy())
-            test_y_pred = np.append(test_y_pred, lstm_model.predict(x)[0])
+            test_y_pred = np.append(test_y_pred, self.modle.predict(x)[0])
 
         print_metrics(y_true=test_y_true, y_pred=test_y_pred)
         return None

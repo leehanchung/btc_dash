@@ -16,14 +16,14 @@ class BaseModel:
     """Basemodel class API, to be subclassed by different data and
     modeling framework choices.
     """
-    def __init__(self, *, dataset: Callable, model: Callable,
-                 dataset_args: Dict = None, model_args: Dict = None):
-        self.name = (f'{self.__class__.__name__}',
-                     f'_{dataset.__name__}_{model.__name__}')
+    def __init__(self, *,  model: Callable, model_args: Dict = None):
+        # dataset: Callable, dataset_args: Dict = None):
+        # self.name = (f'{self.__class__.__name__}',
+        #              f'_{dataset.__name__}_{model.__name__}')
 
-        if dataset_args is None:
-            dataset_args = {}
-        self.data = DataReader(**dataset_args)
+        # if dataset_args is None:
+        #     dataset_args = {}
+        # self.data = DataReader(**dataset_args)
 
         if model_args is None:
             model_args = {}

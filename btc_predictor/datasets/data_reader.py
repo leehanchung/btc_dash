@@ -19,6 +19,8 @@ class DataReader:
     """
 
     def __init__(self, *, data_file: str) -> None:
+        self.datafile = data_file
+
         if data_file.split(".")[-1] == "csv":
             self.source_type = "csv"
         elif data_file.split(".")[-1] == "parquet":
@@ -31,6 +33,8 @@ class DataReader:
             self.data = self.read_csv(csv_file=data_file)
         else:
             self.data = self.read_parquet(parquet_file=data_file)
+
+        self.__name__ = f'{self.__class__.data_file}'
 
     def read_csv(self, *, csv_file: str) -> None:
         """Read parquet data file using pyarrow into a pandas dataframe
