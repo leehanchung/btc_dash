@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 from btc_predictor.models import BaseModel
 from btc_predictor.datasets import DataReader
-from btc_predictor.utils import print_metrics
+from btc_predictor.utils import calculate_metrics
 
 
 class LSTM_Model(tf.keras.Model):
@@ -102,12 +102,12 @@ class LSTMModel(BaseModel):
         train_tfds = data.create_tfds_from_np(
             data=train,
             window_size=self.WINDOW_SIZE,
-            batch_size=self.BATCH_SIZE
+            batch_size=self.BATCH_SIZE,
         )
         val_tfds = data.create_tfds_from_np(
             data=val,
             window_size=self.WINDOW_SIZE,
-            batch_size=self.BATCH_SIZE
+            batch_size=self.BATCH_SIZE,
         )
         # test_tfds = self.data.create_tfds_from_np(
         #     data=test,
@@ -123,7 +123,7 @@ class LSTMModel(BaseModel):
         )
         lstm_model.compile(
             optimizer='adam',
-            loss='mse'
+            loss='mse',
         )
 
         train_history = lstm_model.fit(
@@ -131,29 +131,30 @@ class LSTMModel(BaseModel):
             epochs=self.EPOCHS,
             steps_per_epoch=self.EVALUATION_INTERVAL,
             validation_data=val_tfds,
-            validation_steps=self.VALIDATION_STEPS
+            validation_steps=self.VALIDATION_STEPS,
         )
 
         self.history = train_history
         return None
 
-    def eval(self, *, data: DataReader):
+    def eval(self, *, data: DataReader) -> Tuple[float, float, float]:
         """Function that accept input training data and train the model
 
         Args:
-            data: Features required by the model to generate a
+            data (DataReader): Features required by the model to generate a
             prediction. Numpy array of shape (1, n) where n is the dimension
             of the feature vector.
 
         Returns:
-            eval_scores: a tuple of MSE and MAE scores.
+            Tuple[float, float, float]: eval_scores of RMSE, directional
+            accuracy, and mean directional accuracy
         """
-
         test_y_true = np.array([])
         test_y_pred = np.array([])
         for x, y in self.test_tfds.take(self.WALK_FORWARD):
             test_y_true = np.append(test_y_true, y[0].numpy())
             test_y_pred = np.append(test_y_pred, self.modle.predict(x)[0])
 
-        print_metrics(y_true=test_y_true, y_pred=test_y_pred)
+        calculate_metrics(y_true=test_y_true, y_pred=test_y_pred)
+
         return None

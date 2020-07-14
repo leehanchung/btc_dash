@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 import datetime as dt
 
 import pandas as pd
@@ -91,6 +91,42 @@ def show_plot(*,
     return plt
 
 
+def flatten_values(*, series: pd.Series) -> pd.Series:
+    """Flatten a Pandas series to one dimension.
+
+    Args:
+        series (pd.Series): input Pandas series to be flattened
+
+    Returns:
+        pd.Series: flattened series
+    """
+    if isinstance(series, pd.Series) or isinstance(series, pd.DataFrame):
+        return series.values.ravel()
+    return series
+
+
+def mean_directional_accuracy(*,
+                              y_true: np.ndarray,
+                              y_pred: np.ndarray) -> float:
+    """Calculate the mean directional accuracy of y_pred vs y_true
+
+    Args:
+        y_true (np.ndarray):
+        y_pred (np.ndarray):
+
+    Returns:
+        float: the mean directional accuracy of y_pred vs vs y_true
+    """
+    y_true = flatten_values(series=y_true)
+    y_pred = flatten_values(series=y_pred)
+    observations_increasing = np.sign(y_true[1:] - y_true[:-1])
+    predictions_increasing = np.sign(y_pred[1:] - y_pred[:-1])
+    directional_increase_count = (observations_increasing ==
+                                  predictions_increasing).astype(int)
+
+    return np.mean(directional_increase_count)
+
+
 def print_metrics(*,
                   y_true: List[np.ndarray],
                   y_pred: List[np.ndarray]) -> None:
@@ -105,7 +141,31 @@ def print_metrics(*,
     """
     mse = np.sqrt(mean_squared_error(y_true, y_pred))
     accuracy = accuracy_score(np.sign(y_true), np.sign(y_pred))
-    print(f"Prediction RMSE: {mse:.4f}, directional accuracy: {accuracy:.4f}")
+    mda = mean_directional_accuracy(y_true=y_true, y_pred=y_pred)
+    print(f"""Prediction RMSE: {mse:.4f},
+              directional accuracy: {accuracy:.4f},
+              mean directional accuracy: {mda:.4f}""")
+
+
+def calculate_metrics(*,
+                      y_true: List[np.ndarray],
+                      y_pred: List[np.ndarray]) -> Tuple[float, float, float]:
+    """Convenience function for calculating RMSE, directional accuracy, and
+    mean directional accuracy
+
+    Args:
+        y_true (List[np.ndarray]): shape (N,) ground truth values
+        y_pred (List[np.ndarray]): shape (N,) predicted values
+
+    Returns:
+        Tuple[float, float, float]: a tuple of RMSE, directional accuracy, and
+        mean directional accuracy
+    """
+    mse = np.sqrt(mean_squared_error(y_true, y_pred))
+    accuracy = accuracy_score(np.sign(y_true), np.sign(y_pred))
+    mda = mean_directional_accuracy(y_true=y_true, y_pred=y_pred)
+
+    return mse, accuracy, mda
 
 
 def preproc(df: pd.DataFrame) -> pd.DataFrame:

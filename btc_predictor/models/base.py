@@ -59,12 +59,16 @@ class BaseModel:
         """Function that accept input training data and train the model
 
         Args:
-            data: Features required by the model to generate a
+            data (DataReader): Features required by the model to generate a
             prediction. Numpy array of shape (1, n) where n is the dimension
             of the feature vector.
 
+        Raises:
+            NotImplementedError: [description]
+
         Returns:
-            eval_scores: a tuple of MSE and MAE scores.
+            Tuple[float]: a tuple of RMSE, directional accuracy, and mean
+            directional accuracy scores.
         """
         raise NotImplementedError
 
@@ -74,10 +78,10 @@ class BaseModel:
         # TODO: extend for AWS S3 support
 
         Args:
-            model_file. serialized model weights file
+            model_file (str): serialized model weights file
 
         Returns:
-            status: success of fail
+            bool: success of fail
         """
         try:
             self.model = tf.keras.models.load_model(model_file)
@@ -93,7 +97,7 @@ class BaseModel:
             None
 
         Returns:
-            status: success of fail
+            bool: success of fail
         """
         try:
             self.model.save(f'{self.name}.h5')
