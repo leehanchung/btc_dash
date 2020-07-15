@@ -1,4 +1,4 @@
-from btc_dash import app
+from frontend import app
 
 
 if __name__ == "__main__":

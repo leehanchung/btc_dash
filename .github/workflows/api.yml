@@ -1,14 +1,14 @@
-name: build_predictor_api
+name: build_api
 
 on: 
   pull_request:
     branches:
     - master
     paths:
-    - 'btc_predictor_api/**.py'  
+    - 'api/**.py'  
   push:
     paths:
-    - 'btc_predictor_api/**.py'
+    - 'api/**.py'
 
 jobs:
   build:
@@ -29,12 +29,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install pipenv
         python -m pipenv install --dev --system
-        pipenv install .\TA_Lib-0.4.18-cp37-cp37m-win_amd64.whl
     #===============================================#
     - name: STEP 4. Lint with black and flake8
       run: |
-        pipenv run black --line-length=79 btc_dash btc_predictor
-        pipenv run flake8 btc_dash btc_predictor
+        pipenv run black --line-length=79 btc_predictor
+        pipenv run flake8 btc_predictor
     #===============================================#
     - name: STEP 5. Test with pytest
       run: |
