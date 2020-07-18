@@ -1,4 +1,4 @@
-from typing import Any, Dict, Callable, Tuple
+from typing import Any, Dict, Tuple
 import numpy as np
 import tensorflow as tf
 from btc_predictor.datasets import DataReader
@@ -12,11 +12,21 @@ class ModelSavingError(Exception):
     pass
 
 
+class ModelDataError(Exception):
+    def __init__(self, message="Dataset has not been defined"):
+        self.message = message
+        super.__init__(self.message)
+
+    def __str__(self):
+        return f'{self.message}'
+
+
 class BaseModel:
-    """Basemodel class API, to be subclassed by different data and
-    modeling framework choices.
+    """BaseModel provides an unified fit, eval, predict, load, and save API
+    to accomodate different data and modeling frameworks.
     """
-    def __init__(self, *,  model: Callable, model_args: Dict = None):
+    # def __init__(self, *, model: Callable, model_args: Dict = None):
+    def __init__(self, *, model_args: Dict = None, train_args: Dict = None):
         # dataset: Callable, dataset_args: Dict = None):
         # self.name = (f'{self.__class__.__name__}',
         #              f'_{dataset.__name__}_{model.__name__}')
@@ -27,20 +37,9 @@ class BaseModel:
 
         if model_args is None:
             model_args = {}
-        self.model = model(**model_args)
 
-    def predict(self, *, input_features: Any) -> np.ndarray:
-        """Function that accept input data for the model to generate a prediction
-
-        Args:
-            input_features: Features required by the model to generate a
-            prediction. Numpy array of shape (1, n) where n is the dimension
-            of the feature vector.
-
-        Returns:
-            prediction: Prediction of the model. Numpy array of shape (1,).
-        """
-        raise NotImplementedError
+        if train_args is None:
+            train_args = {}
 
     def fit(self, *, data: DataReader) -> None:
         """Function that accept input training data and train the model
@@ -72,6 +71,19 @@ class BaseModel:
         """
         raise NotImplementedError
 
+    def predict(self, *, input_features: Any) -> np.ndarray:
+        """Function that accept input data for the model to generate a prediction
+
+        Args:
+            input_features: Features required by the model to generate a
+            prediction. Numpy array of shape (1, n) where n is the dimension
+            of the feature vector.
+
+        Returns:
+            prediction: Prediction of the model. Numpy array of shape (1,).
+        """
+        raise NotImplementedError
+
     def load(self, *, model_file: str) -> bool:
         """Function that loads pretrained weights for making a prediction.
         Currently only TF is supported.
@@ -99,8 +111,4 @@ class BaseModel:
         Returns:
             bool: success of fail
         """
-        try:
-            self.model.save(f'{self.name}.h5')
-        except ModelSavingError:
-            return False
-        return True
+        raise NotImplementedError

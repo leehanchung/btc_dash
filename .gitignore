@@ -4,6 +4,7 @@ settings.json
 *.pkl
 *.sav
 notebooks/saved_model/
+saved_model/
 
 # Data files
 *.db

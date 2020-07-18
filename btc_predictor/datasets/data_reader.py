@@ -34,7 +34,8 @@ class DataReader:
         else:
             self.data = self.read_parquet(parquet_file=data_file)
 
-        self.__name__ = f'{self.__class__.data_file}'
+        self.data_file = data_file
+        self.__name__ = f'{self.data_file}'
 
     def read_csv(self, *, csv_file: str) -> None:
         """Read parquet data file using pyarrow into a pandas dataframe
@@ -124,6 +125,6 @@ class DataReader:
                                                          drop_remainder=True))
         data = data.map(lambda window: (window[:-1],
                                         tf.reshape(window[-1:], [])))
-        data = data.cache().shuffle(batch_size).batch(batch_size).repeat()
+        data = data.shuffle(batch_size).batch(batch_size).cache().repeat()
 
         return data
