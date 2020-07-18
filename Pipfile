@@ -30,7 +30,6 @@ dash-bootstrap-components = "*"
 pyarrow = "*"
 tensorflow = "*"
 pmdarima = "*"
-ta-lib = {path = "./TA_Lib-0.4.18-cp37-cp37m-win_amd64.whl"}
 
 [requires]
 python_version = "3.7"

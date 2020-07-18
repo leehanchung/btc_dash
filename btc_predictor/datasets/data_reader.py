@@ -1,5 +1,4 @@
 # from typing import Any
-
 import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
@@ -20,6 +19,8 @@ class DataReader:
     """
 
     def __init__(self, *, data_file: str) -> None:
+        self.datafile = data_file
+
         if data_file.split(".")[-1] == "csv":
             self.source_type = "csv"
         elif data_file.split(".")[-1] == "parquet":
@@ -32,6 +33,9 @@ class DataReader:
             self.data = self.read_csv(csv_file=data_file)
         else:
             self.data = self.read_parquet(parquet_file=data_file)
+
+        self.data_file = data_file
+        self.__name__ = f'{self.data_file}'
 
     def read_csv(self, *, csv_file: str) -> None:
         """Read parquet data file using pyarrow into a pandas dataframe
@@ -121,6 +125,6 @@ class DataReader:
                                                          drop_remainder=True))
         data = data.map(lambda window: (window[:-1],
                                         tf.reshape(window[-1:], [])))
-        data = data.cache().shuffle(batch_size).batch(batch_size).repeat()
+        data = data.shuffle(batch_size).batch(batch_size).cache().repeat()
 
         return data

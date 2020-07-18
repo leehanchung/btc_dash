@@ -1,12 +1,18 @@
-name: build
+name: build_frontend
 
-on: [push, pull request]
+on: 
+  pull_request:
+    branches:
+    - master
+    paths:
+    - 'frontend/**.py'  
+  push:
+    paths:
+    - 'frontend/**.py'
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - name: STEP 1. Check out repo
       uses: actions/checkout@v2
@@ -21,12 +27,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install pipenv
         python -m pipenv install --dev --system
-        pipenv install .\TA_Lib-0.4.18-cp37-cp37m-win_amd64.whl
     #===============================================#
     - name: STEP 4. Lint with black and flake8
       run: |
-        pipenv run black --line-length=79 btc_dash btc_predictor
-        pipenv run flake8 btc_dash btc_predictor
+        pipenv run black --line-length=79 frontend
+        pipenv run flake8 frontend
     #===============================================#
     - name: STEP 5. Test with pytest
       run: |
