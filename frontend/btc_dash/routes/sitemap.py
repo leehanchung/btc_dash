@@ -19,7 +19,6 @@ def sitemap_route():
 
     Returns:
         Flask response
-
     """
 
     host_components = urlparse(request.host_url)

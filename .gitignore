@@ -3,13 +3,13 @@ settings.json
 # Model files
 *.pkl
 *.sav
-notebooks/saved_model/
-saved_model/
+btc_predictor/notebooks/saved_model/
+btc_predictor/saved_model/
 
 # Data files
 *.db
-*.csv
-*.parquet
+btc_predictor/btc_predictor/datasets/*.csv
+btc_predictor/btc_predictor/datasets/*.parquet
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,2 +1,2 @@
-web: gunicorn --workers=3 btc_dash:server
+web: gunicorn --workers=3 frontend/btc_dash:server
 

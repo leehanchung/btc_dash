@@ -13,14 +13,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+
     steps:
     - name: STEP 1. Check out repo
       uses: actions/checkout@v2
     #===============================================#
-    - name: STEP 2. Set up Python 3.7
-      uses: actions/setup-python@v1
+    - name: STEP 2. Set up Python {{ matrix.python-version }}
+      uses: actions/setup-python@v2
       with:
-        python-version: 3.7
+        python-version: {{ matrix.python-version }}
     #===============================================#
     - name: STEP 3. Install pipenv dependencies
       run: |
@@ -39,6 +43,6 @@ jobs:
     #===============================================#
     - name: STEP 6. Generate coverage reports
       env:
-        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN}}
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
       run: |
         coveralls
