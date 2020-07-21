@@ -32,7 +32,7 @@ jobs:
         cd frontend
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install -r requirenets.test.txt
+        pip install -r requirements.test.txt
     # pip install pipenv==2018.11.26
     # python -m pipenv install --dev --system
     #===============================================#
