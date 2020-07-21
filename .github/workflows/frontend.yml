@@ -10,6 +10,10 @@ on:
     # paths:
     # - 'frontend/**'
 
+defaults:
+    run:
+      working-directory: frontend
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -29,7 +33,7 @@ jobs:
     #===============================================#
     - name: STEP 3. Install pipenv dependencies
       run: |
-        cd frontend
+        ls
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -r requirements.test.txt
@@ -38,12 +42,14 @@ jobs:
     #===============================================#
     - name: STEP 4. Lint with black and flake8
       run: |
+        ls
         black --line-length=79 btc_dash
         flake8 btc_dash
       working-directory: ${{ env.working_directory }}
     #===============================================#
     - name: STEP 5. Test with pytest
       run: |
+        ls
         coverage run --omit */.virtualenvs/* -m pytest
       working-directory: ${{ env.working_directory }}
     #===============================================#
