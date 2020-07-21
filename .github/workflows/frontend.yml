@@ -21,7 +21,7 @@ jobs:
       matrix:
         python-version: [ '3.7' ]
     env:
-      working-directory: ./frontend
+      working-directory: frontend
     steps:
     - name: STEP 1. Check out repo
       uses: actions/checkout@v2
