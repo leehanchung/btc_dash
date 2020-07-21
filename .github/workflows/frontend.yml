@@ -1,14 +1,14 @@
 name: build_frontend
 
 on: 
-  # pull_request:
-    # branches:
-    # - master
-    # paths:
-    # - 'frontend/**'  
+  pull_request:
+    branches:
+    - master
+    paths:
+    - 'frontend/**'
   push:
-    # paths:
-    # - 'frontend/**'
+    paths:
+    - 'frontend/**'
 
 defaults:
     run:
@@ -31,25 +31,18 @@ jobs:
     #===============================================#
     - name: STEP 3. Install pipenv dependencies
       run: |
-        ls
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -r requirements.test.txt
-    # pip install pipenv==2018.11.26
-    # python -m pipenv install --dev --system
     #===============================================#
     - name: STEP 4. Lint with black and flake8
       run: |
-        ls
         black --line-length=79 btc_dash
         flake8 btc_dash
-      
     #===============================================#
     - name: STEP 5. Test with pytest
       run: |
-        ls
         coverage run --omit */.virtualenvs/* -m pytest
-      
     #===============================================#
     - name: STEP 6. Generate coverage reports
       env:

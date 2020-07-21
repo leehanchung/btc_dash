@@ -30,9 +30,19 @@
     ```
 
 ## Tech Stack
-
 Python
 
 Plotly Dash
 
 Flask
+
+## Local Testing
+To run local testing, formatting, and linting, please do:
+
+```
+tox
+```
+
+## CI/CD
+Testing, formatting, and linting pipeline is run on Github Action using `.github/workflows/frontend.yml`.
+
