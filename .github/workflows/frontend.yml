@@ -1,14 +1,14 @@
 name: build_frontend
 
 on: 
-  pull_request:
-    branches:
-    - master
-    paths:
-    - 'frontend/**'  
+  # pull_request:
+    # branches:
+    # - master
+    # paths:
+    # - 'frontend/**'  
   push:
-    paths:
-    - 'frontend/**'
+    # paths:
+    # - 'frontend/**'
 
 jobs:
   build:
@@ -27,7 +27,9 @@ jobs:
         python-version: ${{ matrix.python-version }}
     #===============================================#
     - name: STEP 3. Install pipenv dependencies
-      run: |
+      run: 
+        working-directory: frontend
+        |
         cd frontend
         python -m pip install --upgrade pip
         pip install pipenv
