@@ -35,7 +35,7 @@ class DataReader:
             self.data = self.read_parquet(parquet_file=data_file)
 
         self.data_file = data_file
-        self.__name__ = f'{self.data_file}'
+        self.__name__ = f"{self.data_file}"
 
     def read_csv(self, *, csv_file: str) -> None:
         """Read parquet data file using pyarrow into a pandas dataframe
@@ -93,12 +93,14 @@ class DataReader:
         raise NotImplementedError
 
     @staticmethod
-    def create_tfds_from_np(*,
-                            data: np.ndarray,
-                            window_size: int = 31,
-                            shift_size: int = 1,
-                            stride_size: int = 1,
-                            batch_size: int = 15) -> tf.data.Dataset:
+    def create_tfds_from_np(
+        *,
+        data: np.ndarray,
+        window_size: int = 31,
+        shift_size: int = 1,
+        stride_size: int = 1,
+        batch_size: int = 15,
+    ) -> tf.data.Dataset:
         """Generates tf.data dataset using a given numpy array using tf.data API
 
         Args:
@@ -117,14 +119,18 @@ class DataReader:
 
         """
         data = tf.data.Dataset.from_tensor_slices(data.reshape(-1, 1))
-        data = data.window(size=window_size,
-                           shift=shift_size,
-                           stride=stride_size,
-                           drop_remainder=True)
-        data = data.flat_map(lambda window: window.batch(window_size,
-                                                         drop_remainder=True))
-        data = data.map(lambda window: (window[:-1],
-                                        tf.reshape(window[-1:], [])))
+        data = data.window(
+            size=window_size,
+            shift=shift_size,
+            stride=stride_size,
+            drop_remainder=True,
+        )
+        data = data.flat_map(
+            lambda window: window.batch(window_size, drop_remainder=True)
+        )
+        data = data.map(
+            lambda window: (window[:-1], tf.reshape(window[-1:], []))
+        )
         data = data.shuffle(batch_size).batch(batch_size).cache().repeat()
 
         return data

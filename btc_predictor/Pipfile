@@ -8,10 +8,8 @@ pytest = "*"
 black = "*"
 flake8 = "*"
 jupyter = "*"
-mypy = "*"
 coverage = "*"
 coveralls = "*"
-seaborn = "*"
 
 [packages]
 category-encoders = "==2.2.2"
@@ -24,6 +22,7 @@ python-dotenv = "*"
 pyarrow = "*"
 tensorflow = "*"
 pmdarima = "*"
+seaborn = "*"
 
 [requires]
 python_version = "3.7"

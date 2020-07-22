@@ -18,13 +18,14 @@ class ModelDataError(Exception):
         super.__init__(self.message)
 
     def __str__(self):
-        return f'{self.message}'
+        return f"{self.message}"
 
 
 class BaseModel:
     """BaseModel provides an unified fit, eval, predict, load, and save API
     to accomodate different data and modeling frameworks.
     """
+
     # def __init__(self, *, model: Callable, model_args: Dict = None):
     def __init__(self, *, model_args: Dict = None, train_args: Dict = None):
         # dataset: Callable, dataset_args: Dict = None):
