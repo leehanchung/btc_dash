@@ -18,27 +18,29 @@ def plot_train_history(*, history: History, title: str) -> plt:
     Returns:
         A matplotlib pyplot chart object
     """
-    loss = history.history['loss']
-    val_loss = history.history['val_loss']
+    loss = history.history["loss"]
+    val_loss = history.history["val_loss"]
 
     epochs = range(len(loss))
 
     plt.figure()
 
-    plt.plot(epochs, loss, 'b', label='Training loss')
-    plt.plot(epochs, val_loss, 'r', label='Validation loss')
+    plt.plot(epochs, loss, "b", label="Training loss")
+    plt.plot(epochs, val_loss, "r", label="Validation loss")
     plt.title(title)
     plt.legend()
 
     return plt
 
 
-def show_plot(*,
-              plot_data: List[np.ndarray],
-              delta: int = 0,
-              title: str,
-              labels: List[str] = ['History', 'True Future', 'Prediction'],
-              marker: List[str] = ['.-', 'rx', 'go']) -> plt:
+def show_plot(
+    *,
+    plot_data: List[np.ndarray],
+    delta: int = 0,
+    title: str,
+    labels: List[str] = ["History", "True Future", "Prediction"],
+    marker: List[str] = [".-", "rx", "go"],
+) -> plt:
     """Plot time series historical and walk-fowards data on the same chart.
 
     Args:
@@ -52,6 +54,7 @@ def show_plot(*,
     Returns:
         A matplotlib pyplot chart object
     """
+
     def create_time_steps(length):
         return list(range(-length, 0))
 
@@ -66,27 +69,30 @@ def show_plot(*,
         if i:
             if not delta:
                 # plot single step forward in the future
-                plt.plot(future,
-                         plot_data[i].flatten(),
-                         marker[i],
-                         markersize=10,
-                         label=labels[i])
+                plt.plot(
+                    future,
+                    plot_data[i].flatten(),
+                    marker[i],
+                    markersize=10,
+                    label=labels[i],
+                )
             else:
                 # plot multi step forward in the future
-                plt.plot(range(future),
-                         plot_data[i].flatten(),
-                         marker[i],
-                         markersize=10,
-                         label=labels[i])
+                plt.plot(
+                    range(future),
+                    plot_data[i].flatten(),
+                    marker[i],
+                    markersize=10,
+                    label=labels[i],
+                )
         else:
             # plot the historical data
-            plt.plot(time_steps,
-                     plot_data[i].flatten(),
-                     marker[i],
-                     label=labels[i])
+            plt.plot(
+                time_steps, plot_data[i].flatten(), marker[i], label=labels[i]
+            )
     plt.legend()
-    plt.xlim([time_steps[0], (future+10)])
-    plt.xlabel('Time-Step')
+    plt.xlim([time_steps[0], (future + 10)])
+    plt.xlabel("Time-Step")
 
     return plt
 
@@ -105,9 +111,9 @@ def flatten_values(*, series: pd.Series) -> pd.Series:
     return series
 
 
-def mean_directional_accuracy(*,
-                              y_true: np.ndarray,
-                              y_pred: np.ndarray) -> float:
+def mean_directional_accuracy(
+    *, y_true: np.ndarray, y_pred: np.ndarray
+) -> float:
     """Calculate the mean directional accuracy of y_pred vs y_true
 
     Args:
@@ -121,15 +127,16 @@ def mean_directional_accuracy(*,
     y_pred = flatten_values(series=y_pred)
     observations_increasing = np.sign(y_true[1:] - y_true[:-1])
     predictions_increasing = np.sign(y_pred[1:] - y_pred[:-1])
-    directional_increase_count = (observations_increasing ==
-                                  predictions_increasing).astype(int)
+    directional_increase_count = (
+        observations_increasing == predictions_increasing
+    ).astype(int)
 
     return np.mean(directional_increase_count)
 
 
-def print_metrics(*,
-                  y_true: List[np.ndarray],
-                  y_pred: List[np.ndarray]) -> None:
+def print_metrics(
+    *, y_true: List[np.ndarray], y_pred: List[np.ndarray]
+) -> None:
     """Convenience function for displaying RMSE and directional accuracy
 
     Args:
@@ -142,14 +149,16 @@ def print_metrics(*,
     mse = np.sqrt(mean_squared_error(y_true, y_pred))
     accuracy = accuracy_score(np.sign(y_true), np.sign(y_pred))
     mda = mean_directional_accuracy(y_true=y_true, y_pred=y_pred)
-    print(f"""Prediction RMSE: {mse:.4f},
+    print(
+        f"""Prediction RMSE: {mse:.4f},
               directional accuracy: {accuracy:.4f},
-              mean directional accuracy: {mda:.4f}""")
+              mean directional accuracy: {mda:.4f}"""
+    )
 
 
-def calculate_metrics(*,
-                      y_true: List[np.ndarray],
-                      y_pred: List[np.ndarray]) -> Tuple[float, float, float]:
+def calculate_metrics(
+    *, y_true: List[np.ndarray], y_pred: List[np.ndarray]
+) -> Tuple[float, float, float]:
     """Convenience function for calculating RMSE, directional accuracy, and
     mean directional accuracy
 

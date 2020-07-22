@@ -14,8 +14,7 @@ mock_dataset = MockDataset
 mock_model = MockModel
 
 
-@pytest.fixture
-def model_fixture():
-    model = BaseModel(dataset=mock_dataset,
-                      model=mock_model)
-    yield model
+# @pytest.fixture
+# def model_fixture():
+#     model = BaseModel(dataset=mock_dataset, model=mock_model)
+#     yield model

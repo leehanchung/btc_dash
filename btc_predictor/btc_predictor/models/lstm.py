@@ -32,15 +32,14 @@ class LSTM_Model(tf.keras.Model):
             tf.keras.layers.Dense(1)
         ])
     """
-    def __init__(self,
-                 *,
-                 input_shape: Tuple[int, int],
-                 dropout: float,
-                 num_forward: int):
+
+    def __init__(
+        self, *, input_shape: Tuple[int, int], dropout: float, num_forward: int
+    ):
         super(LSTM_Model, self).__init__()
-        self.lstm_input = tf.keras.layers.LSTM(128,
-                                               input_shape=input_shape,
-                                               return_sequences=True)
+        self.lstm_input = tf.keras.layers.LSTM(
+            128, input_shape=input_shape, return_sequences=True
+        )
         self.lstm_hidden = tf.keras.layers.LSTM(64)
         self.dropout = tf.keras.layers.Dropout(dropout)
         self.dense = tf.keras.layers.Dense(num_forward)
@@ -58,6 +57,7 @@ class LSTM_Model(tf.keras.Model):
 class LSTMModel(BaseModel):
     """LSTM_Model wrapped in BaseModel API
     """
+
     RANDOM_SEED = 78
 
     def __init__(self, *, model_args: Dict = None, train_args: Dict = None):
@@ -82,13 +82,15 @@ class LSTMModel(BaseModel):
         # load data
         df = data.pd
         self.name = f"lstm_{data.__name__.split('/')[-1].split('.')[0]}"
-        df['log_ret'] = np.log(df.Close) - np.log(df.Close.shift(1))
+        df["log_ret"] = np.log(df.Close) - np.log(df.Close.shift(1))
         df.dropna(inplace=True)
 
         # preprocess
-        time_series_data = np.diff(df['log_ret'].to_numpy()).astype('float32')
-        train = time_series_data[:self.TRAIN_SIZE]
-        val = time_series_data[self.TRAIN_SIZE:self.VAL_SIZE+self.TRAIN_SIZE]
+        time_series_data = np.diff(df["log_ret"].to_numpy()).astype("float32")
+        train = time_series_data[: self.TRAIN_SIZE]
+        val = time_series_data[
+            self.TRAIN_SIZE : self.VAL_SIZE + self.TRAIN_SIZE
+        ]
 
         train_tfds = data.create_tfds_from_np(
             data=train,
@@ -96,15 +98,12 @@ class LSTMModel(BaseModel):
             batch_size=self.BATCH_SIZE,
         )
         val_tfds = data.create_tfds_from_np(
-            data=val,
-            window_size=self.WINDOW_SIZE,
-            batch_size=self.BATCH_SIZE,
+            data=val, window_size=self.WINDOW_SIZE, batch_size=self.BATCH_SIZE,
         )
-        print(f'Total daily data: {df.shape[0]} days')
+        print(f"Total daily data: {df.shape[0]} days")
 
         self.model.compile(
-            optimizer='adam',
-            loss='mse',
+            optimizer="adam", loss="mse",
         )
 
         # train_history = lstm_model.fit(
@@ -136,14 +135,12 @@ class LSTMModel(BaseModel):
         df = data.pd
 
         # preprocess
-        df['log_ret'] = np.log(df.Close) - np.log(df.Close.shift(1))
+        df["log_ret"] = np.log(df.Close) - np.log(df.Close.shift(1))
         df.dropna(inplace=True)
-        time_series_data = np.diff(df['log_ret'].to_numpy()).astype('float32')
-        test = time_series_data[self.VAL_SIZE+self.TRAIN_SIZE:]
+        time_series_data = np.diff(df["log_ret"].to_numpy()).astype("float32")
+        test = time_series_data[self.VAL_SIZE + self.TRAIN_SIZE :]
         test_tfds = data.create_tfds_from_np(
-            data=test,
-            window_size=self.WINDOW_SIZE,
-            batch_size=1,
+            data=test, window_size=self.WINDOW_SIZE, batch_size=1,
         )
 
         # evaluate
@@ -153,8 +150,9 @@ class LSTMModel(BaseModel):
             test_y_true = np.append(test_y_true, y[0].numpy())
             test_y_pred = np.append(test_y_pred, self.model.predict(x)[0])
 
-        rmse, dir_acc, mda = calculate_metrics(y_true=test_y_true,
-                                               y_pred=test_y_pred)
+        rmse, dir_acc, mda = calculate_metrics(
+            y_true=test_y_true, y_pred=test_y_pred
+        )
 
         return rmse, dir_acc, mda
 
@@ -185,7 +183,7 @@ class LSTMModel(BaseModel):
             raise ModelSavingError("Model not trained; aborting save.")
 
         try:
-            self.model.save(f'saved_model/{self.name}') 
+            self.model.save(f"saved_model/{self.name}")
         except ModelSavingError:
             return False
         return True
