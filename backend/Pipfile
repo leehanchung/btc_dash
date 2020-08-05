@@ -1,0 +1,24 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+black = "*"
+flake8 = "*"
+pytest = "*"
+coverage = "*"
+coveralls = "*"
+
+[packages]
+flask = "*"
+flask-sqlalchemy = "*"
+requests = "*"
+python-dotenv = "*"
+flask-api = "*"
+
+[requires]
+python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true
