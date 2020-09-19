@@ -11,17 +11,11 @@ def register_blueprints(*, app: Flask) -> None:
         app (Flask): flask server object to hook blueprints to.
     """
     for name in find_modules("app.routes"):
-        # it doesnt like to import robots from app.routes.robots
-        # so hack around the import string.
-        # print(f'[DEBUG] register_blueprints name: {name}')
-        name = name.split(".")
-        # print(f'[DEBUG] register_blueprints name: {name}')
-        # name = ".".join(name + [name[-1]]) #['blueprint'])#
+        name = name.split(".")        
         name = ".".join(name + ['blueprint'])
-        # print(f'[DEBUG] register_blueprints name: {name}')
         module = import_string(name)
-        # print(f'[DEBUG] register_blueprints name: {name}, module: {module}')
         app.register_blueprint(module)
+
         if hasattr(module, 'blueprint'):
             app.register_blueprint(module)
 
@@ -39,12 +33,14 @@ def create_app(*, config: BaseConfig) -> Flask:
     app = flask.Flask(__name__, static_folder="assets",)
     app.config.from_object(config())#["TESTING"] = config.TESTING
     
-    print(f'[DEBUG] setting up db...')
+    # Setting up SQLAlchemy dB
     # db = SQLAlchemy(app)
+    app.logger.info(f'Setting up db...')
     from app.model import db
     db.init_app(app)
-    print(f'[DEBUG] setting up blueprints...')
+
+    app.logger.info(f'Setting up blueprints...')
     register_blueprints(app=app)
-    print(f'[DEBUG] finished setting up app...')
+    app.logger.info(f'Finished setting up app...')
 
     return app

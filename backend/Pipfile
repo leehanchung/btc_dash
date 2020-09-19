@@ -15,8 +15,8 @@ flask = "*"
 flask-sqlalchemy = "*"
 requests = "*"
 python-dotenv = "*"
-flask-api = "*"
 flask-restx = "*"
+flask-marshmallow = "*"
 
 [requires]
 python_version = "3.7"

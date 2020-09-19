@@ -1,2 +1,4 @@
+2020-09-18 Added backend app scaffold, including config switching and flask
+restx
 2020-02-07 CHANGELOG, reorg
 2019-08-31 init app, model, noteboooks

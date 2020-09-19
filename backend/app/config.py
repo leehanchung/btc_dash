@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 PACKAGE_ROOT = pathlib.Path(__file__).resolve().parent.parent
 
+
 class BaseConfig(object):
     """Base config"""
     DEBUG = False
@@ -36,6 +37,12 @@ class ProductionConfig(BaseConfig):
 
 
 def get_config() -> BaseConfig:
+    """Getting config from sys env variable FLASK_ENV and choose the
+    appropriate config object
+
+    Returns:
+        BaseConfig: the configuration corresponding to FLASK_ENV
+    """
     env = os.environ.get("FLASK_ENV", 'testing')
     if  env == "production":
         config = ProductionConfig
@@ -45,5 +52,4 @@ def get_config() -> BaseConfig:
         os.environ["FLASK_ENV"] = "testing"
         config = TestingConfig
 
-    print(f"[INFO] Running using {env} config...")
     return config
