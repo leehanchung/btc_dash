@@ -16,6 +16,7 @@ flask-sqlalchemy = "*"
 requests = "*"
 python-dotenv = "*"
 flask-api = "*"
+flask-restx = "*"
 
 [requires]
 python_version = "3.7"

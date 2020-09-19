@@ -16,11 +16,12 @@
 2. Run the app:
 
     ```
-    python run_dash.py
+    python run_app.py
     ```
     or
     ```
-    $Env:FLASK_APP="backend/backend:app"
+    $Env:FLASK_APP="backend/app"
+    $Env:FLASK_ENV="development"
     flask run
     ```
 3. Open the app on your browser:

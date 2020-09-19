@@ -1,0 +1,11 @@
+version: "3.7"
+services:
+    frontend:
+        build: ./frontend
+        depends_on: backend
+
+    backend:
+        build: ./backend
+
+    btc_predictor:
+        build: ./api
