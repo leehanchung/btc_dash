@@ -11,9 +11,12 @@ def register_blueprints(*, app: Flask) -> None:
         app (Flask): flask server object to hook blueprints to.
     """
     for name in find_modules("app.routes"):        
-        name = name.split(".")        
+        name = name.split(".")
         name = ".".join(name + ['blueprint'])
-        module = import_string(name)
+        try:
+            module = import_string(name)
+        except:
+            continue
 
         if isinstance(module, flask.blueprints.Blueprint):
             app.logger.info(f"Registering {name}...")

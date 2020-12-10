@@ -11,7 +11,7 @@ class BaseConfig(object):
     """Base config"""
     DEBUG = False
     TESTING = False
-    DB_SERVER = '0.0.0.0'
+    DB_SERVER = '192.168.1.56'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     @property

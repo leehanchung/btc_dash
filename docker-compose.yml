@@ -1,28 +1,35 @@
 version: "3.7"
 
 services:
-  frontend:
-    env_file: .env
-    image: python:3.7
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    command: ['frontend/run.sh']
-    ports:
-      - 8000:8000
-    depends_on: backend
-        
+    # frontend:
+    #     env_file: .env
+    #     image: python:3.7
+    #     build: ./frontend
+    #     command: ['frontend/run.sh']
+    #     ports:
+    #         - 8000:8000
+    #     depends_on: backend
   backend:
-    env_file: .env
     build:
       context: ./backend
       dockerfile: Dockerfile
-    env_file:
-      ./backend/.env
-
-  nginx:
-    build: ./nginx
+    env_file: .env
+    # depends_on:
+    #   - db  
+    volumes:
+      - ./backend:/usr/src/backend
     ports:
-      - 80:80
-    depends_on:
-      - frontend
+      - 5000:5000
+#   db:
+#     image: postgres:12-alpine
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data/
+#     ports:
+#       - "5432:5432"
+#     environment:
+#       - POSTGRES_USER=root
+#       - POSTGRES_PASSWORD=admin
+#       - POSTGRES_DB=dev_db
+
+# volumes:
+#   postgres_data:
