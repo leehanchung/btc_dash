@@ -23,6 +23,7 @@ pyarrow = "*"
 tensorflow = "*"
 pmdarima = "*"
 seaborn = "*"
+spacy = "*"
 
 [requires]
 python_version = "3.7"

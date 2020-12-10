@@ -6,7 +6,7 @@
 from app.config import PACKAGE_ROOT, get_config
 from app.app import create_app
 
-with open(PACKAGE_ROOT / "VERSION") as version_file:
+with open(PACKAGE_ROOT / "VERSION", 'rb') as version_file:
     __version__ = version_file.read().strip()
 
 config = get_config()

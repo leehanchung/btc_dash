@@ -1,11 +1,28 @@
 version: "3.7"
+
 services:
-    frontend:
-        build: ./frontend
-        depends_on: backend
+  frontend:
+    env_file: .env
+    image: python:3.7
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    command: ['frontend/run.sh']
+    ports:
+      - 8000:8000
+    depends_on: backend
+        
+  backend:
+    env_file: .env
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      ./backend/.env
 
-    backend:
-        build: ./backend
-
-    btc_predictor:
-        build: ./api
+  nginx:
+    build: ./nginx
+    ports:
+      - 80:80
+    depends_on:
+      - frontend

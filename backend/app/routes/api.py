@@ -3,7 +3,7 @@ from flask_restx import Api, Namespace, Resource, fields
 from jinja2 import TemplateNotFound
 
 
-blueprint = Blueprint('api',
+blueprint = Blueprint('btcdash',
                       __name__,
                       template_folder='templates')
 api = Api(blueprint,
@@ -11,8 +11,12 @@ api = Api(blueprint,
           title='BTC_USD API',
           description="BTC_USD API for BTC_Dash")
 
-namespace = api.namespace('btcusd_namespace',
+namespace = api.namespace('api',
                           description="OHLCV + Predict")
 
-# @namespace.route('/')
+@namespace.route('/')
+class Health(Resource):
+    # @api.doc(description="health checkup")
+    def get(self):
+        return {'status': 'ok', 'version': api.version}
 
