@@ -43,13 +43,10 @@ def get_config() -> BaseConfig:
     Returns:
         BaseConfig: the configuration corresponding to FLASK_ENV
     """
-    env = os.environ.get("FLASK_ENV", 'testing')
+    env = os.environ.get("FLASK_ENV", 'development')
     if env == "production":
         config = ProductionConfig
-    elif env == "development":
-        config = DevelopmentConfig
     else:
-        os.environ["FLASK_ENV"] = "testing"
-        config = TestingConfig
+        config = DevelopmentConfig
 
     return config
