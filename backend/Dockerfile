@@ -14,21 +14,18 @@ ENV FLASK_ENV development
 
 # install system dependencies
 RUN apt-get update
-
-# install dependencies
 RUN pip install --upgrade pip
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+# install dependencies
+# COPY requirements.txt ./
+# RUN pip install --no-cache-dir -r requirements.txt
 
-# install dependencies using pipenv
-# RUN pip install pipenv
-# COPY Pipfile Pipfile.lock ./
-# RUN pipenv install --deploy --system
+# install dependencies using pipenv to align dev env
+RUN pip install pipenv
+COPY Pipfile Pipfile.lock ./
+RUN pipenv install --deploy --system
 
 # copy source code to image
 COPY . .
-EXPOSE 5000
 
 # run image
-# CMD [ "pipenv", "run", "flask", "run" ]
-CMD [ "flask", "run"]
+CMD [ "flask", "run", "--host=0.0.0.0"]
