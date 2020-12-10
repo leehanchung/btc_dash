@@ -14,6 +14,7 @@ def register_blueprints(*, app: Flask) -> None:
         name = name.split(".")        
         name = ".".join(name + ['blueprint'])
         module = import_string(name)
+
         if isinstance(module, flask.blueprints.Blueprint):
             app.logger.info(f"Registering {name}...")
             app.register_blueprint(module)
@@ -35,8 +36,8 @@ def create_app(*, config: BaseConfig) -> Flask:
     # Setting up SQLAlchemy dB
     # db = SQLAlchemy(app)
     app.logger.info(f'Setting up db...')
-    from app.model import db
-    db.init_app(app)
+    # from app.model import db
+    # db.init_app(app)
 
     app.logger.info(f'Setting up blueprints...')
     register_blueprints(app=app)

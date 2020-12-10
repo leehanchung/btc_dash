@@ -11,4 +11,5 @@ with open(PACKAGE_ROOT / "VERSION", 'rb') as version_file:
 
 config = get_config()
 app = create_app(config=config)
+app.logger.info(f'Using config: {config}')
 app.logger.info(f'Package root directory is: {PACKAGE_ROOT}')

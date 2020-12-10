@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, abort
 from flask_restx import Api, Namespace, Resource, fields
-from jinja2 import TemplateNotFound
 
 
 blueprint = Blueprint('btcdash',
@@ -19,4 +18,3 @@ class Health(Resource):
     # @api.doc(description="health checkup")
     def get(self):
         return {'status': 'ok', 'version': api.version}
-

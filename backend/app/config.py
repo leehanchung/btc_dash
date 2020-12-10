@@ -1,9 +1,9 @@
 import os
 import pathlib
+from pathlib import Path
 from dotenv import load_dotenv
 
 
-load_dotenv()
 PACKAGE_ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 
@@ -21,19 +21,21 @@ class BaseConfig(object):
 
 class TestingConfig(BaseConfig):
     DEBUG = True
-    TESTING = False
     DB_SERVER = 'localhost'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
 
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
-    TESTING = False
-    DB_SERVER = ""
+    DB_SERVER = os.getenv("DB_SERVER")
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URI")
 
 
 class ProductionConfig(BaseConfig):
-    DB_SERVER = ""
+    TESTING = False
+    DEBUG = False
+    DB_SERVER = os.getenv("DB_SERVER")
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URI")
 
 
 def get_config() -> BaseConfig:
@@ -44,9 +46,16 @@ def get_config() -> BaseConfig:
         BaseConfig: the configuration corresponding to FLASK_ENV
     """
     env = os.environ.get("FLASK_ENV", 'development')
+
     if env == "production":
+        env_path = Path('.')/'.env'
+        load_dotenv(dotenv_path=env_path)
         config = ProductionConfig
+    elif env == "testing":
+        config = TestingConfig
     else:
+        env_path = Path('.')/'.env.dev'
+        load_dotenv(dotenv_path=env_path)
         config = DevelopmentConfig
 
     return config
