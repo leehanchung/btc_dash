@@ -1,7 +1,10 @@
 import flask
 from flask.app import Flask
+from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import find_modules, import_string
+
 from app.config import BaseConfig
+
 
 
 def register_blueprints(*, app: Flask) -> None:
@@ -37,13 +40,14 @@ def create_app(*, config: BaseConfig) -> Flask:
     app.config.from_object(config())
     
     # Setting up SQLAlchemy dB
-    # db = SQLAlchemy(app)
-    app.logger.info(f'Setting up db...')
-    # from app.model import db
-    # db.init_app(app)
+    app.logger.info(f'Initializing db...')
+    db = SQLAlchemy(app)
+    from app.model import db
+    db.init_app(app)
+    app.logger.info(f'Initializiing db complete!')
 
-    app.logger.info(f'Setting up blueprints...')
+    app.logger.info(f'Initializing blueprints...')
     register_blueprints(app=app)
-    app.logger.info(f'Finished setting up app...')
+    app.logger.info(f'Initializing blueprints complete!')
 
     return app

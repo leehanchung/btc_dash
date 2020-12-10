@@ -14,22 +14,22 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     env_file: .env
-    # depends_on:
-    #   - db  
+    depends_on:
+      - db  
     volumes:
       - ./backend:/usr/src/backend
     ports:
       - 5000:5000
-#   db:
-#     image: postgres:12-alpine
-#     volumes:
-#       - postgres_data:/var/lib/postgresql/data/
-#     ports:
-#       - "5432:5432"
-#     environment:
-#       - POSTGRES_USER=root
-#       - POSTGRES_PASSWORD=admin
-#       - POSTGRES_DB=dev_db
+  db:
+    image: postgres:12-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=dev_db
 
-# volumes:
-#   postgres_data:
+volumes:
+  postgres_data:
