@@ -20,10 +20,14 @@ def register_blueprints(*, server: Flask) -> None:
         # so hack around the import string.
         name = name.split(".")
         name = ".".join(name + [name[-1]])
-        module = import_string(name)
-        server.register_blueprint(module)
-        # if hasattr(module, 'blueprint'):
-        #     server.register_blueprint(module)
+        try:
+            module = import_string(name)
+        except:
+            continue
+
+        if isinstance(module, flask.blueprint.Blueprint):
+            server.logger.info(f'Registering {name}...')
+            server.register_blueprint(module)
 
 
 def create_flask_server(*, config: BaseConfig) -> Flask:
