@@ -13,3 +13,5 @@ with open(PACKAGE_ROOT / "VERSION") as version_file:
 
 server = create_flask_server(config=config)
 app = create_dash_app(flask_server=server)
+app.logger.info(f'Using config: {config}')
+app.logger.info(f'Package root directory is: {PACKAGE_ROOT}')
