@@ -1,3 +1,4 @@
+2020-12-10 Use Bitfinex websocket as data source.
 2020-09-18 Added backend app scaffold, including config switching and flask
 restx
 2020-02-07 CHANGELOG, reorg

@@ -6,7 +6,6 @@ from werkzeug.utils import find_modules, import_string
 from app.config import BaseConfig
 
 
-
 def register_blueprints(*, app: Flask) -> None:
     """Register all blueprints located in /routes modules to the flask app
 
