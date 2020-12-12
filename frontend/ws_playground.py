@@ -1,15 +1,14 @@
 from typing import Any
 import json
 import pandas as pd
-from btc_dash.websocket_manager import BitfinexSocketManager, WebsocketDataValidationError
-from btc_dash.buffer import OrderedBuffer
+from btc_dash.bitfinex_api import BitfinexSocketManager, BitfinexWebsocketError, OrderedBuffer
 
 
 bsm = BitfinexSocketManager()
 ws = bsm.start_candle_socket()
 ws_metadata = {}
 columns = ['timestamp', 'open', 'close', 'high', 'low', 'volume']
-buffer = OrderedCircularBuffer()
+buffer = OrderedBuffer()
 
 
 while True:
@@ -21,7 +20,7 @@ while True:
     if isinstance(msg, dict):
         for key, value in msg.items():
             if key != "event" and key in ws_metadata:
-                raise WebsocketDataValidationError
+                raise BitfinexWebsocketError
                 break
             else:
                 ws_metadata[key] = value
@@ -34,7 +33,7 @@ while True:
     #   3. array of multiple length for the first msg
     # the timestamps will have duplicates as well
     if not isinstance(msg, list) or len(msg) != 2:
-        raise WebsocketDataValidationError
+        raise BitfinexWebsocketError
         break
 
     print(f'[INFO] Stepping...')
@@ -49,7 +48,7 @@ while True:
         buffer.update(msg[1])
     else:
         print(f'[ERROR] WTF {msg[1]}')
-        raise WebsocketDataValidationError
+        raise BitfinexWebsocketError
         break
     
     print(buffer)

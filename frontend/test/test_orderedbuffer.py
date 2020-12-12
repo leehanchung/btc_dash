@@ -1,5 +1,5 @@
 import pytest
-from btc_dash.buffer import OrderedBuffer
+from btc_dash.bitfinex_api import OrderedBuffer
 
 
 def test_inorder_update():

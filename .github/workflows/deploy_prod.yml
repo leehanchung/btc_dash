@@ -1,12 +1,12 @@
-# name: Deploy to Production
-# on:
-# push:
-# branches:
-# - master
-# pull_request:
-# types: [closed]
+name: Deploy to Production
+  on:
+    push:
+      branches:
+      - master
+    pull_request:
+      types: [closed]
 
-# jobs:
+jobs:
 # merge-PR:
 # if: github.event.pull_request.merged == true
 # runs-on: ubuntu-latest
