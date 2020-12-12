@@ -1,9 +1,9 @@
 import pytest
-from btc_dash.buffer import OrderedCircularBuffer
+from btc_dash.buffer import OrderedBuffer
 
 
 def test_inorder_update():
-    buffer = OrderedCircularBuffer()
+    buffer = OrderedBuffer()
     assert not buffer.data
 
     data = [[n for n in range(m, m+5)] for m in range(35)]
@@ -17,7 +17,7 @@ def test_inorder_update():
 
 
 def test_duplicateorder_update():
-    buffer = OrderedCircularBuffer()
+    buffer = OrderedBuffer()
     data = [[n for n in range(m, m+5)] for m in range(35)]
     for idx, d in enumerate(data):
         if idx % 2:
@@ -32,7 +32,7 @@ def test_duplicateorder_update():
 
 
 def test_outoforder_update():
-    buffer = OrderedCircularBuffer()       
+    buffer = OrderedBuffer()       
     data = [[n for n in range(m, m+5)] for m in range(35)]
     for idx, d in enumerate(data):
         buffer.update(d)

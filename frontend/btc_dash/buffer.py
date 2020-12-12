@@ -1,7 +1,7 @@
 from typing import List, Union
 
 
-class OrderedCircularBuffer:
+class OrderedBuffer:
     def __init__(self, buffer_size: int = 30):
         self.data = []
         self.buffer_size = buffer_size
@@ -19,8 +19,6 @@ class OrderedCircularBuffer:
                 self.data.append(item)
             elif self.data[-1][0] < item[0]:
                 self.data.append(item)
-            else:
-                pass
         else:
             if self.data[-1][0] < item[0]:
                 self.data.pop(0)
