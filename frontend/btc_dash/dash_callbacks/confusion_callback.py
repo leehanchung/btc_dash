@@ -5,8 +5,9 @@ from dash.dependencies import State
 import plotly.graph_objs as go
 from sklearn.metrics import confusion_matrix
 
-from btc_dash.db import get_ohlcv_data
 from btc_dash import config
+from btc_dash.bitfinex_api import bitfinex_candles_api
+from btc_dash.db import get_ohlcv_data
 
 
 def register_confusion_callback(app: Dash):
@@ -40,9 +41,10 @@ def register_confusion_callback(app: Dash):
         # hack to wrap interval around available data.  OOS starts at 1500, df
         # has a total of 2274 rows after processing to wrap around
         # 2274-1500 ~ 750. Reset prediction data to empty df.
-        interval = interval % 750
+        # interval = interval % 750
 
-        df = get_ohlcv_data(interval - 50, interval)
+        # df = get_ohlcv_data(interval - 50, interval)
+        df = bitfinex_candles_api()
         df["log_ret"] = np.log(df.Close) - np.log(df.Close.shift(1))
 
         if config.df_pred.shape[0] < 30:

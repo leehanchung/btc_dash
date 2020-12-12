@@ -110,7 +110,7 @@ def bitfinex_candles_api(
     """
     base_url = "https://api-pub.bitfinex.com/v2/candles/"
     url = base_url + f"trade:{time_frame}:{symbol}/{section}"
-    columns = ["timestamp", "open", "close", "high", "low", "volume"]
+    columns = ["Timestamp", "Open", "Close", "High", "Low", "Volume"]
 
     response = requests.get(url)
     if not response.ok:
@@ -120,6 +120,8 @@ def bitfinex_candles_api(
     assert all(isinstance(item, list) for item in data)
     data = sorted(data, key=lambda x: x[0])
     df = pd.DataFrame(data, columns=columns)
+    df['Timestamp'] = pd.to_datetime(df['Timestamp'], unit='ms')
+    df.set_index('Timestamp', inplace=True)
     del response, data
 
     return df

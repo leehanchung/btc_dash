@@ -3,8 +3,9 @@ from dash.dependencies import Input, Output
 import numpy as np
 import plotly.graph_objs as go
 
-from btc_dash.db import get_ohlcv_data
 from btc_dash import config
+from btc_dash.bitfinex_api import bitfinex_candles_api
+from btc_dash.db import get_ohlcv_data
 
 
 def register_momentum_callback(app: Dash):
@@ -36,11 +37,12 @@ def register_momentum_callback(app: Dash):
         # hack to wrap interval around available data.  OOS starts at 1500,
         # df has a total of 2274 rows after processing to wrap around
         # 2274-1500 ~ 750.
-        interval = interval % 750
+        # interval = interval % 750
 
         # read data from source and calculate RSI.
         # RSI ranges between 0 and 100.
-        df = get_ohlcv_data(interval - 6, interval)
+        # df = get_ohlcv_data(interval - 6, interval)
+        df = bitfinex_candles_api()
         # rsi = int(round(talib.RSI(df.Close.values, 5)[-1]))
         # print(rsi)
         rsi2 = int(round(RSI(df.Close, 5)[-1]))

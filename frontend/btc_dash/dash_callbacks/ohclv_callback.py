@@ -5,8 +5,9 @@ from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 from statsmodels.tsa.arima_model import ARIMA
 
-from btc_dash.db import get_ohlcv_data
 from btc_dash import config
+from btc_dash.bitfinex_api import bitfinex_candles_api
+from btc_dash.db import get_ohlcv_data
 
 
 def register_ohlcv_callback(app: Dash):
@@ -35,17 +36,18 @@ def register_ohlcv_callback(app: Dash):
         # hack to wrap interval around available data.  OOS starts at 1500,
         # df has a total of 2274 rows after processing to wrap around
         # 2274-1500 ~ 750. Reset prediction data to empty df.
-        interval = interval % 750
+        # interval = interval % 750
 
-        print("interva is {}...".format(interval))
+        # print("interva is {}...".format(interval))
 
         # read data from source
-        df = get_ohlcv_data(interval - 100, interval)
+        # df = get_ohlcv_data(interval - 100, interval)
+        df = bitfinex_candles_api()
         df["log_ret"] = np.log(df.Close) - np.log(df.Close.shift(1))
 
         print("\ndata df loaded, starting prediction...\n")
         # online training and forecast.
-        model = ARIMA(df.tail(60)["log_ret"], order=(3, 1, 0), freq="D",).fit(
+        model = ARIMA(df.tail(60)["log_ret"], order=(3, 1, 0)).fit(
             disp=0
         )
         pred = model.forecast()[0]
@@ -53,7 +55,7 @@ def register_ohlcv_callback(app: Dash):
         print("\nprediction ended, writing to output df...")
 
         # save forecast to output dataframe. should be dB irl.
-        next_dt = df.tail(1).index[0] + pd.Timedelta("1 day")
+        next_dt = df.tail(1).index[0] + pd.Timedelta("1 minute")
         config.df_pred.loc[next_dt] = [
             pred[0],
             (np.exp(pred) * df.tail(1).Close.values)[0],
