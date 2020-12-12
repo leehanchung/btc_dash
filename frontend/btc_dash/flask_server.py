@@ -22,11 +22,12 @@ def register_blueprints(*, server: Flask) -> None:
         name = ".".join(name + [name[-1]])
         try:
             module = import_string(name)
-        except:
+        except:  # noqa: E722
+            server.logger.info(f"{name} not a blueprint, skipping...")
             continue
 
-        if isinstance(module, flask.blueprint.Blueprint):
-            server.logger.info(f'Registering {name}...')
+        if isinstance(module, flask.blueprints.Blueprint):
+            server.logger.info(f"Registering {name}...")
             server.register_blueprint(module)
 
 
@@ -39,7 +40,6 @@ def create_flask_server(*, config: BaseConfig) -> Flask:
 
     Returns:
         Dash app object
-
     """
     server = flask.Flask(__name__, static_folder="assets",)
     server.config["TESTING"] = config.TESTING

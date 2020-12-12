@@ -19,7 +19,6 @@ def create_dash_app(*, flask_server: Flask) -> Flask:
 
     Returns:
         Flask with dash app hooked.
-
     """
     external_stylesheets = [
         # Bootswatch theme
