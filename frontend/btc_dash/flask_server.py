@@ -20,10 +20,15 @@ def register_blueprints(*, server: Flask) -> None:
         # so hack around the import string.
         name = name.split(".")
         name = ".".join(name + [name[-1]])
-        module = import_string(name)
-        server.register_blueprint(module)
-        # if hasattr(module, 'blueprint'):
-        #     server.register_blueprint(module)
+        try:
+            module = import_string(name)
+        except:  # noqa: E722
+            server.logger.info(f"{name} not a blueprint, skipping...")
+            continue
+
+        if isinstance(module, flask.blueprints.Blueprint):
+            server.logger.info(f"Registering {name}...")
+            server.register_blueprint(module)
 
 
 def create_flask_server(*, config: BaseConfig) -> Flask:
@@ -35,7 +40,6 @@ def create_flask_server(*, config: BaseConfig) -> Flask:
 
     Returns:
         Dash app object
-
     """
     server = flask.Flask(__name__, static_folder="assets",)
     server.config["TESTING"] = config.TESTING
