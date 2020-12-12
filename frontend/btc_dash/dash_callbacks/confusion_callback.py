@@ -7,7 +7,6 @@ from sklearn.metrics import confusion_matrix
 
 from btc_dash import config
 from btc_dash.bitfinex_api import bitfinex_candles_api
-from btc_dash.db import get_ohlcv_data
 
 
 def register_confusion_callback(app: Dash):

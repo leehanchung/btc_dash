@@ -5,7 +5,6 @@ import plotly.graph_objs as go
 
 from btc_dash import config
 from btc_dash.bitfinex_api import bitfinex_candles_api
-from btc_dash.db import get_ohlcv_data
 
 
 def register_momentum_callback(app: Dash):

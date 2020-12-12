@@ -7,7 +7,6 @@ from statsmodels.tsa.arima_model import ARIMA
 
 from btc_dash import config
 from btc_dash.bitfinex_api import bitfinex_candles_api
-from btc_dash.db import get_ohlcv_data
 
 
 def register_ohlcv_callback(app: Dash):
@@ -47,9 +46,7 @@ def register_ohlcv_callback(app: Dash):
 
         print("\ndata df loaded, starting prediction...\n")
         # online training and forecast.
-        model = ARIMA(df.tail(60)["log_ret"], order=(3, 1, 0)).fit(
-            disp=0
-        )
+        model = ARIMA(df.tail(60)["log_ret"], order=(3, 1, 0)).fit(disp=0)
         pred = model.forecast()[0]
 
         print("\nprediction ended, writing to output df...")

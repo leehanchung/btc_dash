@@ -120,8 +120,8 @@ def bitfinex_candles_api(
     assert all(isinstance(item, list) for item in data)
     data = sorted(data, key=lambda x: x[0])
     df = pd.DataFrame(data, columns=columns)
-    df['Timestamp'] = pd.to_datetime(df['Timestamp'], unit='ms')
-    df.set_index('Timestamp', inplace=True)
+    df["Timestamp"] = pd.to_datetime(df["Timestamp"], unit="ms")
+    df.set_index("Timestamp", inplace=True)
     del response, data
 
     return df
