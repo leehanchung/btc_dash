@@ -1,0 +1,51 @@
+name: Backend API
+
+on: 
+  pull_request:
+    branches:
+    - master
+    paths:
+    - 'backend/**'
+  push:
+    paths:
+    - 'backend/**'
+
+defaults:
+  run:
+    working-directory: backend
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ '3.7' ]
+    steps:
+    - name: STEP 1. Check out repo
+      uses: actions/checkout@v2
+    #===============================================#
+    - name: STEP 2. Set up Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    #===============================================#
+    - name: STEP 3. Install pipenv dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements.test.txt
+  #===============================================#
+    - name: STEP 4. Lint with black and flake8
+      run: |
+        black --line-length=79 backend
+        flake8 --ignore=E203 backend
+  #===============================================#
+    - name: STEP 5. Test with pytest
+      run: |
+        coverage run --omit */.virtualenvs/* -m pytest
+    #===============================================#
+    - name: STEP 6. Generate coverage reports
+      env:
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      run: |
+        coveralls

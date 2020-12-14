@@ -12,12 +12,12 @@ def register_blueprints(*, app: Flask) -> None:
     Args:
         app (Flask): flask server object to hook blueprints to.
     """
-    for name in find_modules("app.routes"):        
+    for name in find_modules("app.routes"):
         name = name.split(".")
-        name = ".".join(name + ['blueprint'])
+        name = ".".join(name + ["blueprint"])
         try:
             module = import_string(name)
-        except:
+        except:  # noqa: E722
             continue
 
         if isinstance(module, flask.blueprints.Blueprint):
@@ -35,18 +35,22 @@ def create_app(*, config: BaseConfig) -> Flask:
     Returns:
         Flask: Flask app object
     """
-    app = flask.Flask(__name__, static_folder="assets",)
+    app = flask.Flask(
+        __name__,
+        static_folder="assets",
+    )
     app.config.from_object(config())
-    
+
     # Setting up SQLAlchemy dB
-    app.logger.info(f'Initializing db...')
+    app.logger.info("Initializing db...")
     db = SQLAlchemy(app)
     from app.model import db
-    db.init_app(app)
-    app.logger.info(f'Initializiing db complete!')
 
-    app.logger.info(f'Initializing blueprints...')
+    db.init_app(app)
+    app.logger.info("Initializiing db complete!")
+
+    app.logger.info("Initializing blueprints...")
     register_blueprints(app=app)
-    app.logger.info(f'Initializing blueprints complete!')
+    app.logger.info("Initializing blueprints complete!")
 
     return app

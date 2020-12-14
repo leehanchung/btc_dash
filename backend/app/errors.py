@@ -1,6 +1,5 @@
 class DataReadingError(Exception):
-    """DataReadingError exception used for sanity checking.
-    """
+    """DataReadingError exception used for sanity checking."""
 
     def __init__(self, *args):
         super(DataReadingError, self).__init__(*args)

@@ -16,7 +16,10 @@ class OHLCV(db.Model):
     volume = db.Column(db.Float)
 
     def __repr__(self):
-        return f"{self.timestamp}: {self.open}, {self.high}, {self.low}, {self.close}, {self.volume}"
+        return (
+            f"{self.timestamp}: {self.open}, {self.high}, {self.low},",
+            f" {self.close}, {self.volume}",
+        )
 
 
 class ForecastHistory(db.Model):
@@ -24,6 +27,6 @@ class ForecastHistory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     forecast = db.Column(db.Float)
-    
+
     def __repr__(self):
         return f"{self.timestamp}: {self.forecast}"
