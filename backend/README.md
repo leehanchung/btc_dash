@@ -1,4 +1,4 @@
-# BTC Dashboard Backend
+# BTC Dashboard API Backend
 
 ## Instructions
 1. Create Python environment using pip or pipenv:
