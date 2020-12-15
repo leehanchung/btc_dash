@@ -9,6 +9,7 @@ services:
       - ./frontend:/usr/src/frontend
     ports:
       - 8000:8000
+
   backend:
     build:
       context: ./backend
@@ -20,6 +21,7 @@ services:
       - ./backend:/usr/src/backend
     ports:
       - 5000:5000
+
   db:
     image: postgres:12-alpine
     volumes:
@@ -29,13 +31,21 @@ services:
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=dev_db
+      - POSTGRES_DB=db
+
   pgadmin:
     image: dpage/pgadmin4
-    networks:
-      - default
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_LISTEN_PORT: 5050
+    volumes:
+      - pgadmin:/root/.pgadmin
+    ports:
+      - "5050:5050"
     depends_on: 
       - db
 
 volumes:
   postgres_data:
+  pgadmin:
