@@ -1,0 +1,13 @@
+
+*env*
+*venv*
+*.env
+*.log
+.git
+.gitignore
+.dockerignore
+*.pytest_cache
+*.tox
+.coverage
+*__pycache__*
+*.py[cod]

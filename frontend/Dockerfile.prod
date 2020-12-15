@@ -26,4 +26,4 @@ RUN pipenv install --deploy --system
 COPY . .
 
 # run image
-CMD [ "flask", "run", "--host=0.0.0.0", "--port=8000"]
+CMD [ "flask", "run", "--host=0.0.0.0", "--port=5000"]

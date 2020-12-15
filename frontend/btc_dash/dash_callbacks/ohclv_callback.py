@@ -44,7 +44,7 @@ def register_ohlcv_callback(app: Dash):
         df = bitfinex_candles_api()
         df["log_ret"] = np.log(df.Close) - np.log(df.Close.shift(1))
 
-        print("\ndata df loaded, starting prediction...\n")
+        print(f"data df loaded, starting prediction...\n{df}\n")
         # online training and forecast.
         model = ARIMA(df.tail(60)["log_ret"], order=(3, 1, 0)).fit(disp=0)
         pred = model.forecast()[0]

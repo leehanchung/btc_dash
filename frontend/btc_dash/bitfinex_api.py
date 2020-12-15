@@ -121,7 +121,7 @@ def bitfinex_candles_api(
     data = sorted(data, key=lambda x: x[0])
     df = pd.DataFrame(data, columns=columns)
     df["Timestamp"] = pd.to_datetime(df["Timestamp"], unit="ms")
-    df.set_index("Timestamp", inplace=True)
+    df = df.set_index("Timestamp").asfreq('T')
     del response, data
 
     return df

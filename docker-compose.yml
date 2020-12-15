@@ -30,6 +30,12 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=dev_db
+  pgadmin:
+    image: dpage/pgadmin4
+    networks:
+      - default
+    depends_on: 
+      - db
 
 volumes:
   postgres_data:

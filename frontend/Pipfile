@@ -24,6 +24,7 @@ Flask = "==1.1.1"
 python-dotenv = "*"
 dash-bootstrap-components = "*"
 websocket-client = "*"
+requests = "*"
 
 [requires]
 python_version = "3.7"

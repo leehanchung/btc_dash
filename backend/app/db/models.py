@@ -6,9 +6,7 @@ db = SQLAlchemy()
 
 
 class OHLCV(db.Model):
-
-    id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow, primary_key=True)
     open = db.Column(db.Float)
     high = db.Column(db.Float)
     low = db.Column(db.Float)
@@ -23,9 +21,7 @@ class OHLCV(db.Model):
 
 
 class ForecastHistory(db.Model):
-
-    id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow, primary_key=True)
     forecast = db.Column(db.Float)
 
     def __repr__(self):
