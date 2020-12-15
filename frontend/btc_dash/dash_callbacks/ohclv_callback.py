@@ -1,9 +1,12 @@
+import warnings
+
 from dash import Dash
 import numpy as np
 import pandas as pd
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 from statsmodels.tsa.arima_model import ARIMA
+from statsmodels.tools.sm_exceptions import ValueWarning
 
 from btc_dash import config
 from btc_dash.bitfinex_api import bitfinex_candles_api
@@ -44,8 +47,10 @@ def register_ohlcv_callback(app: Dash):
         df = bitfinex_candles_api()
         df["log_ret"] = np.log(df.Close) - np.log(df.Close.shift(1))
 
-        print(f"data df loaded, starting prediction...\n{df}\n")
+        print(f"data df loaded, starting prediction...\n")
         # online training and forecast.
+        # ignore timestamp frequency info warning
+        warnings.simplefilter('ignore', ValueWarning)
         model = ARIMA(df.tail(60)["log_ret"], order=(3, 1, 0)).fit(disp=0)
         pred = model.forecast()[0]
 
