@@ -1,8 +1,10 @@
 import flask
 from flask.app import Flask
+from sqlalchemy.orm import scoped_session
 from werkzeug.utils import find_modules, import_string
 
-from app.config import BaseConfig
+from app.config import Config
+from app.db.core import init_database
 
 
 def register_blueprints(*, app: Flask) -> None:
@@ -24,7 +26,7 @@ def register_blueprints(*, app: Flask) -> None:
             app.register_blueprint(module)
 
 
-def create_app(*, config: BaseConfig) -> Flask:
+def create_app(*, config: Config, db_session: scoped_session = None) -> Flask:
     """Creates flask server from config file and register all associated
     blueprints.
 
@@ -38,15 +40,15 @@ def create_app(*, config: BaseConfig) -> Flask:
         __name__,
         static_folder="assets",
     )
-    app.config.from_object(config())
+    app.config.from_object(config)
 
     # Setting up SQLAlchemy dB
     app.logger.info("Initializing db...")
+    init_database(app, config=config, db_session=db_session)
     # db = SQLAlchemy(app)
     # from app.model import db
-
     # db.init_app(app)
-    # app.logger.info("Initializiing db complete!")
+    app.logger.info("Initializing db complete!")
 
     app.logger.info("Initializing blueprints...")
     register_blueprints(app=app)

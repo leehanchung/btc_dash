@@ -15,23 +15,26 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     env_file: ./backend/.env
-    depends_on:
-      - db  
     volumes:
       - ./backend:/usr/src/backend
     ports:
       - 5000:5000
+    depends_on:
+      - db  
 
   db:
-    image: postgres:12-alpine
+    image: postgres:latest
+    environment:
+      # TODO: POSTGRES_USER is not the same as POSTGRES_DB, Postgres will
+      # throw FATAL: role/database does not exist error. To bypass, set them
+      # to the same name for now.
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: ${PG_USER:-root}
-      POSTGRES_PASSWORD: ${PG_PASS:-admin}
-      POSTGRES_DB: ${DB:-db}
+      - 5432:5432
 
   pgadmin:
     image: dpage/pgadmin4
@@ -42,7 +45,7 @@ services:
     volumes:
       - pgadmin:/root/.pgadmin
     ports:
-      - "5050:5050"
+      - 5050:5050
     depends_on: 
       - db
 
