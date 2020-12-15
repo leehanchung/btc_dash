@@ -8,7 +8,7 @@ api = Api(
     version="0.1",
     title="BTC Dash Machine Learning REST API",
     description="API Endpoint for BTC Dash",
-    doc='/docs/'
+    doc="/docs/",
 )
 ns = api.namespace("api", description="OHLCV + Predict")
 
@@ -17,7 +17,7 @@ ns = api.namespace("api", description="OHLCV + Predict")
 class Health(Resource):
     @api.doc(description="API endpoint health info")
     def get(self):
-        
+
         return {"status": "ok", "version": api.version}
 
 

@@ -1,6 +1,5 @@
 import flask
 from flask.app import Flask
-from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import find_modules, import_string
 
 from app.config import BaseConfig
@@ -43,11 +42,11 @@ def create_app(*, config: BaseConfig) -> Flask:
 
     # Setting up SQLAlchemy dB
     app.logger.info("Initializing db...")
-    db = SQLAlchemy(app)
-    from app.model import db
+    # db = SQLAlchemy(app)
+    # from app.model import db
 
-    db.init_app(app)
-    app.logger.info("Initializiing db complete!")
+    # db.init_app(app)
+    # app.logger.info("Initializiing db complete!")
 
     app.logger.info("Initializing blueprints...")
     register_blueprints(app=app)

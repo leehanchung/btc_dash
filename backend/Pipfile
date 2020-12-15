@@ -12,10 +12,10 @@ coveralls = "*"
 
 [packages]
 flask = "*"
-flask-sqlalchemy = "*"
 requests = "*"
 python-dotenv = "*"
 flask-restx = "*"
+sqlalchemy = "*"
 
 [requires]
 python_version = "3.7"

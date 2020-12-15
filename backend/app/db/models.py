@@ -1,17 +1,24 @@
 from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy
+
+from sqlalchemy import Column, DateTime, Float
+
+# from sqlalchemy.dialects.postgresql import JSONB
+# from sqlalchemy.sql import func
+
+from api.persistence.core import Base
+
+# db = SQLAlchemy()
 
 
-db = SQLAlchemy()
-
-
-class OHLCV(db.Model):
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow, primary_key=True)
-    open = db.Column(db.Float)
-    high = db.Column(db.Float)
-    low = db.Column(db.Float)
-    close = db.Column(db.Float)
-    volume = db.Column(db.Float)
+class OHLCV(Base):
+    timestamp = Column(
+        DateTime, index=True, default=datetime.utcnow, primary_key=True
+    )
+    open = Column(Float)
+    high = Column(Float)
+    low = Column(Float)
+    close = Column(Float)
+    volume = Column(Float)
 
     def __repr__(self):
         return (
@@ -20,9 +27,11 @@ class OHLCV(db.Model):
         )
 
 
-class ForecastHistory(db.Model):
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow, primary_key=True)
-    forecast = db.Column(db.Float)
+class ForecastHistory(Base):
+    timestamp = Column(
+        DateTime, index=True, default=datetime.utcnow, primary_key=True
+    )
+    forecast = Column(Float)
 
     def __repr__(self):
         return f"{self.timestamp}: {self.forecast}"
