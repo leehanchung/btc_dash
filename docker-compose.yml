@@ -29,15 +29,15 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=db
+      POSTGRES_USER: ${PG_USER:-root}
+      POSTGRES_PASSWORD: ${PG_PASS:-admin}
+      POSTGRES_DB: ${DB:-db}
 
   pgadmin:
     image: dpage/pgadmin4
     environment:
-      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-root@admin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASS:-admin}
       PGADMIN_LISTEN_PORT: 5050
     volumes:
       - pgadmin:/root/.pgadmin

@@ -47,7 +47,7 @@ def register_ohlcv_callback(app: Dash):
         df = bitfinex_candles_api()
         df["log_ret"] = np.log(df.Close) - np.log(df.Close.shift(1))
 
-        print(f"data df loaded, starting prediction...\n")
+        print("data df loaded, starting prediction...\n")
         # online training and forecast.
         # ignore timestamp frequency info warning
         warnings.simplefilter('ignore', ValueWarning)
