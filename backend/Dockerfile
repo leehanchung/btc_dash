@@ -31,6 +31,6 @@ RUN pipenv install --deploy --system
 
 # copy source code to image
 COPY . .
-
+  app:app --reload
 # run image
-CMD [ "flask", "run", "--host=0.0.0.0"]
+CMD [ "uvicorn", "app:app", "--host=0.0.0.0"]

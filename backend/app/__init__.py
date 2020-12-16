@@ -3,13 +3,23 @@
 # environment variable in Windows by $Env:FLASK_APP="backend/app" and then
 # execute 'flask run' from command line.
 ###############################################################################
-from app.config import PACKAGE_ROOT, get_config
-from app.app import create_app
+# from app.config import PACKAGE_ROOT, get_config
+# from app.app import create_app
 
-with open(PACKAGE_ROOT / "VERSION", "rb") as version_file:
-    __version__ = version_file.read().strip()
+# with open(PACKAGE_ROOT / "VERSION", "rb") as version_file:
+#     __version__ = version_file.read().strip()
 
-config = get_config()
-app = create_app(config=config)
-app.logger.info(f"Using config: {config}")
-app.logger.info(f"Package root directory is: {PACKAGE_ROOT}")
+# config = get_config()
+# app = create_app(config=config)
+# app.logger.info(f"Using config: {config}")
+# app.logger.info(f"Package root directory is: {PACKAGE_ROOT}")
+
+
+from fastapi import FastAPI
+
+app = FastAPI()
+
+
+@app.get("/")
+async def root():
+    return {"hello": "world"}

@@ -18,6 +18,9 @@ flask-restx = "*"
 sqlalchemy = "*"
 sqlalchemy-utils = "*"
 psycopg2 = "==2.8.3"
+fastapi = "*"
+uvicorn = "*"
+pydantic = "*"
 
 [requires]
 python_version = "3.7"
