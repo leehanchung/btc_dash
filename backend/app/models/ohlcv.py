@@ -19,5 +19,7 @@ class OHLCV(Base):
     volume = Column(Float)
 
     def __repr__(self):
-        return (f"{self.timestamp}: {self.open}, {self.high}, {self.low},"
-                f" {self.close}, {self.volume}")
+        return (
+            f"{self.timestamp}: {self.open}, {self.high}, {self.low},"
+            f" {self.close}, {self.volume}"
+        )

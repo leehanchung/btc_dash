@@ -6,7 +6,8 @@ import logging
 from flask import Flask
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
-from sqlalchemy.ext.declarative import declarative_base
+
+# from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy_utils import database_exists, create_database
 
