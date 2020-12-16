@@ -14,7 +14,7 @@ from app.config import Config  # , PACKAGE_ROOT
 
 _logger = logging.getLogger("app.db")
 
-Base = declarative_base()
+# Base = declarative_base()
 
 
 def init_database(app: Flask, config: Config, db_session=None) -> None:
