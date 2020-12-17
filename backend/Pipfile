@@ -11,16 +11,14 @@ coverage = "*"
 coveralls = "*"
 
 [packages]
-flask = "*"
 requests = "*"
 python-dotenv = "*"
-flask-restx = "*"
 sqlalchemy = "*"
-sqlalchemy-utils = "*"
 psycopg2 = "==2.8.3"
 fastapi = "*"
 uvicorn = "*"
 pydantic = "*"
+loguru = "*"
 
 [requires]
 python_version = "3.7"

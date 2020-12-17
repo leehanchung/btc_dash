@@ -1,24 +1,26 @@
-import logging
+##############################################################################
+#                               DEPRECATED
+# FastAPI does not use middleware and context managers to connect
+# to SQLAlchemy unlike Flask. See:
+# https://github.com/tiangolo/fastapi/issues/726
+# and pattern:
+# https://fastapi.tiangolo.com/tutorial/dependencies/dependencies-with-yield/
+##############################################################################
 
 # import os
-
 # import alembic.config
-from flask import Flask
+from fastapi import FastAPI
+from loguru import logger
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 
-# from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy_utils import database_exists, create_database
 
 from app.config import Config  # , PACKAGE_ROOT
 
-_logger = logging.getLogger("app.db")
 
-# Base = declarative_base()
-
-
-def init_database(app: Flask, config: Config, db_session=None) -> None:
+def init_database(app: FastAPI, config: Config, db_session=None) -> None:
     """Connect to the database and attach DB session to the app."""
 
     if not db_session:
@@ -27,9 +29,9 @@ def init_database(app: Flask, config: Config, db_session=None) -> None:
 
     app.db_session = db_session
 
-    @app.teardown_appcontext
-    def shutdown_session(exception=None):
-        db_session.remove()
+    # @app.teardown_appcontext
+    # def shutdown_session(exception=None):
+    #     db_session.remove()
 
 
 def create_db_engine_from_config(*, config: Config) -> Engine:
@@ -41,14 +43,14 @@ def create_db_engine_from_config(*, config: Config) -> Engine:
     """
 
     db_url = config.SQLALCHEMY_DATABASE_URI
-    print(f"[INFO] create_db_engine_from_config {db_url}")
-    print(f"[INFO] {db_url} database exists? {database_exists(db_url)}")
+    logger.info(f"create_db_engine_from_config {db_url}")
+    logger.info(f"{db_url} database exists? {database_exists(db_url)}")
     if not database_exists(db_url):
-        print(f"[INFO] database doesnt exist at {db_url}, creating...")
+        logger.info(f"[INFO] database doesnt exist at {db_url}, creating...")
         create_database(db_url)
 
     engine = create_engine(db_url)
-    # _logger.info(f"creating DB conn with URI: {db_url}")
+    logger.info(f"creating DB conn with URI: {db_url}")
     return engine
 
 

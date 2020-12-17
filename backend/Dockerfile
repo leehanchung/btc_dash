@@ -11,7 +11,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # set flask env
-ENV FLASK_ENV development
+ENV FASTAPI_ENV development
 
 # install system dependencies
 RUN apt-get clean && apt-get update
@@ -31,6 +31,6 @@ RUN pipenv install --deploy --system
 
 # copy source code to image
 COPY . .
-  app:app --reload
+
 # run image
-CMD [ "uvicorn", "app:app", "--host=0.0.0.0"]
+CMD [ "uvicorn", "app:app", "--host=0.0.0.0", "--port=5000", "--reload"]

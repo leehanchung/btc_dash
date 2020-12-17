@@ -1,8 +1,7 @@
 import os
-
-# import logging
 import pathlib
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 
@@ -12,8 +11,14 @@ PACKAGE_ROOT = pathlib.Path(__file__).resolve().parent.parent
 class Config(object):
     """Base config"""
 
+    PROJECT_NAME = "BTC Dash Backend"
+    BACKEND_CORS_ORIGINS = []
+    API_PREFIX = ""
+
     DEBUG = False
     TESTING = False
+    LOG_LEVEL = "DEBUG"
+    JSON_LOGS = False
 
     DB_USER = os.getenv("DB_USER", "user")
     DB_PASSWORD = os.getenv("DB_PASSWORD", "pass")
@@ -31,12 +36,14 @@ class Config(object):
 
 class TestingConfig(Config):
     DEBUG = True
+    LOG_LEVEL = "DEBUG"
 
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
 
 
 class DevelopmentConfig(Config):
     DEBUG = True
+    LOG_LEVEL = "DEBUG"
 
     DB_USER = os.getenv("DB_USER")
     DB_PASSWORD = os.getenv("DB_PASSWORD")
@@ -47,6 +54,7 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     TESTING = False
     DEBUG = False
+    LOG_LEVEL = "INFO"
 
     DB_USER = os.getenv("DB_USER")
     DB_PASSWORD = os.getenv("DB_PASSWORD")
@@ -61,7 +69,7 @@ def get_config() -> Config:
     Returns:
         BaseConfig: the configuration corresponding to FLASK_ENV
     """
-    env = os.environ.get("FLASK_ENV", "development")
+    env = os.environ.get("FASTAPI_ENV", "development")
 
     if env == "production":
         env_path = Path(".") / ".env"

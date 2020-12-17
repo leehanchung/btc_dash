@@ -1,34 +1,15 @@
-import flask
-from flask.app import Flask
-from sqlalchemy.orm import scoped_session
-from werkzeug.utils import find_modules, import_string
+from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
+from loguru import logger
 
 from app.config import Config
-from app.db.core import init_database
+from app.logging import setup_logging
+from app.routes import api_router
 
 
-def register_blueprints(*, app: Flask) -> None:
-    """Register all blueprints located in /routes modules to the flask app
-
-    Args:
-        app (Flask): flask server object to hook blueprints to.
-    """
-    for name in find_modules("app.routes"):
-        name = name.split(".")
-        name = ".".join(name + ["blueprint"])
-        try:
-            module = import_string(name)
-        except:  # noqa: E722
-            continue
-
-        if isinstance(module, flask.blueprints.Blueprint):
-            app.logger.info(f"Registering {name}...")
-            app.register_blueprint(module)
-
-
-def create_app(*, config: Config, db_session: scoped_session = None) -> Flask:
-    """Creates flask server from config file and register all associated
-    blueprints.
+def create_app(*, config: Config) -> FastAPI:
+    """Creates FastAPI server from config file and register all associated
+    routers.
 
     Args:
         config (BaseConfig): config object that specifies app config
@@ -36,22 +17,30 @@ def create_app(*, config: Config, db_session: scoped_session = None) -> Flask:
     Returns:
         Flask: Flask app object
     """
-    app = flask.Flask(
-        __name__,
-        static_folder="assets",
+    app = FastAPI(
+        title=config.PROJECT_NAME,
+        openapi_url=f"{config.API_PREFIX}/openapi.json",
+        debug=config.DEBUG,
     )
-    app.config.from_object(config)
 
-    # Setting up SQLAlchemy dB
-    app.logger.info("Initializing db...")
-    init_database(app, config=config, db_session=db_session)
-    # db = SQLAlchemy(app)
-    # from app.model import db
-    # db.init_app(app)
-    app.logger.info("Initializing db complete!")
+    # Setup unified logging with loguru
+    setup_logging(config=config)
 
-    app.logger.info("Initializing blueprints...")
-    register_blueprints(app=app)
-    app.logger.info("Initializing blueprints complete!")
+    # Setup CORS
+    if config.BACKEND_CORS_ORIGINS:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=[
+                str(origin) for origin in config.BACKEND_CORS_ORIGINS
+            ],
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
+
+    # Registering routes
+    logger.info("Registering routes...")
+    app.include_router(api_router, prefix=config.API_PREFIX)
+    logger.info("Routes registration complete!")
 
     return app
