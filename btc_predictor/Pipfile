@@ -10,6 +10,7 @@ flake8 = "*"
 jupyter = "*"
 coverage = "*"
 coveralls = "*"
+ipykernel = "*"
 
 [packages]
 category-encoders = "==2.2.2"
