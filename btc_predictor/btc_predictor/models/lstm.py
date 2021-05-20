@@ -55,8 +55,7 @@ class LSTM_Model(tf.keras.Model):
 
 
 class LSTMModel(BaseModel):
-    """LSTM_Model wrapped in BaseModel API
-    """
+    """LSTM_Model wrapped in BaseModel API"""
 
     RANDOM_SEED = 78
 
@@ -98,12 +97,15 @@ class LSTMModel(BaseModel):
             batch_size=self.BATCH_SIZE,
         )
         val_tfds = data.create_tfds_from_np(
-            data=val, window_size=self.WINDOW_SIZE, batch_size=self.BATCH_SIZE,
+            data=val,
+            window_size=self.WINDOW_SIZE,
+            batch_size=self.BATCH_SIZE,
         )
         print(f"Total daily data: {df.shape[0]} days")
 
         self.model.compile(
-            optimizer="adam", loss="mse",
+            optimizer="adam",
+            loss="mse",
         )
 
         # train_history = lstm_model.fit(
@@ -140,7 +142,9 @@ class LSTMModel(BaseModel):
         time_series_data = np.diff(df["log_ret"].to_numpy()).astype("float32")
         test = time_series_data[self.VAL_SIZE + self.TRAIN_SIZE :]
         test_tfds = data.create_tfds_from_np(
-            data=test, window_size=self.WINDOW_SIZE, batch_size=1,
+            data=test,
+            window_size=self.WINDOW_SIZE,
+            batch_size=1,
         )
 
         # evaluate

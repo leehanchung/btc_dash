@@ -13,17 +13,14 @@ coveralls = "*"
 
 [packages]
 category-encoders = "==2.2.2"
-numpy = "==1.18.3"
-pandas = "==1.0.3"
-scikit-learn = "==0.22.2"
-scipy = "==1.4.1"
-xgboost = "==1.0.2"
+pandas = "==1.2.4"
+scikit-learn = "==0.24.2"
+xgboost = "==1.4.2"
 python-dotenv = "*"
 pyarrow = "*"
 tensorflow = "*"
 pmdarima = "*"
 seaborn = "*"
-spacy = "*"
 
 [requires]
 python_version = "3.7"
