@@ -1,3 +1,4 @@
+import logging
 import warnings
 
 from dash import Dash
@@ -11,6 +12,8 @@ from statsmodels.tools.sm_exceptions import ValueWarning
 from btc_dash import config
 from btc_dash.bitfinex_api import bitfinex_candles_api
 
+_logger = logging.getLogger(__name__)
+
 
 def register_ohlcv_callback(app: Dash):
     """Wrapper function for registering callback to generate momentum
@@ -21,7 +24,6 @@ def register_ohlcv_callback(app: Dash):
 
     Returns:
         None
-
     """
 
     @app.callback(
@@ -47,7 +49,7 @@ def register_ohlcv_callback(app: Dash):
         df = bitfinex_candles_api()
         df["log_ret"] = np.log(df.Close) - np.log(df.Close.shift(1))
 
-        print("data df loaded, starting prediction...\n")
+        _logger.info("data df loaded, starting prediction...\n")
         # online training and forecast.
         # ignore timestamp frequency info warning
         warnings.simplefilter("ignore", ValueWarning)
