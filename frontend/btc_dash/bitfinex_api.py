@@ -1,4 +1,5 @@
 import json
+import logging
 import threading
 from typing import List, Union
 
@@ -6,6 +7,9 @@ import pandas as pd
 import requests
 
 from websocket import create_connection, WebSocket
+
+
+_logger = logging.getLogger(__name__)
 
 
 class BitfinexSocketManager(threading.Thread):

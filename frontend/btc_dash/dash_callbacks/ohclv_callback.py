@@ -12,6 +12,7 @@ from statsmodels.tools.sm_exceptions import ValueWarning
 from btc_dash import config
 from btc_dash.bitfinex_api import bitfinex_candles_api
 
+
 _logger = logging.getLogger(__name__)
 
 
@@ -42,21 +43,22 @@ def register_ohlcv_callback(app: Dash):
         # 2274-1500 ~ 750. Reset prediction data to empty df.
         # interval = interval % 750
 
-        # print("interva is {}...".format(interval))
+        # _logger.info("interva is {}...".format(interval))
 
         # read data from source
         # df = get_ohlcv_data(interval - 100, interval)
         df = bitfinex_candles_api()
         df["log_ret"] = np.log(df.Close) - np.log(df.Close.shift(1))
 
-        _logger.info("data df loaded, starting prediction...\n")
+        _logger.info(f"{df}\n\ndata df loaded, starting prediction...\n")
+        _logger.info(f"graph interval: {config.GRAPH_INTERVAL}")
         # online training and forecast.
         # ignore timestamp frequency info warning
         warnings.simplefilter("ignore", ValueWarning)
         model = ARIMA(df.tail(60)["log_ret"], order=(3, 1, 0)).fit(disp=0)
         pred = model.forecast()[0]
 
-        print("\nprediction ended, writing to output df...")
+        # _logger.info("\nprediction ended, writing to output df...")
 
         # save forecast to output dataframe. should be dB irl.
         next_dt = df.tail(1).index[0] + pd.Timedelta("1 minute")
@@ -64,16 +66,16 @@ def register_ohlcv_callback(app: Dash):
             pred[0],
             (np.exp(pred) * df.tail(1).Close.values)[0],
         ]
-        print("\nnext datetime is {}...".format(next_dt))
+        _logger.info("next datetime is {}...".format(next_dt))
         # get index location of period.
         loc = config.df_pred.index.get_loc(next_dt) + 1
-        print("\nloc is {}...".format(loc))
+        _logger.info("loc is {}...".format(loc))
 
         # slices for the past N periods perdiction for plotting
         df_pred_plot = config.df_pred.iloc[
             slice(max(0, loc - 30), min(loc, len(df)))
         ].sort_index()
-        print("\n set pred df for plotting...\n", df_pred_plot)
+        _logger.info("Set pred df for plotting...\n{}".format(df_pred_plot))
 
         # plotting ohlc candlestick
         trace_ohlc = go.Candlestick(

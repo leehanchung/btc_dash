@@ -1,5 +1,5 @@
 import logging
-import os
+# import os
 import pathlib
 import sys
 
@@ -45,7 +45,7 @@ class BaseConfig:
     DEBUG = True
     TESTING = True
 
-    GRAPH_INTERVAL = os.environ.get("GRAPH_INTERVAL", 5000)
+    GRAPH_INTERVAL = 60 * 1000  # os.environ.get("GRAPH_INTERVAL", 60000)
     app_color = {"graph_bg": "#082255", "graph_line": "#007ACE"}
     df_pred = pd.DataFrame(columns=["pred_log_ret", "pred_Close"])
 
