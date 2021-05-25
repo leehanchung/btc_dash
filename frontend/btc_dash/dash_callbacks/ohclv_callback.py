@@ -50,7 +50,7 @@ def register_ohlcv_callback(app: Dash):
         print("data df loaded, starting prediction...\n")
         # online training and forecast.
         # ignore timestamp frequency info warning
-        warnings.simplefilter('ignore', ValueWarning)
+        warnings.simplefilter("ignore", ValueWarning)
         model = ARIMA(df.tail(60)["log_ret"], order=(3, 1, 0)).fit(disp=0)
         pred = model.forecast()[0]
 

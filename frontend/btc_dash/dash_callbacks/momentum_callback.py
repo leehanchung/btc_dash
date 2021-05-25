@@ -111,8 +111,16 @@ def register_momentum_callback(app: Dash):
             font={"color": "#fff"},
             autosize=True,
             margin=dict(l=200, autoexpand=True),
-            xaxis=dict(showticklabels=False, showgrid=False, zeroline=False,),
-            yaxis=dict(showticklabels=False, showgrid=False, zeroline=False,),
+            xaxis=dict(
+                showticklabels=False,
+                showgrid=False,
+                zeroline=False,
+            ),
+            yaxis=dict(
+                showticklabels=False,
+                showgrid=False,
+                zeroline=False,
+            ),
             # this is the hand/triangle on the dial.
             # https://plot.ly/python/gauge-charts/#dial center is 0.24, 0.5.
             # 2019/08/01: ^ and the above coordinate is not exactly correct

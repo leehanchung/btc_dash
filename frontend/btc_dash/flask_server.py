@@ -41,7 +41,10 @@ def create_flask_server(*, config: BaseConfig) -> Flask:
     Returns:
         Dash app object
     """
-    server = flask.Flask(__name__, static_folder="assets",)
+    server = flask.Flask(
+        __name__,
+        static_folder="assets",
+    )
     server.config["TESTING"] = config.TESTING
 
     register_blueprints(server=server)

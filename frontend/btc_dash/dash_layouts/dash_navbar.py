@@ -6,7 +6,13 @@ navbar = dbc.NavbarSimple(
     brand="BTCUSD Predictor",
     brand_href="/",
     children=[
-        dbc.NavItem(dcc.Link("About", href="/about", className="nav-link",)),
+        dbc.NavItem(
+            dcc.Link(
+                "About",
+                href="/about",
+                className="nav-link",
+            )
+        ),
     ],
     sticky="top",
     color="#082255",
