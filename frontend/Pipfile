@@ -25,6 +25,7 @@ python-dotenv = "*"
 dash-bootstrap-components = "*"
 websocket-client = "*"
 requests = "*"
+dash-extensions = "*"
 
 [requires]
 python_version = "3.7"
