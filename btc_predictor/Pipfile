@@ -11,17 +11,15 @@ jupyter = "*"
 coverage = "*"
 coveralls = "*"
 ipykernel = "*"
+seaborn = "*"
 
 [packages]
-category-encoders = "==2.2.2"
 pandas = "==1.2.4"
 scikit-learn = "==0.24.2"
 xgboost = "==1.4.2"
 python-dotenv = "*"
-pyarrow = "*"
-tensorflow = "*"
-pmdarima = "*"
-seaborn = "*"
+tensorflow = "==2.5.0"
+pmdarima = "==1.8.2"
 
 [requires]
 python_version = "3.7"
