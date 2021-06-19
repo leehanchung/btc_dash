@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  BTCUSD Predictor API
+
+Parameters:
+  ENV:
+    Type: String
+    Default: "dev"
+  ENVTYPE:
+    Type: String
+    Default: ""
+  ApiStageName:
+    Type: String
+    Default: live
+
+Globals:
+  Function:
+    Timeout: 10
+    MemorySize: 128
+
+Resources:
+  BTCPredictorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      Description: >-
+        BTCUSD Predictor function
+      Events:
+        BTCPredictor:
+          Type: Api
+          Properties:
+            Path: /invoke
+            Method: post
+            RestApiId: !Ref BTCPredictorFunctionApi
+    Metadata:
+      DockerTag: python3.7-v1
+      DockerContext: .
+      Dockerfile: Dockerfile
+
+  BTCPredictorFunctionApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Sub ${ApiStageName}
+
+Outputs:
+  BTCPredictorApi:
+    Description: "API Gateway endpoint URL for Prod stage for BTC Predictor function"
+    Value: !Sub "https://${BTCPredictorApi}.execute-api.${AWS::Region}.amazonaws.com/${ApiStageName}/invoke/"
+  BTCPredictorFunction:
+    Description: "BTC Predictor API Lambda Function ARN"
+    Value: !GetAtt BTCPredictorFunction.Arn
+  BTCPredictorFunctionIamRole:
+    Description: "Implicit IAM Role created for BTC Predictor function"
+    Value: !GetAtt BTCPredictorFunctionRole.Arn
