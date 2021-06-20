@@ -1,7 +1,6 @@
 import logging
 import sys
 
-
 FORMATTER = logging.Formatter(
     "%(asctime)s [%(levelname)-5.5s] [%(funcName)-20.20s:%(lineno)d] - %(message)s"  # noqa: E501
 )

@@ -13,6 +13,7 @@ coveralls = "*"
 ipykernel = "*"
 seaborn = "*"
 wandb = "*"
+isort = "*"
 
 [packages]
 pandas = "==1.2.4"

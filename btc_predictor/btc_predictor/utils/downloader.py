@@ -1,14 +1,13 @@
-from iex_downloader_utils import split_timestamp, write_to_parquet
+import sys
+from pathlib import Path, PurePath
 
+import logzero
 import pandas as pd
 import pandas_datareader.data as web
 import pandas_market_calendars as mcal  # pip install
-
-import logzero
-from logzero import logger
-from pathlib import PurePath, Path
-import sys
 import tzlocal  # pip install
+from iex_downloader_utils import split_timestamp, write_to_parquet
+from logzero import logger
 
 pd.options.display.float_format = "{:,.4f}".format
 

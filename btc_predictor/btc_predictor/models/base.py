@@ -1,6 +1,8 @@
 from typing import Any, Dict, Tuple
+
 import numpy as np
 import tensorflow as tf
+
 from btc_predictor.datasets import DataReader
 
 

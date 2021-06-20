@@ -1,8 +1,10 @@
-from typing import Tuple, Dict, Any
+from typing import Any, Dict, Tuple
+
 import numpy as np
 import tensorflow as tf
-from btc_predictor.models import BaseModel, ModelSavingError
+
 from btc_predictor.datasets import DataReader
+from btc_predictor.models import BaseModel, ModelSavingError
 from btc_predictor.utils import calculate_metrics
 
 

@@ -1,4 +1,5 @@
 from typing import Dict
+
 import pandas as pd
 import pmdarima as pm
 from pmdarima.arima import auto_arima

@@ -1,10 +1,10 @@
-from pathlib import PurePath, Path
-import sys
 import shutil
-import logzero
-from logzero import logger
-import pandas as pd
+import sys
+from pathlib import Path, PurePath
 
+import logzero
+import pandas as pd
+from logzero import logger
 
 # get project dir
 pdir = PurePath("/YOUR/DIRECTORY/iex_intraday_equity_downloader")

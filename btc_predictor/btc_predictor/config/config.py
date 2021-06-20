@@ -3,8 +3,8 @@ import random
 
 import numpy as np
 import pandas as pd
-import btc_predictor
 
+import btc_predictor
 
 random.seed(78)
 np.random.seed(78)
