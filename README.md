@@ -24,8 +24,10 @@ BTCDash includes a real time pseudo live prediction update chart as follows:
 - Momentum gauge using Relative Strength Indicator
 - Directional prediction confusion metrics
 
-![alt text](frontend/btc_dash/assets/btcdash1.gif)
+![demo](frontend/btc_dash/assets/btcdash1.gif)
 
+## Infrastructure
+![infra](docs/btc_dash.png)
 ## Statistics
 
 We establish our baseline using the previous period log returns for RMSE and directional accurcy calculation. 
