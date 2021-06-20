@@ -13,9 +13,7 @@ pd.options.display.max_columns = 500
 
 
 class Config:
-    PACKAGE_ROOT = (
-        pathlib.Path(approval_odds_predictor.__file__).resolve().parent
-    )
+    PACKAGE_ROOT = pathlib.Path(btc_predictor.__file__).resolve().parent
     DATASET_DIR = PACKAGE_ROOT / "datasets"
 
     AWS_ACCESS_KEY_ID = ""

@@ -106,7 +106,7 @@ def flatten_values(*, series: pd.Series) -> pd.Series:
     Returns:
         pd.Series: flattened series
     """
-    if isinstance(series, pd.Series) or isinstance(series, pd.DataFrame):
+    if isinstance(series, (pd.Series, pd.DataFrame)):
         return series.values.ravel()
     return series
 
@@ -256,5 +256,4 @@ def get_current_time():
     """Helper function to get the current time in seconds."""
 
     now = dt.datetime.now()
-    total_time = (now.hour * 3600) + (now.minute * 60) + (now.second)
-    return total_time
+    return (now.hour * 3600) + (now.minute * 60) + (now.second)

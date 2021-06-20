@@ -1,5 +1,3 @@
-import pandas as pd
-import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
 
@@ -27,7 +25,8 @@ def write_to_parquet(
     df : pd.DataFrame
         formatted dataframe data
     root_path : str, data store directory
-    partition_cols : list of columns (as str dtype) to partition parquet storage directory
+    partition_cols : list of columns (as str dtype) to partition parquet
+                     storage directory
     logger : logger object
     """
     if not logger:

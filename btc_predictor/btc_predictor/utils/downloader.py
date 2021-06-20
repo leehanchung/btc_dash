@@ -1,41 +1,36 @@
-from pathlib import PurePath, Path
-import sys
-import tzlocal  # pip install
-
-## get project dir
-pdir = PurePath("/YOUR/DIRECTORY/iex_intraday_equity_downloader")
-data_dir = pdir / "data"
-script_dir = pdir / "src" / "data"
-sys.path.append(script_dir.as_posix())
 from iex_downloader_utils import split_timestamp, write_to_parquet
 
 import pandas as pd
 import pandas_datareader.data as web
-
-pd.options.display.float_format = "{:,.4f}".format
-import numpy as np
 import pandas_market_calendars as mcal  # pip install
-
-import pyarrow as pa
-import pyarrow.parquet as pq
 
 import logzero
 from logzero import logger
+from pathlib import PurePath, Path
+import sys
+import tzlocal  # pip install
+
+pd.options.display.float_format = "{:,.4f}".format
+
+# get project dir
+pdir = PurePath("/YOUR/DIRECTORY/iex_intraday_equity_downloader")
+data_dir = pdir / "data"
+script_dir = pdir / "src" / "data"
+sys.path.append(script_dir.as_posix())
 
 # =============================================================================
 # get current timestamp
 
 now = pd.to_datetime("today")
 # =============================================================================
-## setup logger
+# setup logger
 
-logfile = PurePath(
-    pdir
-    / "logs"
-    / "equity_downloader_logs"
-    / f"iex_downloader_log_{now.date()}.log"
-).as_posix()
-log_format = "%(color)s[%(levelname)1.1s %(asctime)s.%(msecs)03d %(module)s:%(lineno)d]%(end_color)s %(message)s"
+log_dir = pdir / "logs" / "equity" / f"iex_downloader_log_{now.date()}.log"
+logfile = PurePath(log_dir).as_posix()
+log_format = (
+    "%(color)s[%(levelname)1.1s %(asctime)s.%(msecs)03d"
+    "%(module)s:%(lineno)d]%(end_color)s %(message)s"
+)
 formatter = logzero.LogFormatter(fmt=log_format, datefmt="%Y-%m-%d %I:%M:%S")
 logzero.setup_default_logger(logfile=logfile, formatter=formatter)
 

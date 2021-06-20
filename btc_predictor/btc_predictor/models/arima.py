@@ -15,7 +15,7 @@ def stepwise_arima(*, df: pd.Series, config: Dict) -> pm.arima.arima.ARIMA:
         PMD ARIMA model, ready to be fitted.
 
     """
-    stepwise_arima = auto_arima(
+    return auto_arima(
         df,
         start_p=0,
         start_q=0,
@@ -40,5 +40,3 @@ def stepwise_arima(*, df: pd.Series, config: Dict) -> pm.arima.arima.ARIMA:
         maxiter=100,
         n_jobs=24,
     )
-
-    return stepwise_arima

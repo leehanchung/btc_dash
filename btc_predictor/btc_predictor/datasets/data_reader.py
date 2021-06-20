@@ -1,7 +1,6 @@
 # from typing import Any
 import numpy as np
 import pandas as pd
-import pyarrow.parquet as pq
 import tensorflow as tf
 
 
@@ -64,7 +63,8 @@ class DataReader:
             Pandas dataframe containing data in the parquet file
 
         """
-        return pq.read_table(source=parquet_file).to_pandas()
+        # return pq.read_table(source=parquet_file).to_pandas()
+        raise NotImplementedError("parquet file not supported!")
 
     @property
     def pd(self) -> pd.DataFrame:
