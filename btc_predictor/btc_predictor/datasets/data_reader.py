@@ -1,7 +1,12 @@
-# from typing import Any
+import json
+from datetime import datetime
+
 import numpy as np
 import pandas as pd
+import requests
 import tensorflow as tf
+
+# from typing import Any
 
 
 class DataReadingError(Exception):
@@ -134,3 +139,55 @@ class DataReader:
         data = data.shuffle(batch_size).batch(batch_size).cache().repeat()
 
         return data
+
+
+class BitfinexCandlesAPI:
+    def __init__(
+        self,
+        *,
+        period: str = "1m",
+        symbol: str = "tBTCUSD",
+        section: str = "hist",
+    ):
+        self.period = period
+        self.symbol = symbol
+        self.section = section
+        self.url = (
+            "https://api-pub.bitfinex.com/v2/candles/trade"
+            f":{period}:{symbol}/{section}"
+        )
+        self.start_time = None
+        self.end_time = None
+        self.data = None
+
+    def load(self, start_time: int = 1610000000000, limit: int = 10000):
+        """Loads data from Bitfinex Candles API given an Unix timestamp[ms].
+        Currently Bitfinex limits number of candle requested to 10,000, so
+        we default limit to 10,000.
+
+        For simplicity sake, setting start_time to 1610000000000 for now.
+
+        Detailed Bitfinex API doc is here:
+        https://docs.bitfinex.com/reference#rest-public-candles
+
+        Args:
+            start_time (int): Unix timestamp[ms]
+            limit (int, optional): number of candles requested. Defaults to
+                                   10000.
+        """
+        self.start_time = datetime.fromtimestamp(start_time // 1000).strftime(
+            "%Y-%m-%d"
+        )
+        self.end_time = datetime.fromtimestamp(
+            (start_time + limit) // 1000
+        ).strftime("%Y-%m-%d")
+
+        params = {"start": start_time, "limit": limit, "sort": 1}
+        response = requests.get(self.url, params=params)
+
+        payload = json.loads(response.content)
+        columns = ["timestamp", "open", "close", "high", "low", "volume"]
+        data = pd.DataFrame(payload, columns=columns)
+        data["timestamp"] = pd.to_datetime(data["timestamp"], unit="ms")
+
+        self.data = data
