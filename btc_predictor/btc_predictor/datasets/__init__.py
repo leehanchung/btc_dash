@@ -1,2 +1,2 @@
 # flake8: noqa
-from .data_reader import DataReader, DataReadingError
+from .data_reader import BitfinexCandlesAPI, DataReader, DataReadingError

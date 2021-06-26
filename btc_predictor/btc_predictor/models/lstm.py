@@ -1,39 +1,16 @@
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Tuple, Union
 
 import numpy as np
 import tensorflow as tf
 
-from btc_predictor.datasets import DataReader
-from btc_predictor.models import BaseModel, ModelSavingError
+# from btc_predictor.config import config
+from btc_predictor.datasets import BitfinexCandlesAPI, DataReader
+from btc_predictor.models import ModelSavingError
 from btc_predictor.utils import calculate_metrics
 
 
 class LSTM_Model(tf.keras.Model):
-    """Two layer LSTM model using Tensorflow API. Can either be compiled
-    using Keras API or using tf.GradientTape() to train. This is
-    equivalent to Keras Functional API:
-
-        inputs = Input(shape=input_shape)
-        x = tf.keras.layers.LSTM(128, return_sequences=True)(inputs)
-        x = tf.keras.layers.Dropout(0.4)(x)
-        x = tf.keras.layers.LSTM(64)(x)
-        outputs = tf.keras.layers.Dense(1)(x)
-
-        simple_lstm_model = Model(inputs=inputs,
-                                  outputs=outputs,
-                                  name="univariate_lstm")
-
-    Or, Keras Sequential API:
-        simple_lstm_model = tf.keras.models.Sequential([
-            tf.keras.layers.LSTM(128,
-                                 input_shape=input_shape,
-                                 return_sequences=True),
-            tf.keras.layers.Dropout(0.4),
-            tf.keras.layers.LSTM(64),
-            tf.keras.layers.Dropout(0.4),
-            tf.keras.layers.Dense(1)
-        ])
-    """
+    """Simple LSTM Model for univariate time series prediction"""
 
     def __init__(
         self, *, input_shape: Tuple[int, int], dropout: float, num_forward: int
@@ -56,10 +33,8 @@ class LSTM_Model(tf.keras.Model):
         return out
 
 
-class LSTMModel(BaseModel):
+class LSTMModel:
     """LSTM_Model wrapped in BaseModel API"""
-
-    RANDOM_SEED = 78
 
     def __init__(self, *, model_args: Dict = None, train_args: Dict = None):
         super().__init__(model_args=model_args, train_args=train_args)
@@ -69,7 +44,7 @@ class LSTMModel(BaseModel):
         for variable, value in train_args.items():
             setattr(self, variable, value)
 
-    def fit(self, *, data: DataReader) -> None:
+    def fit(self, *, data: Union[DataReader, BitfinexCandlesAPI]) -> None:
         """Function that accept input training data and train the model
 
         Args:
@@ -176,8 +151,25 @@ class LSTMModel(BaseModel):
         raise NotImplementedError
 
     def save(self) -> bool:
-        """Function that saves a serialized model. Currently only TF is supported.
-        # TODO: extend for AWS S3 support
+        """Function that saves a serialized model.
+
+        Args:
+            None
+
+        Returns:
+            bool: success of fail
+        """
+        if not self.name:
+            raise ModelSavingError("Model not trained; aborting save.")
+
+        try:
+            self.model.save(f"saved_model/{self.name}")
+        except ModelSavingError:
+            return False
+        return True
+
+    def load(self) -> bool:
+        """Function that saves a serialized model.
 
         Args:
             None
