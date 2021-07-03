@@ -8,8 +8,9 @@ from dotenv import load_dotenv
 
 import btc_predictor
 
-random.seed(78)
-np.random.seed(78)
+RANDOM_SEED = 78
+random.seed(RANDOM_SEED)
+np.random.seed(RANDOM_SEED)
 pd.options.display.max_rows = None
 pd.options.display.max_columns = 500
 load_dotenv()
@@ -19,14 +20,14 @@ class Config:
     PACKAGE_ROOT = pathlib.Path(btc_predictor.__file__).resolve().parent
     DATASET_DIR = PACKAGE_ROOT / "datasets"
 
-    AWS_ACCESS_KEY_ID = ""
-    AWS_SECRET_ACCESS_KEY = ""
-    BUCKET = ""
+    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+    BUCKET = os.environ.get("S3_BUCKET")
 
     WANDB_API_KEY = os.environ.get("WANDB_API_KEY")
 
-    RANDOM_STATE = 78
-    TRACKING_URI = ""
+    RANDOM_STATE = RANDOM_SEED
+    TRACKING_URI = os.environ.get("TRACKING_URI")
 
 
 config = Config()

@@ -2,8 +2,8 @@
 import numpy as np
 import tensorflow as tf
 from btc_predictor.datasets import DataReader
-from btc_predictor.models import LSTMModel
-
+from btc_predictor.models import LSTMBTCPredictor
+from btc_predictor.config import config
 
 tf.random.set_seed(78)
 np.random.seed(78)
@@ -25,11 +25,17 @@ train_params = {
     "WALK_FORWARD": 30,
 }
 
-data_file = "btc_predictor/datasets/Bitstamp_BTCUSD_d.csv"
 
-data = DataReader(data_file=data_file)
-lstm = LSTMModel(model_args=model_params, train_args=train_params)
-lstm.fit(data=data)
-rmse, da, mda = lstm.eval(data=data)
-print(rmse, da, mda)
-lstm.save()
+def train():
+    data_file = "btc_predictor/datasets/Bitstamp_BTCUSD_d.csv"
+
+    data = DataReader(data_file=data_file)
+    btc_predictor = LSTMBTCPredictor(model_args=model_params, train_args=train_params)
+    btc_predictor.fit(data=data)
+    rmse, da, mda = btc_predictor.eval(data=data)
+    print(rmse, da, mda)
+    btc_predictor.save()
+
+
+if __name__ == "__main__":
+    train()

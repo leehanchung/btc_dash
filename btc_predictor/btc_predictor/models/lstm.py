@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Dict, Tuple, Union
 
 import numpy as np
@@ -8,14 +9,16 @@ from btc_predictor.datasets import BitfinexCandlesAPI, DataReader
 from btc_predictor.models import ModelSavingError
 from btc_predictor.utils import calculate_metrics
 
+_logger = logging.getLogger(__name__)
 
-class LSTM_Model(tf.keras.Model):
+
+class LSTMModel(tf.keras.Model):
     """Simple LSTM Model for univariate time series prediction"""
 
     def __init__(
         self, *, input_shape: Tuple[int, int], dropout: float, num_forward: int
     ):
-        super(LSTM_Model, self).__init__()
+        super(LSTMModel, self).__init__()
         self.lstm_input = tf.keras.layers.LSTM(
             128, input_shape=input_shape, return_sequences=True
         )
@@ -33,16 +36,17 @@ class LSTM_Model(tf.keras.Model):
         return out
 
 
-class LSTMModel:
-    """LSTM_Model wrapped in BaseModel API"""
-
+class LSTMBTCPredictor:
     def __init__(self, *, model_args: Dict = None, train_args: Dict = None):
-        super().__init__(model_args=model_args, train_args=train_args)
+        super().__init__()
 
-        self.model = LSTM_Model(**model_args)
+        self.model = LSTMModel(**model_args)
 
         for variable, value in train_args.items():
             setattr(self, variable, value)
+
+    # def _preproc(self, *) -> None:
+    #     raise NotImplementedError
 
     def fit(self, *, data: Union[DataReader, BitfinexCandlesAPI]) -> None:
         """Function that accept input training data and train the model
@@ -57,7 +61,11 @@ class LSTMModel:
         """
         # load data
         df = data.pd
-        self.name = f"lstm_{data.__name__.split('/')[-1].split('.')[0]}"
+
+        self.start_time = data.start_time
+        self.end_time = data.end_time
+        self.resolution = data.period
+        self.name = f"lstm_{self.start_time}_{self.end_time}_{self.resolution}"
         df["log_ret"] = np.log(df.Close) - np.log(df.Close.shift(1))
         df.dropna(inplace=True)
 
@@ -98,7 +106,9 @@ class LSTMModel:
 
         return None
 
-    def eval(self, *, data: DataReader) -> Tuple[float, float, float]:
+    def eval(
+        self, *, data: Union[DataReader, BitfinexCandlesAPI]
+    ) -> Tuple[float, float, float]:
         """Function that accept input training data and train the model
 
         Args:

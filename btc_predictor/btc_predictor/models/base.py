@@ -1,4 +1,4 @@
-from typing import Any, Dict, Tuple
+from typing import Any, Tuple
 
 import numpy as np
 import tensorflow as tf
@@ -28,21 +28,9 @@ class BaseModel:
     to accomodate different data and modeling frameworks.
     """
 
-    # def __init__(self, *, model: Callable, model_args: Dict = None):
-    def __init__(self, *, model_args: Dict = None, train_args: Dict = None):
-        # dataset: Callable, dataset_args: Dict = None):
-        # self.name = (f'{self.__class__.__name__}',
-        #              f'_{dataset.__name__}_{model.__name__}')
-
-        # if dataset_args is None:
-        #     dataset_args = {}
-        # self.data = DataReader(**dataset_args)
-
-        if model_args is None:
-            model_args = {}
-
-        if train_args is None:
-            train_args = {}
+    def __init__(self):
+        self.model_args = {}
+        self.train_args = {}
 
     def fit(self, *, data: DataReader) -> None:
         """Function that accept input training data and train the model

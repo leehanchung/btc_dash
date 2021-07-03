@@ -35,7 +35,7 @@ Resources:
             RestApiId: !Ref BTCPredictorFunctionApi
     Metadata:
       DockerTag: python3.7-v1
-      DockerContext: .
+      DockerContext: api_serverless/
       Dockerfile: Dockerfile
 
   BTCPredictorFunctionApi:

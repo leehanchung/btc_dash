@@ -1,10 +1,13 @@
 import json
+import logging
 from datetime import datetime
 
 import numpy as np
 import pandas as pd
 import requests
 import tensorflow as tf
+
+_logger = logging.getLogger(__name__)
 
 
 class DataReadingError(Exception):
