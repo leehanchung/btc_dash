@@ -59,7 +59,7 @@ def train():
     logger.info("Loading model")
     boo = model.load(model_filename="saved_model/lstm_2021-01-06_2021-01-06_1m")
     logger.info(f"Model loading success {boo}")
-    # logger.info(f"Loaded model name: {model.name}")
+    # logger.info(f"Loaded model name: {model.name}") not working yet
 
 if __name__ == "__main__":
     train()
