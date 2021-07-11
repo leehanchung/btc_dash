@@ -47,18 +47,20 @@ def train():
     rmse, dir_acc, mean_dir_acc = btc_predictor.eval(data=data)
     logger.info(f"RMSE {rmse}\nDirectional accuracy: {dir_acc}")
     logger.info(f"Mean directional accuracy {mean_dir_acc}")
+    # logger.info(f"{btc_predictor.__dict__}")
+    logger.info(f"Saving model {btc_predictor.name}")
     btc_predictor.save()
 
-    logger.info(f"Saving model {btc_predictor.name}")
-    model = LSTMBTCPredictor(
-        model_args=model_params,
-        train_args=train_params
-    )
+    
+    # model = LSTMBTCPredictor(
+    #     model_args=model_params,
+    #     train_args=train_params
+    # )
 
-    logger.info("Loading model")
-    boo = model.load(model_filename="saved_model/lstm_2021-01-06_2021-01-06_1m")
-    logger.info(f"Model loading success {boo}")
-    # logger.info(f"Loaded model name: {model.name}")
+    # logger.info("Loading model")
+    # boo = model.load(model_filename="saved_model/lstm_2021-01-06_2021-01-06_1m")
+    # logger.info(f"Model loading success {boo}")
+    # # logger.info(f"Loaded model name: {model.name}")
 
 if __name__ == "__main__":
     train()

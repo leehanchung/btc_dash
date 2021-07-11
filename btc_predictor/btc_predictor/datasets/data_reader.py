@@ -153,11 +153,11 @@ class BitfinexCandlesAPI:
                                    10000.
         """
         self.start_time = datetime.fromtimestamp(start_time // 1000).strftime(
-            "%Y-%m-%d"
+            "%Y%m%d"
         )
         self.end_time = datetime.fromtimestamp(
             (start_time + limit) // 1000
-        ).strftime("%Y-%m-%d")
+        ).strftime("%Y%m%d")
 
         params = {"start": start_time, "limit": limit, "sort": 1}
         response = requests.get(self.url, params=params)

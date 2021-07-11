@@ -6,7 +6,7 @@ import tensorflow as tf
 from btc_predictor.datasets import DataReader
 
 
-class ModelLoadingError(Exception):
+class ModelLoadingError(Exception):    
     pass
 
 
@@ -101,5 +101,5 @@ class BaseModel:
 
         Returns:
             bool: success of fail
-        """
+        """        
         raise NotImplementedError

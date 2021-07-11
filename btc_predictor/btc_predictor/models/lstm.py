@@ -1,12 +1,12 @@
+import json
 import logging
 from typing import Any, Dict, Tuple, Union
 
 import numpy as np
 import tensorflow as tf
 
-# from btc_predictor.config import config
 from btc_predictor.datasets import BitfinexCandlesAPI, DataReader
-from btc_predictor.models import ModelSavingError
+from btc_predictor.models import ModelLoadingError, ModelSavingError
 from btc_predictor.utils import calculate_metrics
 
 _logger = logging.getLogger(__name__)
@@ -98,7 +98,6 @@ class LSTMBTCPredictor:
             loss="mse",
         )
 
-        # train_history = lstm_model.fit(
         train_history = self.model.fit(
             train_tfds,
             epochs=self.EPOCHS,
@@ -177,9 +176,14 @@ class LSTMBTCPredictor:
         """
         if not self.name:
             raise ModelSavingError("Model not trained; aborting save.")
-        _logger.info(type(self.model))
+
         try:
             self.model.save(f"saved_model/{self.name}", save_format="tf")
+            with open(f"saved_model/{self.name}/model_attr.json", 'w') as f:
+                attrs = self.__dict__
+                attrs.pop('model', None)
+                attrs.pop('history', None)
+                json.dump(self.__dict__, f)
         except ModelSavingError:
             return False
         return True
@@ -197,6 +201,6 @@ class LSTMBTCPredictor:
         try:
             tf.keras.models.load_model(model_filename)
             # self.model.load(f"saved_model/{self.name}")
-        except ModelSavingError:
+        except ModelLoadingError:
             return False
         return True
