@@ -11,8 +11,6 @@ jupyter = "*"
 coverage = "*"
 coveralls = "*"
 ipykernel = "*"
-seaborn = "*"
-wandb = "*"
 isort = "*"
 
 [packages]
@@ -24,6 +22,8 @@ tensorflow = "==2.5.0"
 pmdarima = "==1.8.2"
 hydra-core = "*"
 urllib3 = "==1.25.11"
+seaborn = "*"
+wandb = "*"
 
 [requires]
 python_version = "3.7"
