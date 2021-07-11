@@ -183,10 +183,10 @@ class LSTMBTCPredictor:
             raise ModelSavingError("Problem saving model weights.")
 
         try:
-            with open(f"saved_model/{self.name}/model_attr.json", 'w') as f:
+            with open(f"saved_model/{self.name}/model_attr.json", "w") as f:
                 attrs = self.__dict__
-                attrs.pop('model', None)
-                attrs.pop('history', None)
+                attrs.pop("model", None)
+                attrs.pop("history", None)
                 json.dump(self.__dict__, f)
         except ModelSavingError:
             raise ModelSavingError("Probelm saving model wrapper attributes.")
