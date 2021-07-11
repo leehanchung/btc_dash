@@ -9,19 +9,34 @@ from btc_predictor.datasets import DataReader
 class ModelLoadingError(Exception):
     """Custom error that's raised when problem arises at model loading"""
 
-    def __init__(self, value: str, message: str) -> None:
-        self.value = value
+    def __init__(self, message: str = "Model loading error") -> None:
         self.message = message
         super().__init__(message)
+
+    def __str__(self):
+        return f"{self.message}"
 
 
 class ModelSavingError(Exception):
     """Custom error that's raised when problem arises at model saving"""
 
-    def __init__(self, value: str, message: str) -> None:
-        self.value = value
+    def __init__(self, message: str = "Model saving error") -> None:
         self.message = message
         super().__init__(message)
+
+    def __str__(self):
+        return f"{self.message}"
+
+
+class ModelTrainingError(Exception):
+    """Custom error that's raised when problem arises at model training"""
+
+    def __init__(self, message="Dataset has not been defined"):
+        self.message = message
+        super.__init__(self.message)
+
+    def __str__(self):
+        return f"{self.message}"
 
 
 class ModelDataError(Exception):
@@ -61,9 +76,6 @@ class BasePredictor(ABC):
             prediction. Numpy array of shape (1, n) where n is the dimension
             of the feature vector.
 
-        Raises:
-            NotImplementedError: [description]
-
         Returns:
             Tuple[float]: a tuple of RMSE, directional accuracy, and mean
             directional accuracy scores.
@@ -97,9 +109,8 @@ class BasePredictor(ABC):
         pass
 
     @abstractmethod
-    def load(self, *, model_file: str) -> bool:
+    def load(self, *, model_filename: str) -> None:
         """Function that loads pretrained weights for making a prediction.
-        Currently only TF is supported.
 
         Args:
             model_file (str): serialized model weights file
