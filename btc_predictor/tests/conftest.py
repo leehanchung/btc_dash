@@ -1,4 +1,5 @@
 import pytest
+
 from btc_predictor.models import BaseModel
 
 

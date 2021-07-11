@@ -4,10 +4,9 @@ import sys
 import numpy as np
 import tensorflow as tf
 
-from btc_predictor.datasets import DataReader
-from btc_predictor.datasets import BitfinexCandlesAPI
-from btc_predictor.models import LSTMBTCPredictor
 from btc_predictor.config import config, logging_config
+from btc_predictor.datasets import BitfinexCandlesAPI, DataReader
+from btc_predictor.models import LSTMBTCPredictor
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -59,7 +58,7 @@ def train():
     logger.info("Loading model")
     boo = model.load(model_filename="saved_model/lstm_2021-01-06_2021-01-06_1m")
     logger.info(f"Model loading success {boo}")
-    # logger.info(f"Loaded model name: {model.name}") not working yet
+    # logger.info(f"Loaded model name: {model.name}")
 
 if __name__ == "__main__":
     train()
