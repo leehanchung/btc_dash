@@ -135,7 +135,9 @@ class BitfinexCandlesAPI:
         self.end_time = None
         self.data = None
 
-    def load(self, start_time: int = 1610000000000, limit: int = 10000) -> None:
+    def load(
+        self, start_time: int = 1610000000000, limit: int = 10000
+    ) -> None:
         """Loads data from Bitfinex Candles API given an Unix timestamp[ms].
         Currently Bitfinex limits number of candle requested to 10,000, so
         we default limit to 10,000.

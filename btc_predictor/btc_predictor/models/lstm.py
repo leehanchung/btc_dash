@@ -9,7 +9,6 @@ from btc_predictor.datasets import BitfinexCandlesAPI, DataReader
 from btc_predictor.models import ModelSavingError
 from btc_predictor.utils import calculate_metrics
 
-
 _logger = logging.getLogger(__name__)
 
 
@@ -20,8 +19,10 @@ class LSTMModel(tf.keras.Model):
         self, *, input_shape: Tuple[int, int], dropout: float, num_forward: int
     ):
         super(LSTMModel, self).__init__()
-        _logger.info(f"\ninput_shape {input_shape}\ndropout: {dropout}\n"
-                     f"num_forward: {num_forward}")
+        _logger.info(
+            f"\ninput_shape {input_shape}\ndropout: {dropout}\n"
+            f"num_forward: {num_forward}"
+        )
         self.lstm_input = tf.keras.layers.LSTM(
             128, input_shape=input_shape, return_sequences=True
         )
@@ -70,7 +71,7 @@ class LSTMBTCPredictor:
         self.resolution = data.period
         self.name = f"lstm_{self.start_time}_{self.end_time}_{self.resolution}"
         # df["log_ret"] = np.log(df.Close) - np.log(df.Close.shift(1))
-        df["log_ret"] = np.log(df['close']) - np.log(df['close'].shift(1))
+        df["log_ret"] = np.log(df["close"]) - np.log(df["close"].shift(1))
         df.dropna(inplace=True)
 
         # preprocess
@@ -129,7 +130,7 @@ class LSTMBTCPredictor:
 
         # preprocess
         # df["log_ret"] = np.log(df.Close) - np.log(df.Close.shift(1))
-        df["log_ret"] = np.log(df['close']) - np.log(df['close'].shift(1))
+        df["log_ret"] = np.log(df["close"]) - np.log(df["close"].shift(1))
         df.dropna(inplace=True)
         time_series_data = np.diff(df["log_ret"].to_numpy()).astype("float32")
         test = time_series_data[self.VAL_SIZE + self.TRAIN_SIZE :]
@@ -178,7 +179,7 @@ class LSTMBTCPredictor:
             raise ModelSavingError("Model not trained; aborting save.")
         _logger.info(type(self.model))
         try:
-            self.model.save(f"saved_model/{self.name}", save_format='tf')
+            self.model.save(f"saved_model/{self.name}", save_format="tf")
         except ModelSavingError:
             return False
         return True
