@@ -6,12 +6,22 @@ import tensorflow as tf
 from btc_predictor.datasets import DataReader
 
 
-class ModelLoadingError(Exception):    
-    pass
+class ModelLoadingError(Exception):
+    """Custom error that's raised when problem arises at model loading"""
+
+    def __init__(self, value: str, message: str) -> None:
+        self.value = value
+        self.message = message
+        super().__init__(message)
 
 
 class ModelSavingError(Exception):
-    pass
+    """Custom error that's raised when problem arises at model saving"""
+    
+    def __init__(self, value: str, message: str) -> None:
+        self.value = value
+        self.message = message
+        super().__init__(message)
 
 
 class ModelDataError(Exception):

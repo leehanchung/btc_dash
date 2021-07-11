@@ -165,7 +165,7 @@ class LSTMBTCPredictor:
         """
         raise NotImplementedError
 
-    def save(self) -> bool:
+    def save(self) -> None:
         """Function that saves a serialized model.
 
         Args:
@@ -179,14 +179,17 @@ class LSTMBTCPredictor:
 
         try:
             self.model.save(f"saved_model/{self.name}", save_format="tf")
+        except ModelSavingError:
+            raise ModelSavingError("Problem saving model weights.")
+
+        try:
             with open(f"saved_model/{self.name}/model_attr.json", 'w') as f:
                 attrs = self.__dict__
                 attrs.pop('model', None)
                 attrs.pop('history', None)
                 json.dump(self.__dict__, f)
         except ModelSavingError:
-            return False
-        return True
+            raise ModelSavingError("Probelm saving model wrapper attributes.")
 
     def load(self, *, model_filename: str) -> bool:
         """Function that saves a serialized model.
