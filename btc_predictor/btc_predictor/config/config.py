@@ -14,6 +14,7 @@ np.random.seed(RANDOM_SEED)
 pd.options.display.max_rows = None
 pd.options.display.max_columns = 500
 load_dotenv()
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 
 class Config:
