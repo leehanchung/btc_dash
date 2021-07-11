@@ -5,7 +5,7 @@ from typing import Any, Dict, Tuple, Union
 import numpy as np
 import tensorflow as tf
 
-from btc_predictor.datasets import BitfinexCandlesAPI, DataReader
+from btc_predictor.datasets import BitfinexCandlesAPI, DataReader, util
 from btc_predictor.models import (
     BasePredictor,
     ModelLoadingError,
@@ -90,12 +90,12 @@ class LSTMBTCPredictor(BasePredictor):
             self.TRAIN_SIZE : self.VAL_SIZE + self.TRAIN_SIZE
         ]
 
-        train_tfds = data.create_tfds_from_np(
+        train_tfds = util.create_tfds_from_np(
             data=train,
             window_size=self.WINDOW_SIZE,
             batch_size=self.BATCH_SIZE,
         )
-        val_tfds = data.create_tfds_from_np(
+        val_tfds = util.create_tfds_from_np(
             data=val,
             window_size=self.WINDOW_SIZE,
             batch_size=self.BATCH_SIZE,
@@ -142,7 +142,7 @@ class LSTMBTCPredictor(BasePredictor):
 
         time_series_data = np.diff(df["log_ret"].to_numpy()).astype("float32")
         test = time_series_data[self.VAL_SIZE + self.TRAIN_SIZE :]
-        test_tfds = data.create_tfds_from_np(
+        test_tfds = util.create_tfds_from_np(
             data=test,
             window_size=self.WINDOW_SIZE,
             batch_size=1,
