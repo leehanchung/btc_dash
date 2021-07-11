@@ -13,7 +13,7 @@ _logger = logging.getLogger(__name__)
 
 
 class LSTMModel(tf.keras.Model):
-    """Simple LSTM Model for univariate time series prediction"""
+    """LSTM Model for univariate time series prediction"""
 
     def __init__(
         self, *, input_shape: Tuple[int, int], dropout: float, num_forward: int
@@ -41,6 +41,8 @@ class LSTMModel(tf.keras.Model):
 
 
 class LSTMBTCPredictor:
+    """Predictor Wrapper that predicts, trains, save and load LSTM models"""
+
     def __init__(self, *, model_args: Dict = None, train_args: Dict = None):
         super().__init__()
 
@@ -49,10 +51,7 @@ class LSTMBTCPredictor:
         for variable, value in train_args.items():
             setattr(self, variable, value)
 
-    # def _preproc(self, *) -> None:
-    #     raise NotImplementedError
-
-    def fit(self, *, data: Union[DataReader, BitfinexCandlesAPI]) -> None:
+    def train(self, *, data: Union[DataReader, BitfinexCandlesAPI]) -> None:
         """Function that accept input training data and train the model
 
         Args:
@@ -207,3 +206,6 @@ class LSTMBTCPredictor:
         except ModelLoadingError:
             return False
         return True
+
+    # def _preproc(self, *) -> None:
+    #     raise NotImplementedError

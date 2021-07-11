@@ -43,7 +43,7 @@ def train():
         model_args=model_params,
         train_args=train_params
     )
-    btc_predictor.fit(data=data)
+    btc_predictor.train(data=data)
     rmse, dir_acc, mean_dir_acc = btc_predictor.eval(data=data)
     logger.info(f"RMSE {rmse}\nDirectional accuracy: {dir_acc}")
     logger.info(f"Mean directional accuracy {mean_dir_acc}")

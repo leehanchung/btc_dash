@@ -1,7 +1,7 @@
+from abc import ABC, abstractmethod
 from typing import Any, Tuple
 
 import numpy as np
-import tensorflow as tf
 
 from btc_predictor.datasets import DataReader
 
@@ -33,16 +33,13 @@ class ModelDataError(Exception):
         return f"{self.message}"
 
 
-class BaseModel:
-    """BaseModel provides an unified fit, eval, predict, load, and save API
+class BasePredictor(ABC):
+    """BasePredictor provides an unified fit, eval, predict, load, and save API
     to accomodate different data and modeling frameworks.
     """
 
-    def __init__(self):
-        self.model_args = {}
-        self.train_args = {}
-
-    def fit(self, *, data: DataReader) -> None:
+    @abstractmethod
+    def train(self, *, data: DataReader) -> None:
         """Function that accept input training data and train the model
 
         Args:
@@ -53,8 +50,9 @@ class BaseModel:
         Returns:
             None
         """
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def eval(self, *, data: DataReader) -> Tuple[float]:
         """Function that accept input training data and train the model
 
@@ -70,8 +68,9 @@ class BaseModel:
             Tuple[float]: a tuple of RMSE, directional accuracy, and mean
             directional accuracy scores.
         """
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def predict(self, *, input_features: Any) -> np.ndarray:
         """Function that accept input data for the model to generate a prediction
 
@@ -83,12 +82,24 @@ class BaseModel:
         Returns:
             prediction: Prediction of the model. Numpy array of shape (1,).
         """
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
+    def save(self) -> None:
+        """Function that saves a serialized model.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        pass
+
+    @abstractmethod
     def load(self, *, model_file: str) -> bool:
         """Function that loads pretrained weights for making a prediction.
         Currently only TF is supported.
-        # TODO: extend for AWS S3 support
 
         Args:
             model_file (str): serialized model weights file
@@ -96,20 +107,4 @@ class BaseModel:
         Returns:
             bool: success of fail
         """
-        try:
-            self.model = tf.keras.models.load_model(model_file)
-        except ModelLoadingError:
-            return False
-        return True
-
-    def save(self) -> bool:
-        """Function that saves a serialized model. Currently only TF is supported.
-        # TODO: extend for AWS S3 support
-
-        Args:
-            None
-
-        Returns:
-            bool: success of fail
-        """
-        raise NotImplementedError
+        pass
