@@ -12,7 +12,7 @@ on:
 
 defaults:
   run:
-    working-directory: btc_predictor
+    working-directory: ./btc_predictor
 
 jobs:
   build:
