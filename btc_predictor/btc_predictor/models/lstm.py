@@ -3,6 +3,7 @@ import logging
 from typing import Any, Dict, Tuple, Union
 
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 
 from btc_predictor.datasets import BitfinexCandlesAPI, DataReader, util
@@ -80,11 +81,8 @@ class LSTMBTCPredictor(BasePredictor):
         self.resolution = data.period
         self.name = f"lstm_{self.start_time}_{self.end_time}_{self.resolution}"
 
-        df["log_ret"] = np.log(df["close"]) - np.log(df["close"].shift(1))
-        df.dropna(inplace=True)
+        time_series_data = self._preproc(data=data.pd)
 
-        # preprocess
-        time_series_data = np.diff(df["log_ret"].to_numpy()).astype("float32")
         train = time_series_data[: self.TRAIN_SIZE]
         val = time_series_data[
             self.TRAIN_SIZE : self.VAL_SIZE + self.TRAIN_SIZE
@@ -136,11 +134,10 @@ class LSTMBTCPredictor(BasePredictor):
         # load data
         df = data.pd
 
-        # preprocess
-        df["log_ret"] = np.log(df["close"]) - np.log(df["close"].shift(1))
-        df.dropna(inplace=True)
+        time_series_data = self._preproc(data=df)
 
-        time_series_data = np.diff(df["log_ret"].to_numpy()).astype("float32")
+        _logger.info(f"original data: {df['close'].to_numpy()}")
+        _logger.info(f"ts data: {time_series_data}")
         test = time_series_data[self.VAL_SIZE + self.TRAIN_SIZE :]
         test_tfds = util.create_tfds_from_np(
             data=test,
@@ -155,6 +152,8 @@ class LSTMBTCPredictor(BasePredictor):
             test_y_true = np.append(test_y_true, y[0].numpy())
             test_y_pred = np.append(test_y_pred, self.model.predict(x)[0])
 
+        _logger.info(f"{test_y_true}")
+        _logger.info(f"{test_y_pred}")
         rmse, dir_acc, mda = calculate_metrics(
             y_true=test_y_true, y_pred=test_y_pred
         )
@@ -227,5 +226,20 @@ class LSTMBTCPredictor(BasePredictor):
         except (ValueError, AttributeError):
             raise ModelLoadingError("Error loading Tensorflow Keras model.")
 
-    # def _preproc(self, *) -> None:
-    #     raise NotImplementedError
+    def _preproc(self, *, data: pd.DataFrame) -> np.ndarray:
+        """[summary]
+
+        Args:
+            data (pd.DataFrame): input dataframe containing 'close' field
+
+        Returns:
+            np.ndarray: log return numpy array.
+        """
+        data["log_ret"] = np.log(
+            data["close"]) - np.log(data["close"].shift(1)
+        )
+        data.dropna(inplace=True)
+        return np.diff(data["log_ret"].to_numpy()).astype("float32")
+
+    def _postproc(self, *, data: pd.DataFrame) -> float:
+        raise NotImplementedError

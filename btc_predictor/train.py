@@ -39,18 +39,18 @@ def train():
     data = BitfinexCandlesAPI()
     data.load(start_time=1610000000000)
 
-    btc_predictor = LSTMBTCPredictor(
-        model_args=model_params,
-        train_args=train_params
-    )
+    # btc_predictor = LSTMBTCPredictor(
+    #     model_args=model_params,
+    #     train_args=train_params
+    # )
 
-    btc_predictor.train(data=data)
-    rmse, dir_acc, mean_dir_acc = btc_predictor.eval(data=data)
-    logger.info(f"RMSE {rmse}")
-    logger.info(f"Directional accuracy: {dir_acc}")
-    logger.info(f"Mean directional accuracy {mean_dir_acc}")
+    # btc_predictor.train(data=data)
+    # rmse, dir_acc, mean_dir_acc = btc_predictor.eval(data=data)
+    # logger.info(f"RMSE {rmse}")
+    # logger.info(f"Directional accuracy: {dir_acc}")
+    # logger.info(f"Mean directional accuracy {mean_dir_acc}")
     
-    logger.info(f"Saving model {btc_predictor.name}...")
+    # logger.info(f"Saving model {btc_predictor.name}...")
     # btc_predictor.save()
 
     logger.info("Loading model...")
@@ -61,6 +61,11 @@ def train():
 
     model.load(model_filename="saved_model/lstm_20210106_20210106_1m")
     logger.info(f"Loaded model name: {model.name}")
+    rmse, dir_acc, mean_dir_acc = model.eval(data=data)
+    logger.info(f"RMSE {rmse}")
+    logger.info(f"Directional accuracy: {dir_acc}")
+    logger.info(f"Mean directional accuracy {mean_dir_acc}")
+
 
 if __name__ == "__main__":
     train()
