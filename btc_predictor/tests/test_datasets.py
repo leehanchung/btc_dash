@@ -2,13 +2,13 @@ from datetime import datetime
 
 import pandas as pd
 
-from btc_predictor.datasets.data_reader import BitfinexCandlesAPI
+from btc_predictor.datasets import BitfinexCandlesAPI
 
 
 def test_bitfinex_candles_api():
     candles = BitfinexCandlesAPI()
 
-    assert candles.period == '1m'
+    assert candles.resolution == '1m'
     assert candles.symbol == 'tBTCUSD'
     assert not candles.start_time
     assert not candles.end_time

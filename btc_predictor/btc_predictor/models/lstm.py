@@ -78,10 +78,10 @@ class LSTMBTCPredictor(BasePredictor):
 
         self.start_time = data.start_time
         self.end_time = data.end_time
-        self.resolution = data.period
+        self.resolution = data.resolution
         self.name = f"lstm_{self.start_time}_{self.end_time}_{self.resolution}"
 
-        time_series_data = self._preproc(data=data.pd)
+        time_series_data = self._preproc(df=data.pd)
 
         train = time_series_data[: self.TRAIN_SIZE]
         val = time_series_data[
@@ -134,7 +134,7 @@ class LSTMBTCPredictor(BasePredictor):
         # load data
         df = data.pd
 
-        time_series_data = self._preproc(data=df)
+        time_series_data = self._preproc(df=df)
 
         _logger.info(f"original data: {df['close'].to_numpy()}")
         _logger.info(f"ts data: {time_series_data}")
@@ -226,7 +226,7 @@ class LSTMBTCPredictor(BasePredictor):
         except (ValueError, AttributeError):
             raise ModelLoadingError("Error loading Tensorflow Keras model.")
 
-    def _preproc(self, *, data: pd.DataFrame) -> np.ndarray:
+    def _preproc(self, *, df: pd.DataFrame) -> np.ndarray:
         """[summary]
 
         Args:
@@ -235,11 +235,9 @@ class LSTMBTCPredictor(BasePredictor):
         Returns:
             np.ndarray: log return numpy array.
         """
-        data["log_ret"] = np.log(
-            data["close"]) - np.log(data["close"].shift(1)
-        )
-        data.dropna(inplace=True)
-        return np.diff(data["log_ret"].to_numpy()).astype("float32")
+        df["log_ret"] = np.log(df["close"]) - np.log(df["close"].shift(1))
+        df.dropna(inplace=True)
+        return np.diff(df["log_ret"].to_numpy()).astype("float32")
 
     def _postproc(self, *, data: pd.DataFrame) -> float:
         raise NotImplementedError

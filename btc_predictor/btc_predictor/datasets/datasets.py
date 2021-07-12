@@ -5,11 +5,9 @@ from datetime import datetime
 import pandas as pd
 import requests
 
+from btc_predictor.datasets import DataReadingError
+
 _logger = logging.getLogger(__name__)
-
-
-class DataReadingError(Exception):
-    pass
 
 
 class DataReader:
@@ -75,16 +73,16 @@ class BitfinexCandlesAPI:
     def __init__(
         self,
         *,
-        period: str = "1m",
+        resolution: str = "1m",
         symbol: str = "tBTCUSD",
         section: str = "hist",
     ):
-        self.period = period
+        self.resolution = resolution
         self.symbol = symbol
         self.section = section
         self.url = (
             "https://api-pub.bitfinex.com/v2/candles/trade"
-            f":{period}:{symbol}/{section}"
+            f":{resolution}:{symbol}/{section}"
         )
         self.start_time = None
         self.end_time = None
