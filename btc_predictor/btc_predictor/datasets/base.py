@@ -10,23 +10,26 @@ class DataReadingError(Exception):
     pass
 
 
-class Dataset(ABC):
+class BaseDataset(ABC):
+    """Base Dataset template for datasets. We characterize btcusd time series
+    data using source, start_time, end_time, and resolution.
+    """
+
+    start_time: str
+    end_time: str
+    resolution: str
+    data: pd.DataFrame
+
     @abstractmethod
-    def load(self, *, csv_file: str) -> None:
+    def load(
+        self,
+        *,
+        filename: str = None,
+        start_time: int = None,
+        limit: int = 10000
+    ) -> None:
         pass
 
     @property
     def pd(self) -> pd.DataFrame:
-        return getattr(self, "data", None)
-
-    @property
-    def start_time(self) -> str:
-        return getattr(self, "start_time", None)
-
-    @property
-    def end_time(self) -> str:
-        return getattr(self, "end_time", None)
-
-    @property
-    def resolution(self) -> str:
-        return getattr(self, "resolution", None)
+        return self.data

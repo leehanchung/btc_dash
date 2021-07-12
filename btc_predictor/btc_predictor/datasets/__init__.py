@@ -1,3 +1,3 @@
 # flake8: noqa
-from .base import DataReadingError, Dataset
-from .datasets import BitfinexCandlesAPI, DataReader
+from .base import BaseDataset, DataReadingError
+from .datasets import BitfinexCandlesAPIData, DataReader

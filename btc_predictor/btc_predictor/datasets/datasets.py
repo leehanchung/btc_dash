@@ -5,12 +5,12 @@ from datetime import datetime
 import pandas as pd
 import requests
 
-from btc_predictor.datasets import DataReadingError
+from btc_predictor.datasets import BaseDataset, DataReadingError
 
 _logger = logging.getLogger(__name__)
 
 
-class DataReader:
+class DataReader(BaseDataset):
     """Load either 1 minute data with no header and columns representing
     [posix_timestamp, price, volumne in btc] in parquet format or daily
     btcusd data with header in csv format.
@@ -55,21 +55,8 @@ class DataReader:
         data.set_index("Date", inplace=True)
         return data
 
-    @property
-    def pd(self) -> pd.DataFrame:
-        """Returns the dataset in pandas dataframe format
 
-        Args:
-            None
-
-        Returns:
-            Pandas dataframe containing data in the parquet file
-
-        """
-        return self.data
-
-
-class BitfinexCandlesAPI:
+class BitfinexCandlesAPIData(BaseDataset):
     def __init__(
         self,
         *,
@@ -89,7 +76,7 @@ class BitfinexCandlesAPI:
         self.data = None
 
     def load(
-        self, start_time: int = 1610000000000, limit: int = 10000
+        self, *, start_time: int = 1610000000000, limit: int = 10000
     ) -> None:
         """Loads data from Bitfinex Candles API given an Unix timestamp[ms].
         Currently Bitfinex limits number of candle requested to 10,000, so
@@ -121,16 +108,3 @@ class BitfinexCandlesAPI:
         data["timestamp"] = pd.to_datetime(data["timestamp"], unit="ms")
 
         self.data = data
-
-    @property
-    def pd(self) -> pd.DataFrame:
-        """Returns the dataset in pandas dataframe format
-
-        Args:
-            None
-
-        Returns:
-            Pandas dataframe containing data in the parquet file
-
-        """
-        return self.data

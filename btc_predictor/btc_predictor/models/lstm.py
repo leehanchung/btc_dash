@@ -1,12 +1,12 @@
 import json
 import logging
-from typing import Any, Dict, Tuple, Union
+from typing import Any, Dict, Tuple
 
 import numpy as np
 import pandas as pd
 import tensorflow as tf
 
-from btc_predictor.datasets import BitfinexCandlesAPI, DataReader, util
+from btc_predictor.datasets import BaseDataset, util
 from btc_predictor.models import (
     BasePredictor,
     ModelLoadingError,
@@ -56,7 +56,7 @@ class LSTMBTCPredictor(BasePredictor):
         for arg, value in train_args.items():
             setattr(self, arg, value)
 
-    def train(self, *, data: Union[DataReader, BitfinexCandlesAPI]) -> None:
+    def train(self, *, data: BaseDataset) -> None:
         """Function that accept input training data and train the model
 
         Args:
@@ -117,9 +117,7 @@ class LSTMBTCPredictor(BasePredictor):
 
         return None
 
-    def eval(
-        self, *, data: Union[DataReader, BitfinexCandlesAPI]
-    ) -> Tuple[float, float, float]:
+    def eval(self, *, data: BaseDataset) -> Tuple[float, float, float]:
         """Function that accept input training data and train the model
 
         Args:
@@ -235,6 +233,7 @@ class LSTMBTCPredictor(BasePredictor):
         Returns:
             np.ndarray: log return numpy array.
         """
+        _logger.info(f"{type(df)}")
         df["log_ret"] = np.log(df["close"]) - np.log(df["close"].shift(1))
         df.dropna(inplace=True)
         return np.diff(df["log_ret"].to_numpy()).astype("float32")
