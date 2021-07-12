@@ -153,12 +153,16 @@ class LSTMBTCPredictor(BasePredictor):
             test_y_pred = np.append(test_y_pred, self.model.predict(x)[0])
 
         skip_num_index = self.VAL_SIZE + self.TRAIN_SIZE
+        eval_df = df.iloc[skip_num_index:, :][:46]
+        true_close = eval_df['close'].to_numpy()
+        # true_log_ret = eval_df['log_ret'].to_numpy()##np.log(eval_df["close"]) - np.log(eval_df["close"].shift(1))
+        # true_log_ret_diff = eval_df['np.diff(df["log_ret"].to_numpy()).astype("float16")
         # Logging code to print out how the fuck things line up.
-        _logger.info(
-            "df:\n" f"{df.iloc[skip_num_index:, :]['close'].to_numpy()[:46]}"
-        )
+        _logger.info(f"eval_df:\n{eval_df}")
+        # _logger.info(f"true_close:\n{true_close}")
+        # _logger.info(f"log_ret:\n{true_log_ret}")
+        # _logger.info(f"log_ret_diff:\n{true_log_ret_diff}")
         _logger.info(f"ts_true:\n{test[:45]}")
-        _logger.info(f"ts_true len:\n{len(time_series_data)}")
         _logger.info(f"ts_true len:\n{len(test)}")
         _logger.info(f"y_true:\n{test_y_true}")
         _logger.info(f"y_pred:\n{test_y_pred}")
@@ -246,7 +250,8 @@ class LSTMBTCPredictor(BasePredictor):
         """
         df["log_ret"] = np.log(df["close"]) - np.log(df["close"].shift(1))
         df.dropna(inplace=True)
-        return np.diff(df["log_ret"].to_numpy()).astype("float16")
+        df['log_ret_diff'] = df["log_ret"].diff()
+        return df['log_ret_diff'].to_numpy().astype("float16")
 
     def _postproc(self, *, data: pd.DataFrame) -> float:
         raise NotImplementedError
