@@ -1,9 +1,9 @@
 # flake8: noqa
-from .arima import stepwise_arima
 from .base import (
     BasePredictor,
     ModelLoadingError,
     ModelSavingError,
     ModelTrainingError,
 )
-from .lstm import LSTMBTCPredictor, LSTMModel
+from .lstm import LSTMBTCPredictor
+from .pmdarima import ARIMABTCPredictor

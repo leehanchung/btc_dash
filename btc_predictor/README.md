@@ -1,5 +1,16 @@
 # BTC Dash Machine Learning
 
+# Predictor Design
+
+To support multiple different sources of data and multiple different ways of modeling, we designed  two template classes: BaseDataset and BasePredictor.
+
+We extend BaseDataset template for a particular data source and use start_time, end_time, and resolution to characterize the data.
+
+Modeling can be done using any modeling library of choice.
+
+We then uses the BasePredictor template to bridge models and data together. The BasePredictors have the basic `train`, `eval`, `predict`, `load`, and `save` methods.
+
+# Deployment
 We deploy BTC Predictor machine learning model to AWS Lambda via AWS SAM CLI.
 
 To deploy the Lambda function using SAM CLI:
@@ -31,5 +42,4 @@ aws cloudformation delete-stack --stack-name Btc-Dash-BTCPredictorFunctionAndApi
 ```
 
 # Reference
-[Cookiecutter AWS SAM Python](https://github.com/aws-samples/cookiecutter-aws-sam-python/tree/master/%7B%7B%20cookiecutter.project_name%20%7D%7D)
 [SAM Deploy](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-deploy.html)
