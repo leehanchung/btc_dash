@@ -147,11 +147,22 @@ class LSTMBTCPredictor(BasePredictor):
         test_y_true = np.array([])
         test_y_pred = np.array([])
         for x, y in test_tfds.take(self.WALK_FORWARD):
+            # _logger.info(f"x: {x}")
+            # _logger.info(f"y: {y}")
             test_y_true = np.append(test_y_true, y[0].numpy())
             test_y_pred = np.append(test_y_pred, self.model.predict(x)[0])
 
-        _logger.info(f"{test_y_true}")
-        _logger.info(f"{test_y_pred}")
+        skip_num_index = self.VAL_SIZE + self.TRAIN_SIZE
+        # Logging code to print out how the fuck things line up.
+        _logger.info(
+            "df:\n" f"{df.iloc[skip_num_index:, :]['close'].to_numpy()[:46]}"
+        )
+        _logger.info(f"ts_true:\n{test[:45]}")
+        _logger.info(f"ts_true len:\n{len(time_series_data)}")
+        _logger.info(f"ts_true len:\n{len(test)}")
+        _logger.info(f"y_true:\n{test_y_true}")
+        _logger.info(f"y_pred:\n{test_y_pred}")
+
         rmse, dir_acc, mda = calculate_metrics(
             y_true=test_y_true, y_pred=test_y_pred
         )
@@ -235,7 +246,7 @@ class LSTMBTCPredictor(BasePredictor):
         """
         df["log_ret"] = np.log(df["close"]) - np.log(df["close"].shift(1))
         df.dropna(inplace=True)
-        return np.diff(df["log_ret"].to_numpy()).astype("float32")
+        return np.diff(df["log_ret"].to_numpy()).astype("float16")
 
     def _postproc(self, *, data: pd.DataFrame) -> float:
         raise NotImplementedError
