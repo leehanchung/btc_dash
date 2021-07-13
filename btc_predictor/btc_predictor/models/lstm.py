@@ -82,12 +82,13 @@ class LSTMBTCPredictor(BasePredictor):
         self.name = f"lstm_{self.start_time}_{self.end_time}_{self.resolution}"
 
         time_series_data = self._preproc(df=data.pd)
-
+        
         train = time_series_data[: self.TRAIN_SIZE]
         val = time_series_data[
             self.TRAIN_SIZE : self.VAL_SIZE + self.TRAIN_SIZE
         ]
-
+        _logger.info(f"train first 20: {train[:20]}")
+        _logger.info(f"val first 20: {val[:20]}")
         train_tfds = util.create_tfds_from_np(
             data=train,
             window_size=self.WINDOW_SIZE,
@@ -134,8 +135,6 @@ class LSTMBTCPredictor(BasePredictor):
 
         time_series_data = self._preproc(df=df)
 
-        _logger.info(f"original data: {df['close'].to_numpy()}")
-        _logger.info(f"ts data: {time_series_data}")
         test = time_series_data[self.VAL_SIZE + self.TRAIN_SIZE :]
         test_tfds = util.create_tfds_from_np(
             data=test,
@@ -147,8 +146,6 @@ class LSTMBTCPredictor(BasePredictor):
         test_y_true = np.array([])
         test_y_pred = np.array([])
         for x, y in test_tfds.take(self.WALK_FORWARD):
-            # _logger.info(f"x: {x}")
-            # _logger.info(f"y: {y}")
             test_y_true = np.append(test_y_true, y[0].numpy())
             test_y_pred = np.append(test_y_pred, self.model.predict(x)[0])
 
@@ -249,8 +246,8 @@ class LSTMBTCPredictor(BasePredictor):
             np.ndarray: log return numpy array.
         """
         df["log_ret"] = np.log(df["close"]) - np.log(df["close"].shift(1))
-        df.dropna(inplace=True)
         df['log_ret_diff'] = df["log_ret"].diff()
+        df.dropna(inplace=True)
         return df['log_ret_diff'].to_numpy().astype("float16")
 
     def _postproc(self, *, data: pd.DataFrame) -> float:

@@ -21,11 +21,11 @@ model_params = {
 }
 
 train_params = {
-    "TRAIN_SIZE": 1680,
-    "VAL_SIZE": 180,
-    "WINDOW_SIZE": 16,
+    "TRAIN_SIZE": 5000,
+    "VAL_SIZE": 1000,
+    "WINDOW_SIZE": 20,
     "BATCH_SIZE": 256,
-    "EPOCHS": 1,
+    "EPOCHS": 20,
     "EVALUATION_INTERVAL": 64,
     "VALIDATION_STEPS": 64,
     "WALK_FORWARD": 30,
@@ -39,19 +39,19 @@ def train():
     candles = BitfinexCandlesAPIData()
     candles.load(start_time=1610000000000)
 
-    # btc_predictor = LSTMBTCPredictor(
-    #     model_args=model_params,
-    #     train_args=train_params
-    # )
+    btc_predictor = LSTMBTCPredictor(
+        model_args=model_params,
+        train_args=train_params
+    )
 
-    # btc_predictor.train(data=candles)
-    # rmse, dir_acc, mean_dir_acc = btc_predictor.eval(data=candles)
-    # logger.info(f"RMSE {rmse}")
-    # logger.info(f"Directional accuracy: {dir_acc}")
-    # logger.info(f"Mean directional accuracy {mean_dir_acc}")
+    btc_predictor.train(data=candles)
+    rmse, dir_acc, mean_dir_acc = btc_predictor.eval(data=candles)
+    logger.info(f"RMSE {rmse}")
+    logger.info(f"Directional accuracy: {dir_acc}")
+    logger.info(f"Mean directional accuracy {mean_dir_acc}")
     
-    # logger.info(f"Saving model {btc_predictor.name}...")
-    # btc_predictor.save()
+    logger.info(f"Saving model {btc_predictor.name}...")
+    btc_predictor.save()
 
     logger.info("Loading model...")
     model = LSTMBTCPredictor(
