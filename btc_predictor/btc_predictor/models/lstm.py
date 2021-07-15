@@ -42,8 +42,7 @@ class LSTMModel(tf.keras.Model):
         x = self.dropout(x)
         x = self.lstm_hidden(x)
         x = self.dropout(x)
-        out = self.dense(x)
-        return out
+        return self.dense(x)
 
 
 class LSTMBTCPredictor(BasePredictor):
@@ -82,7 +81,7 @@ class LSTMBTCPredictor(BasePredictor):
         self.name = f"lstm_{self.start_time}_{self.end_time}_{self.resolution}"
 
         time_series_data = self._preproc(df=data.pd)
-        
+
         train = time_series_data[: self.TRAIN_SIZE]
         val = time_series_data[
             self.TRAIN_SIZE : self.VAL_SIZE + self.TRAIN_SIZE
@@ -151,14 +150,14 @@ class LSTMBTCPredictor(BasePredictor):
 
         skip_num_index = self.VAL_SIZE + self.TRAIN_SIZE
         eval_df = df.iloc[skip_num_index:, :][:46]
-        true_close = eval_df['close'].to_numpy()
-        # true_log_ret = eval_df['log_ret'].to_numpy()##np.log(eval_df["close"]) - np.log(eval_df["close"].shift(1))
-        # true_log_ret_diff = eval_df['np.diff(df["log_ret"].to_numpy()).astype("float16")
+        true_close = eval_df["close"].to_numpy()
+        true_log_ret = eval_df["log_ret"].to_numpy()
+        true_log_ret_diff = eval_df["log_ret_diff"].to_numpy()
         # Logging code to print out how the fuck things line up.
         _logger.info(f"eval_df:\n{eval_df}")
-        # _logger.info(f"true_close:\n{true_close}")
-        # _logger.info(f"log_ret:\n{true_log_ret}")
-        # _logger.info(f"log_ret_diff:\n{true_log_ret_diff}")
+        _logger.info(f"true_close:\n{true_close}")
+        _logger.info(f"log_ret:\n{true_log_ret}")
+        _logger.info(f"log_ret_diff:\n{true_log_ret_diff}")
         _logger.info(f"ts_true:\n{test[:45]}")
         _logger.info(f"ts_true len:\n{len(test)}")
         _logger.info(f"y_true:\n{test_y_true}")
@@ -206,7 +205,7 @@ class LSTMBTCPredictor(BasePredictor):
                 attrs.pop("model", None)
                 attrs.pop("history", None)
                 json.dump(self.__dict__, f)
-        except (OSError, FileNotFoundError, TypeError, Exception):
+        except (OSError, TypeError, Exception):
             raise ModelSavingError("Problem saving model wrapper attributes.")
 
     def load(self, *, model_filename: str) -> None:
@@ -226,7 +225,7 @@ class LSTMBTCPredictor(BasePredictor):
                 attrs = json.load(f)
                 for attr, value in attrs.items():
                     setattr(self, attr, value)
-        except (OSError, FileNotFoundError, TypeError, Exception):
+        except (OSError, TypeError, Exception):
             raise ModelLoadingError(
                 "Problem loading model wrapper attributes."
             )
@@ -246,9 +245,9 @@ class LSTMBTCPredictor(BasePredictor):
             np.ndarray: log return numpy array.
         """
         df["log_ret"] = np.log(df["close"]) - np.log(df["close"].shift(1))
-        df['log_ret_diff'] = df["log_ret"].diff()
+        df["log_ret_diff"] = df["log_ret"].diff()
         df.dropna(inplace=True)
-        return df['log_ret_diff'].to_numpy().astype("float16")
+        return df["log_ret_diff"].to_numpy().astype("float16")
 
     def _postproc(self, *, data: pd.DataFrame) -> float:
         raise NotImplementedError

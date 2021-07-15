@@ -11,7 +11,6 @@ from btc_predictor.models import LSTMBTCPredictor
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging_config.get_console_handler())
-logger.propagate = True
 
 
 model_params = {
@@ -23,7 +22,7 @@ model_params = {
 train_params = {
     "TRAIN_SIZE": 5000,
     "VAL_SIZE": 1000,
-    "WINDOW_SIZE": 20,
+    "WINDOW_SIZE": 16,
     "BATCH_SIZE": 256,
     "EPOCHS": 20,
     "EVALUATION_INTERVAL": 64,
@@ -39,19 +38,19 @@ def train():
     candles = BitfinexCandlesAPIData()
     candles.load(start_time=1610000000000)
 
-    btc_predictor = LSTMBTCPredictor(
-        model_args=model_params,
-        train_args=train_params
-    )
+    # btc_predictor = LSTMBTCPredictor(
+    #     model_args=model_params,
+    #     train_args=train_params
+    # )
 
-    btc_predictor.train(data=candles)
-    rmse, dir_acc, mean_dir_acc = btc_predictor.eval(data=candles)
-    logger.info(f"RMSE {rmse}")
-    logger.info(f"Directional accuracy: {dir_acc}")
-    logger.info(f"Mean directional accuracy {mean_dir_acc}")
+    # btc_predictor.train(data=candles)
+    # rmse, dir_acc, mean_dir_acc = btc_predictor.eval(data=candles)
+    # logger.info(f"RMSE {rmse}")
+    # logger.info(f"Directional accuracy: {dir_acc}")
+    # logger.info(f"Mean directional accuracy {mean_dir_acc}")
     
-    logger.info(f"Saving model {btc_predictor.name}...")
-    btc_predictor.save()
+    # logger.info(f"Saving model {btc_predictor.name}...")
+    # btc_predictor.save()
 
     logger.info("Loading model...")
     model = LSTMBTCPredictor(

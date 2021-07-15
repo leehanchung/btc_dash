@@ -7,7 +7,6 @@ verify_ssl = true
 pytest = "*"
 black = "*"
 flake8 = "*"
-jupyter = "*"
 coverage = "*"
 coveralls = "*"
 ipykernel = "*"
