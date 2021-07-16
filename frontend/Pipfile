@@ -12,18 +12,20 @@ coveralls = "*"
 
 [packages]
 category-encoders = "==2.2.2"
-dash = "==1.11.0"
+dash = "==1.20.0"
 gunicorn = "==20.0.4"
 numpy = "==1.18.3"
 pandas = "==1.0.3"
-plotly = "==4.6.0"
+plotly = "==4.14.3"
 plotly-express = "==0.4.1"
 scikit-learn = "==0.22.2"
 statsmodels = "==0.11.1"
-Flask = "==1.1.1"
+Flask = "==2.0.0"
 python-dotenv = "*"
 dash-bootstrap-components = "*"
 websocket-client = "*"
+requests = "*"
+dash-extensions = "*"
 
 [requires]
 python_version = "3.7"

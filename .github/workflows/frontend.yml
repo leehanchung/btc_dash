@@ -1,4 +1,4 @@
-name: build_frontend
+name: Build Frontend Plotly Dash
 
 on: 
   pull_request:
@@ -11,8 +11,8 @@ on:
     - 'frontend/**'
 
 defaults:
-    run:
-      working-directory: frontend
+  run:
+    working-directory: ./frontend
 
 jobs:
   build:
@@ -24,7 +24,7 @@ jobs:
     - name: STEP 1. Check out repo
       uses: actions/checkout@v2
     #===============================================#
-    - name: STEP 2. Set up Python
+    - name: STEP 2. Set up Python 3.7
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}

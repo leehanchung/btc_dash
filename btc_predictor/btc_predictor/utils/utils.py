@@ -1,11 +1,11 @@
-from typing import List, Tuple
 import datetime as dt
+from typing import List, Tuple
 
-import pandas as pd
+import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from sklearn.metrics import accuracy_score, mean_squared_error
 from tensorflow.python.keras.callbacks import History
-import matplotlib.pyplot as plt
 
 
 def plot_train_history(*, history: History, title: str) -> plt:
@@ -106,7 +106,7 @@ def flatten_values(*, series: pd.Series) -> pd.Series:
     Returns:
         pd.Series: flattened series
     """
-    if isinstance(series, pd.Series) or isinstance(series, pd.DataFrame):
+    if isinstance(series, (pd.Series, pd.DataFrame)):
         return series.values.ravel()
     return series
 
@@ -219,8 +219,8 @@ def cv_score(
 ):
     if scoring not in ["neg_log_loss", "accuracy"]:
         raise Exception("wrong scoring method.")
-    from sklearn.metrics import log_loss
     from clfSequential import PurgedKFold  # ???????
+    from sklearn.metrics import log_loss
 
     if cvGen is None:
         cvGen = PurgedKFold(
@@ -253,8 +253,7 @@ def cv_score(
 
 
 def get_current_time():
-    """ Helper function to get the current time in seconds. """
+    """Helper function to get the current time in seconds."""
 
     now = dt.datetime.now()
-    total_time = (now.hour * 3600) + (now.minute * 60) + (now.second)
-    return total_time
+    return (now.hour * 3600) + (now.minute * 60) + (now.second)

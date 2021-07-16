@@ -3,10 +3,16 @@
 # environment variable in Windows by $Env:FLASK_APP="btc_dash:app" and then
 # execute 'flask run' from command line.
 ###############################################################################
-from btc_dash.config import PACKAGE_ROOT, config
+import logging
+
+from btc_dash.config import PACKAGE_ROOT, config, get_console_handler
 from btc_dash.flask_server import create_flask_server
 from btc_dash.dash_app import create_dash_app
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+logger.addHandler(get_console_handler())
+logger.propagate = False
 
 with open(PACKAGE_ROOT / "VERSION") as version_file:
     __version__ = version_file.read().strip()

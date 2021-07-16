@@ -56,7 +56,7 @@ def register_confusion_callback(app: Dash):
             if len(cm) == 0 or len(cm) == 1:
                 cm = [[1, 1], [1, 1]]
 
-            cm = np.array(cm) / p
+            cm = np.array(cm) / (p + 0.000000001)
         else:
             cm = confusion_matrix(
                 np.sign(df.log_ret.tail(30).values),

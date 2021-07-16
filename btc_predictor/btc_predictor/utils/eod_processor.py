@@ -1,19 +1,20 @@
-from pathlib import PurePath, Path
-import sys
 import shutil
+import sys
+from pathlib import Path, PurePath
 
-## get project dir
+import logzero
+import pandas as pd
+from logzero import logger
+
+# get project dir
 pdir = PurePath("/YOUR/DIRECTORY/iex_intraday_equity_downloader")
 data_dir = pdir / "data"
 script_dir = pdir / "src" / "data"
 sys.path.append(script_dir.as_posix())
 
-import pandas as pd
 
 pd.options.display.float_format = "{:,.4f}".format
 
-import logzero
-from logzero import logger
 
 # =============================================================================
 # get current timestamp
@@ -21,15 +22,14 @@ from logzero import logger
 now = pd.to_datetime("today")
 
 # =============================================================================
-## setup logger
+# setup logger
 
-logfile = PurePath(
-    pdir
-    / "logs"
-    / "equity_downloader_logs"
-    / f"iex_downloader_log_{now.date()}.log"
-).as_posix()
-log_format = "%(color)s[%(levelname)1.1s %(asctime)s.%(msecs)03d %(module)s:%(lineno)d]%(end_color)s %(message)s"
+log_dir = pdir / "logs" / "equity" / f"iex_downloader_log_{now.date()}.log"
+logfile = PurePath(log_dir).as_posix()
+log_format = (
+    "%(color)s[%(levelname)1.1s %(asctime)s.%(msecs)03d"
+    "%(module)s:%(lineno)d]%(end_color)s %(message)s"
+)
 formatter = logzero.LogFormatter(fmt=log_format, datefmt="%Y-%m-%d %I:%M:%S")
 logzero.setup_default_logger(logfile=logfile, formatter=formatter)
 
@@ -49,12 +49,8 @@ try:
     logger.info(
         "storing all intraday data for today as compressed parquet file..."
     )
-    outfp = PurePath(
-        data_dir
-        / "processed"
-        / "intraday_store"
-        / f"etf_intraday_data_{now.date()}.parq"
-    )
+    pq_dir = data_dir / "processed" / "intraday" / f"etf_{now.date()}.parq"
+    outfp = PurePath(pq_dir)
     df.to_parquet(outfp, engine="fastparquet")
 
     # ==========================================================================

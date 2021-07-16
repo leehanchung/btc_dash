@@ -1,4 +1,5 @@
 import json
+import logging
 import threading
 from typing import List, Union
 
@@ -6,6 +7,9 @@ import pandas as pd
 import requests
 
 from websocket import create_connection, WebSocket
+
+
+_logger = logging.getLogger(__name__)
 
 
 class BitfinexSocketManager(threading.Thread):
@@ -121,7 +125,13 @@ def bitfinex_candles_api(
     data = sorted(data, key=lambda x: x[0])
     df = pd.DataFrame(data, columns=columns)
     df["Timestamp"] = pd.to_datetime(df["Timestamp"], unit="ms")
-    df.set_index("Timestamp", inplace=True)
+    df = df.set_index("Timestamp")
+    # TODO: tried to set Timestamp index frequency, but somehow getting
+    # another row of data. Breaking all the Dash callbacks. Fuck.
+    #
+    # df = df.reset_index(drop=True)
+    # df = df.set_index("Timestamp").asfreq("T")
+    # print(df.shape)
     del response, data
 
     return df

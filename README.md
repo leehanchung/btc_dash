@@ -1,10 +1,10 @@
 # BTCDash: A Bitcoin Price Prediction Dashboard
-[![Python 3.7](https://img.shields.io/badge/python-3.7.4-blue.svg)](https://www.python.org/downloads/release/python-374/)
-[![Flask 1.11](https://img.shields.io/badge/flask-1.1.1-blue.svg)](https://flask.palletsprojects.com/en/1.1.x/)
-[![Dash 1.11](https://img.shields.io/badge/dash-1.11.0-blue.svg)](https://github.com/plotly/dash/)
-[![Plotly 1.11](https://img.shields.io/badge/plotly-4.6.0-blue.svg)](https://github.com/plotly/plotly.py)
-[![Tensorflow 2.2.0](https://img.shields.io/badge/tensorflow-2.2.0-blue.svg)](https://github.com/tensorflow/tensorflow)
-[![pandas 1.0.3](https://img.shields.io/badge/pandas-1.0.3-blue.svg)](https://github.com/pandas-dev/pandas)
+[![Python 3.7.4](https://img.shields.io/badge/python-3.7.4-blue.svg)](https://www.python.org/downloads/release/python-374/)
+[![Flask 2.00](https://img.shields.io/badge/flask-2.0.0-blue.svg)](https://flask.palletsprojects.com/en/1.1.x/)
+[![Dash 1.20](https://img.shields.io/badge/dash-1.20.0-blue.svg)](https://github.com/plotly/dash/)
+[![Plotly 4.14](https://img.shields.io/badge/plotly-4.14.3-blue.svg)](https://github.com/plotly/plotly.py)
+[![Tensorflow 2.5.0](https://img.shields.io/badge/tensorflow-2.5.0-blue.svg)](https://github.com/tensorflow/tensorflow)
+[![pandas 1.2.4](https://img.shields.io/badge/pandas-1.2.4-blue.svg)](https://github.com/pandas-dev/pandas)
 [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
 [![CodeFactor](https://www.codefactor.io/repository/github/leehanchung/btc_dash/badge)](https://www.codefactor.io/repository/github/leehanchung/btc_dash)
 [![Coverage Status](https://coveralls.io/repos/github/leehanchung/btc_dash/badge.svg?branch=master)](https://coveralls.io/github/leehanchung/btc_dash?branch=master)
@@ -24,7 +24,12 @@ BTCDash includes a real time pseudo live prediction update chart as follows:
 - Momentum gauge using Relative Strength Indicator
 - Directional prediction confusion metrics
 
-![alt text](frontend/btc_dash/assets/btcdash1.gif)
+![demo](frontend/btc_dash/assets/btcdash1.gif)
+
+## Infrastructure
+:construction:
+
+![infra](docs/btc_dash.png)
 
 ## Statistics
 

@@ -5,18 +5,6 @@ import plotly.graph_objs as go
 
 from btc_dash import config
 
-# set interval at 5000ms, or 5s. need 5s for everything to render.
-# 8/1/19: prediction line skipping back and forth different time periods.
-#         change to 10s to give heroku ample time for compute. at 13s heroku
-#         still slows down dramaticall causing lines to jump back and forth.
-GRAPH_INTERVAL = config.GRAPH_INTERVAL
-app_color = config.app_color
-
-"""
-pred output df. Ideally this should go to some dB instead of being on this app.
-"""
-# df_pred = pd.DataFrame(columns=["pred_log_ret", "pred_Close"])
-
 
 """
 Layout. One rows and two columns. First column is 8 width and contains the OHLC
@@ -29,6 +17,8 @@ invoked at every interval as defined in GRAPH_INTERVAL. Interval will invoke
 callback to plot OHLC chart, which will in term invoke callback to plot the
 other charts.
 """
+app_color = config.app_color
+
 column1 = dbc.Col(
     [
         # OHLC Chart
@@ -51,7 +41,7 @@ column1 = dbc.Col(
         ),
         dcc.Interval(
             id="btcusd-ohlcv-update",
-            interval=int(GRAPH_INTERVAL),
+            interval=config.GRAPH_INTERVAL,
             n_intervals=0,
         ),
     ],

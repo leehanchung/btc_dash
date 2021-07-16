@@ -3,7 +3,11 @@ from urllib.parse import urlparse
 from flask import Blueprint, render_template, make_response, request
 
 
-sitemap = Blueprint("sitemap", __name__, template_folder="templates",)
+sitemap = Blueprint(
+    "sitemap",
+    __name__,
+    template_folder="templates",
+)
 
 
 @sitemap.route("/sitemap")

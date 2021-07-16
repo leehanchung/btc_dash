@@ -1,42 +1,36 @@
-from typing import Tuple, Dict, Any
+import json
+import logging
+from typing import Any, Dict, Tuple
+
 import numpy as np
+import pandas as pd
 import tensorflow as tf
-from btc_predictor.models import BaseModel, ModelSavingError
-from btc_predictor.datasets import DataReader
+from hydra.core.hydra_config import HydraConfig
+from hydra.utils import get_original_cwd
+
+from btc_predictor.datasets import BaseDataset, util
+from btc_predictor.models import (
+    BasePredictor,
+    ModelLoadingError,
+    ModelSavingError,
+    ModelTrainingError,
+)
 from btc_predictor.utils import calculate_metrics
 
+_logger = logging.getLogger(__name__)
 
-class LSTM_Model(tf.keras.Model):
-    """Two layer LSTM model using Tensorflow API. Can either be compiled
-    using Keras API or using tf.GradientTape() to train. This is
-    equivalent to Keras Functional API:
 
-        inputs = Input(shape=input_shape)
-        x = tf.keras.layers.LSTM(128, return_sequences=True)(inputs)
-        x = tf.keras.layers.Dropout(0.4)(x)
-        x = tf.keras.layers.LSTM(64)(x)
-        outputs = tf.keras.layers.Dense(1)(x)
-
-        simple_lstm_model = Model(inputs=inputs,
-                                  outputs=outputs,
-                                  name="univariate_lstm")
-
-    Or, Keras Sequential API:
-        simple_lstm_model = tf.keras.models.Sequential([
-            tf.keras.layers.LSTM(128,
-                                 input_shape=input_shape,
-                                 return_sequences=True),
-            tf.keras.layers.Dropout(0.4),
-            tf.keras.layers.LSTM(64),
-            tf.keras.layers.Dropout(0.4),
-            tf.keras.layers.Dense(1)
-        ])
-    """
+class LSTMModel(tf.keras.Model):
+    """LSTM Model for univariate time series prediction"""
 
     def __init__(
         self, *, input_shape: Tuple[int, int], dropout: float, num_forward: int
     ):
-        super(LSTM_Model, self).__init__()
+        super(LSTMModel, self).__init__()
+        _logger.info(
+            f"\ninput_shape {input_shape}\ndropout: {dropout}\n"
+            f"num_forward: {num_forward}"
+        )
         self.lstm_input = tf.keras.layers.LSTM(
             128, input_shape=input_shape, return_sequences=True
         )
@@ -50,25 +44,20 @@ class LSTM_Model(tf.keras.Model):
         x = self.dropout(x)
         x = self.lstm_hidden(x)
         x = self.dropout(x)
-        out = self.dense(x)
-        return out
+        return self.dense(x)
 
 
-class LSTMModel(BaseModel):
-    """LSTM_Model wrapped in BaseModel API
-    """
-
-    RANDOM_SEED = 78
+class LSTMBTCPredictor(BasePredictor):
+    """Predictor Wrapper that predicts, trains, save and load LSTM models"""
 
     def __init__(self, *, model_args: Dict = None, train_args: Dict = None):
-        super().__init__(model_args=model_args, train_args=train_args)
+        self.model = None
+        self.model_args = model_args
 
-        self.model = LSTM_Model(**model_args)
+        for arg, value in train_args.items():
+            setattr(self, arg, value)
 
-        for variable, value in train_args.items():
-            setattr(self, variable, value)
-
-    def fit(self, *, data: DataReader) -> None:
+    def train(self, *, data: BaseDataset) -> None:
         """Function that accept input training data and train the model
 
         Args:
@@ -79,34 +68,45 @@ class LSTMModel(BaseModel):
         Returns:
             None
         """
+
+        if self.model:
+            raise ModelTrainingError("Model already trained.")
+
+        self.model = LSTMModel(**self.model_args)
+
         # load data
         df = data.pd
-        self.name = f"lstm_{data.__name__.split('/')[-1].split('.')[0]}"
-        df["log_ret"] = np.log(df.Close) - np.log(df.Close.shift(1))
-        df.dropna(inplace=True)
 
-        # preprocess
-        time_series_data = np.diff(df["log_ret"].to_numpy()).astype("float32")
+        self.start_time = data.start_time
+        self.end_time = data.end_time
+        self.resolution = data.resolution
+        self.name = f"lstm_{self.start_time}_{self.end_time}_{self.resolution}"
+
+        time_series_data = self._preproc(df=data.pd)
+
         train = time_series_data[: self.TRAIN_SIZE]
         val = time_series_data[
             self.TRAIN_SIZE : self.VAL_SIZE + self.TRAIN_SIZE
         ]
-
-        train_tfds = data.create_tfds_from_np(
+        _logger.info(f"train first 20: {train[:20]}")
+        _logger.info(f"val first 20: {val[:20]}")
+        train_tfds = util.create_tfds_from_np(
             data=train,
             window_size=self.WINDOW_SIZE,
             batch_size=self.BATCH_SIZE,
         )
-        val_tfds = data.create_tfds_from_np(
-            data=val, window_size=self.WINDOW_SIZE, batch_size=self.BATCH_SIZE,
+        val_tfds = util.create_tfds_from_np(
+            data=val,
+            window_size=self.WINDOW_SIZE,
+            batch_size=self.BATCH_SIZE,
         )
-        print(f"Total daily data: {df.shape[0]} days")
+        _logger.info(f"Total {self.resolution} data: {df.shape[0]}")
 
         self.model.compile(
-            optimizer="adam", loss="mse",
+            optimizer="adam",
+            loss="mse",
         )
 
-        # train_history = lstm_model.fit(
         train_history = self.model.fit(
             train_tfds,
             epochs=self.EPOCHS,
@@ -119,7 +119,7 @@ class LSTMModel(BaseModel):
 
         return None
 
-    def eval(self, *, data: DataReader) -> Tuple[float, float, float]:
+    def eval(self, *, data: BaseDataset) -> Tuple[float, float, float]:
         """Function that accept input training data and train the model
 
         Args:
@@ -134,13 +134,13 @@ class LSTMModel(BaseModel):
         # load data
         df = data.pd
 
-        # preprocess
-        df["log_ret"] = np.log(df.Close) - np.log(df.Close.shift(1))
-        df.dropna(inplace=True)
-        time_series_data = np.diff(df["log_ret"].to_numpy()).astype("float32")
+        time_series_data = self._preproc(df=df)
+
         test = time_series_data[self.VAL_SIZE + self.TRAIN_SIZE :]
-        test_tfds = data.create_tfds_from_np(
-            data=test, window_size=self.WINDOW_SIZE, batch_size=1,
+        test_tfds = util.create_tfds_from_np(
+            data=test,
+            window_size=self.WINDOW_SIZE,
+            batch_size=1,
         )
 
         # evaluate
@@ -149,6 +149,21 @@ class LSTMModel(BaseModel):
         for x, y in test_tfds.take(self.WALK_FORWARD):
             test_y_true = np.append(test_y_true, y[0].numpy())
             test_y_pred = np.append(test_y_pred, self.model.predict(x)[0])
+
+        skip_num_index = self.VAL_SIZE + self.TRAIN_SIZE
+        eval_df = df.iloc[skip_num_index:, :][:46]
+        true_close = eval_df["close"].to_numpy()
+        true_log_ret = eval_df["log_ret"].to_numpy()
+        true_log_ret_diff = eval_df["log_ret_diff"].to_numpy()
+        # Logging code to print out how the fuck things line up.
+        _logger.info(f"eval_df:\n{eval_df}")
+        _logger.info(f"true_close:\n{true_close}")
+        _logger.info(f"log_ret:\n{true_log_ret}")
+        _logger.info(f"log_ret_diff:\n{true_log_ret_diff}")
+        _logger.info(f"ts_true:\n{test[:45]}")
+        _logger.info(f"ts_true len:\n{len(test)}")
+        _logger.info(f"y_true:\n{test_y_true}")
+        _logger.info(f"y_pred:\n{test_y_pred}")
 
         rmse, dir_acc, mda = calculate_metrics(
             y_true=test_y_true, y_pred=test_y_pred
@@ -169,21 +184,75 @@ class LSTMModel(BaseModel):
         """
         raise NotImplementedError
 
-    def save(self) -> bool:
-        """Function that saves a serialized model. Currently only TF is supported.
-        # TODO: extend for AWS S3 support
+    def save(self) -> None:
+        """Function that saves a serialized model.
 
         Args:
             None
 
         Returns:
-            bool: success of fail
+            None
         """
         if not self.name:
             raise ModelSavingError("Model not trained; aborting save.")
 
         try:
-            self.model.save(f"saved_model/{self.name}")
-        except ModelSavingError:
-            return False
-        return True
+            self.model.save(f"saved_model/{self.name}", save_format="tf")
+        except (ValueError, AttributeError):
+            raise ModelSavingError("Problem saving model weights.")
+
+        try:
+            with open(f"saved_model/{self.name}/model_attr.json", "w") as f:
+                attrs = self.__dict__
+                attrs.pop("model", None)
+                attrs.pop("history", None)
+                json.dump(self.__dict__, f)
+        except (OSError, TypeError, Exception):
+            raise ModelSavingError("Problem saving model wrapper attributes.")
+
+    def load(self, *, model_name: str) -> None:
+        """Function that saves a serialized model.
+
+        Args:
+            model_name[str]
+
+        Returns:
+            None
+        """
+        if not model_name or hasattr(self, "name"):
+            raise ModelLoadingError("Model name not specified")
+
+        try:
+            if HydraConfig.initialized():
+                model_name = get_original_cwd() + f"/{model_name}"
+
+            with open(f"{model_name}/model_attr.json", "r") as f:
+                attrs = json.load(f)
+                for attr, value in attrs.items():
+                    setattr(self, attr, value)
+        except (OSError, TypeError, Exception):
+            raise ModelLoadingError(
+                "Problem loading model wrapper attributes."
+            )
+
+        try:
+            self.model = tf.keras.models.load_model(model_name)
+        except (ValueError, AttributeError):
+            raise ModelLoadingError("Error loading Tensorflow Keras model.")
+
+    def _preproc(self, *, df: pd.DataFrame) -> np.ndarray:
+        """[summary]
+
+        Args:
+            data (pd.DataFrame): input dataframe containing 'close' field
+
+        Returns:
+            np.ndarray: log return numpy array.
+        """
+        df["log_ret"] = np.log(df["close"]) - np.log(df["close"].shift(1))
+        df["log_ret_diff"] = df["log_ret"].diff()
+        df.dropna(inplace=True)
+        return df["log_ret_diff"].to_numpy().astype("float16")
+
+    def _postproc(self, *, data: pd.DataFrame) -> float:
+        raise NotImplementedError
