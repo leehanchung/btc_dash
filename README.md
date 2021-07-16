@@ -27,7 +27,10 @@ BTCDash includes a real time pseudo live prediction update chart as follows:
 ![demo](frontend/btc_dash/assets/btcdash1.gif)
 
 ## Infrastructure
+:construction:
+
 ![infra](docs/btc_dash.png)
+
 ## Statistics
 
 We establish our baseline using the previous period log returns for RMSE and directional accurcy calculation. 

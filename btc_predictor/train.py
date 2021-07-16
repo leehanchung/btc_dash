@@ -1,15 +1,14 @@
 import logging
-import sys
+# import sys
 
-import numpy as np
-import tensorflow as tf
-import logging
+# import numpy as np
+# import tensorflow as tf
 
 import hydra
-from hydra.core.hydra_config import HydraConfig
-from hydra.utils import get_original_cwd
-import pandas as pd
+# from hydra.core.hydra_config import HydraConfig
+# from hydra.utils import get_original_cwd
 from omegaconf import DictConfig
+# import pandas as pd
 
 from btc_predictor.datasets import BitfinexCandlesAPIData
 from btc_predictor.models import LSTMBTCPredictor
@@ -32,6 +31,7 @@ train_params = {
     "VALIDATION_STEPS": 64,
     "WALK_FORWARD": 30,
 }
+
 
 @hydra.main(
     config_path="experiments",

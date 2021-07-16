@@ -2,11 +2,11 @@ import json
 import logging
 from typing import Any, Dict, Tuple
 
-from hydra.core.hydra_config import HydraConfig
-from hydra.utils import get_original_cwd
 import numpy as np
 import pandas as pd
 import tensorflow as tf
+from hydra.core.hydra_config import HydraConfig
+from hydra.utils import get_original_cwd
 
 from btc_predictor.datasets import BaseDataset, util
 from btc_predictor.models import (
