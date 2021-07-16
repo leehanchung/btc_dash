@@ -109,7 +109,7 @@ class BasePredictor(ABC):
         pass
 
     @abstractmethod
-    def load(self, *, model_filename: str) -> None:
+    def load(self, *, model_name: str) -> None:
         """Function that loads pretrained weights for making a prediction.
 
         Args:

@@ -2,6 +2,8 @@ import json
 import logging
 from typing import Any, Dict, Tuple
 
+from hydra.core.hydra_config import HydraConfig
+from hydra.utils import get_original_cwd
 import numpy as np
 import pandas as pd
 import tensorflow as tf
@@ -208,20 +210,23 @@ class LSTMBTCPredictor(BasePredictor):
         except (OSError, TypeError, Exception):
             raise ModelSavingError("Problem saving model wrapper attributes.")
 
-    def load(self, *, model_filename: str) -> None:
+    def load(self, *, model_name: str) -> None:
         """Function that saves a serialized model.
 
         Args:
-            model_filename[str]
+            model_name[str]
 
         Returns:
             None
         """
-        if not model_filename or hasattr(self, "name"):
+        if not model_name or hasattr(self, "name"):
             raise ModelLoadingError("Model name not specified")
 
         try:
-            with open(f"{model_filename}/model_attr.json", "r") as f:
+            if HydraConfig.initialized():
+                model_name = get_original_cwd() + f"/{model_name}"
+
+            with open(f"{model_name}/model_attr.json", "r") as f:
                 attrs = json.load(f)
                 for attr, value in attrs.items():
                     setattr(self, attr, value)
@@ -231,7 +236,7 @@ class LSTMBTCPredictor(BasePredictor):
             )
 
         try:
-            self.model = tf.keras.models.load_model(model_filename)
+            self.model = tf.keras.models.load_model(model_name)
         except (ValueError, AttributeError):
             raise ModelLoadingError("Error loading Tensorflow Keras model.")
 
