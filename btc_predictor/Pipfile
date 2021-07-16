@@ -20,7 +20,7 @@ python-dotenv = "*"
 tensorflow = "==2.5.0"
 pmdarima = "==1.8.2"
 hydra-core = "*"
-urllib3 = "==1.25.11"
+urllib3 = "==1.26.5"
 seaborn = "*"
 wandb = "*"
 
