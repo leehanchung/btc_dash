@@ -1,19 +1,16 @@
 import logging
-# import sys
-
-# import numpy as np
-# import tensorflow as tf
 
 import hydra
-# from hydra.core.hydra_config import HydraConfig
-# from hydra.utils import get_original_cwd
+import numpy as np
 from omegaconf import DictConfig
-# import pandas as pd
 
+# from btc_predictor.config import logging_config
 from btc_predictor.datasets import BitfinexCandlesAPIData
 from btc_predictor.models import LSTMBTCPredictor
 
+
 _logger = logging.getLogger(__name__)
+
 
 model_params = {
     "input_shape": (29, 1),
@@ -44,19 +41,19 @@ def train(params: DictConfig) -> None:
     candles = BitfinexCandlesAPIData()
     candles.load(start_time=1610000000000)
 
-    # btc_predictor = LSTMBTCPredictor(
-    #     model_args=model_params,
-    #     train_args=train_params
-    # )
+    btc_predictor = LSTMBTCPredictor(
+        model_args=model_params,
+        train_args=train_params
+    )
 
-    # btc_predictor.train(data=candles)
-    # rmse, dir_acc, mean_dir_acc = btc_predictor.eval(data=candles)
-    # logger.info(f"RMSE {rmse}")
-    # logger.info(f"Directional accuracy: {dir_acc}")
-    # logger.info(f"Mean directional accuracy {mean_dir_acc}")
+    btc_predictor.train(data=candles)
+    rmse, dir_acc, mean_dir_acc = btc_predictor.eval(data=candles)
+    _logger.info(f"RMSE {rmse}")
+    _logger.info(f"Directional accuracy: {dir_acc}")
+    _logger.info(f"Mean directional accuracy {mean_dir_acc}")
 
-    # logger.info(f"Saving model {btc_predictor.name}...")
-    # btc_predictor.save()
+    _logger.info(f"Saving model {btc_predictor.name}...")
+    btc_predictor.save()
 
     _logger.info("Loading model...")
     model = LSTMBTCPredictor(
@@ -64,12 +61,19 @@ def train(params: DictConfig) -> None:
         train_args=train_params
     )
 
-    model.load(model_name="saved_model/lstm_20210106_20210106_1m")
+    model.load(model_name="lstm_20210106_20210106_1m", origin_pwd=False)
     _logger.info(f"Loaded model name: {model.name}")
     rmse, dir_acc, mean_dir_acc = model.eval(data=candles)
     _logger.info(f"RMSE {rmse}")
     _logger.info(f"Directional accuracy: {dir_acc}")
     _logger.info(f"Mean directional accuracy {mean_dir_acc}")
+
+    X_test = np.array([35581, 35787, 35702, 35786, 35576, 35427,
+        35356.49956215, 35499, 35417, 35461, 35500, 35535, 35620, 35466, 35422,
+        35385.847202, 35389])
+
+    pred = model.predict(X=X_test)
+    _logger.info(f"pred: {pred}")
 
 
 if __name__ == "__main__":
