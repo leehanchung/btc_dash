@@ -5,7 +5,6 @@ from typing import Any, Dict, Tuple
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from hydra.core.hydra_config import HydraConfig
 from hydra.utils import get_original_cwd
 
 from btc_predictor.datasets import BaseDataset, util
@@ -86,7 +85,7 @@ class LSTMBTCPredictor(BasePredictor):
 
         train = time_series_data[: self.TRAIN_SIZE]
         val = time_series_data[
-            self.TRAIN_SIZE: self.VAL_SIZE + self.TRAIN_SIZE
+            self.TRAIN_SIZE : self.VAL_SIZE + self.TRAIN_SIZE
         ]
         _logger.info(f"train first 20: {train[:20]}")
         _logger.info(f"val first 20: {val[:20]}")
@@ -212,11 +211,13 @@ class LSTMBTCPredictor(BasePredictor):
         """
         raise NotImplementedError
 
-    def save(self) -> None:
+    def save(self, *, origin_pwd: bool = False) -> None:
         """Function that saves a serialized model.
 
         Args:
-            None
+            origin_pwd (bool, optional): Load file from original package root
+                if True. Else load from Hydra config current working dir.
+                Defaults to False.
 
         Returns:
             None
@@ -224,38 +225,51 @@ class LSTMBTCPredictor(BasePredictor):
         if not self.name:
             raise ModelSavingError("Model not trained; aborting save.")
 
-        self.model.save(f"saved_model/{self.name}", save_format="tf")
+        model_dir = f"{self.name}"
+        if origin_pwd:
+            model_dir = (
+                get_original_cwd() + f"/btc_predictor/saved_models{model_dir}"
+            )
 
-        with open(f"saved_model/{self.name}/model_attr.json", "w") as f:
+        self.model.save(model_dir, save_format="tf")
+
+        with open(f"{model_dir}/model_attr.json", "w") as f:
             attrs = self.__dict__
             attrs.pop("model", None)
             attrs.pop("history", None)
             json.dump(self.__dict__, f)
 
-    def load(self, *, model_name: str) -> None:
+    def load(self, *, model_name: str, origin_pwd: bool = False) -> None:
         """Function that saves a serialized model.
 
-        TODO: NEED TO FUCKING MAKE SURE LOADING THE RIGHT FUCKING MODEL. THANKS
-        HYDRA CONFIG
-
         Args:
-            model_name[str]
+            model_name (str): specify model name to load. or model directory
+                if saved using tf format.
+            origin_pwd (bool, optional): Load file from original package root
+                if True. Else load from Hydra config current working dir.
+                Defaults to False.
 
         Returns:
             None
         """
+        if self.model:
+            raise ModelLoadingError("Model already exists!")
+
         if not model_name or hasattr(self, "name"):
             raise ModelLoadingError("Model name not specified")
 
-        if HydraConfig.initialized():
-            model_name = get_original_cwd() + f"/{model_name}"
-
-        with open(f"{model_name}/model_attr.json", "r") as f:
+        model_dir = f"{model_name}"
+        if origin_pwd:
+            model_dir = (
+                get_original_cwd() + f"/btc_predictor/saved_models/{model_dir}"
+            )
+        _logger.info(f"load model dir {model_dir}")
+        with open(f"{model_dir}/model_attr.json", "r") as f:
             attrs = json.load(f)
             for attr, value in attrs.items():
                 setattr(self, attr, value)
 
-        self.model = tf.keras.models.load_model(model_name)
+        self.model = tf.keras.models.load_model(model_dir)
 
     def _preproc(self, *, df: pd.DataFrame) -> np.ndarray:
         """We are taking first differences of log return. Thus we calculate
