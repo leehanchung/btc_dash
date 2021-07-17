@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Any, Dict, Tuple
+from typing import Dict, Tuple
 
 import numpy as np
 import pandas as pd
@@ -87,8 +87,7 @@ class LSTMBTCPredictor(BasePredictor):
         val = time_series_data[
             self.TRAIN_SIZE : self.VAL_SIZE + self.TRAIN_SIZE
         ]
-        _logger.info(f"train first 20: {train[:20]}")
-        _logger.info(f"val first 20: {val[:20]}")
+
         train_tfds = util.create_tfds_from_np(
             data=train,
             window_size=self.WINDOW_SIZE,
@@ -150,11 +149,7 @@ class LSTMBTCPredictor(BasePredictor):
         test_y_pred = np.array([])
         test_y_close_true = np.array([])
         test_y_close_pred = np.array([])
-        # i = 0
         for i, (X, y) in enumerate(test_tfds.take(self.WALK_FORWARD)):
-            _logger.info(X)
-            _logger.info(y)
-            log_return_diff = X.numpy().squeeze()[-1]
             pred = self.model.predict(X)[0]
             test_y_true = np.append(test_y_true, y[0].numpy())
             test_y_pred = np.append(test_y_pred, pred)
@@ -164,33 +159,14 @@ class LSTMBTCPredictor(BasePredictor):
             next_close = eval_df["close"].iloc[self.WINDOW_SIZE + i - 1]
 
             pred_clos = self._postproc(pred=pred, log_ret=log_ret, close=close)
-            _logger.info(f"true: {log_return_diff}")
-            _logger.info(f"pred: {log_return_diff}")
-            _logger.info(f"log_ret: {log_ret}")
-            _logger.info(f"close: {close}")
-            _logger.info(f"actual_close: {next_close}")
-            _logger.info(f"pred_close: {pred_clos[0]}")
             test_y_close_true = np.append(test_y_close_true, next_close)
             test_y_close_pred = np.append(test_y_close_pred, pred_clos[0])
-            # i += 1
 
-        true_close = eval_df["close"].to_numpy()
-        true_log_ret = eval_df["log_ret"].to_numpy()
-        true_log_ret_diff = eval_df["log_ret_diff"].to_numpy()
-        # Logging code to print out how the fuck things line up.
-        _logger.info(
-            f"eval_df:\n{eval_df[['close', 'log_ret', 'log_ret_diff']]}"
-        )
-        _logger.info(f"true_close:\n{true_close}")
-        _logger.info(f"log_ret:\n{true_log_ret}")
-        _logger.info(f"log_ret_diff:\n{true_log_ret_diff}")
-        _logger.info(f"ts_true:\n{test[:45]}")
-        _logger.info(f"ts_true len:\n{len(test)}")
-        _logger.info(f"y_true:\n{test_y_true}")
-        _logger.info(f"y_pred:\n{test_y_pred}")
+        _logger.debug(f"y_true:\n{test_y_true}")
+        _logger.debug(f"y_pred:\n{test_y_pred}")
 
-        _logger.info(f"y_close_true:\n{test_y_close_true}")
-        _logger.info(f"y_close_pred:\n{test_y_close_pred}")
+        _logger.debug(f"y_close_true:\n{test_y_close_true}")
+        _logger.debug(f"y_close_pred:\n{test_y_close_pred}")
 
         rmse, dir_acc, mda = calculate_metrics(
             y_true=test_y_true, y_pred=test_y_pred
@@ -198,18 +174,28 @@ class LSTMBTCPredictor(BasePredictor):
 
         return rmse, dir_acc, mda
 
-    def predict(self, *, input_features: Any) -> np.ndarray:
+    def predict(self, *, X: np.ndarray) -> float:
         """Function that accept input data for the model to generate a prediction
 
         Args:
-            input_features: Features required by the model to generate a
-            prediction. Numpy array of shape (1, n) where n is the dimension
-            of the feature vector.
+            X (np.ndarray) (15,): Features required by the model to generate a
+            prediction. Numpy vector of shape (15,), where 15 is the shape of
+            the specified WINDOW_SIZE - 1.
 
         Returns:
-            prediction: Prediction of the model. Numpy array of shape (1,).
+            float: A single float number .
         """
-        raise NotImplementedError
+        X_log_ret = np.diff(np.log(X))
+        X_lr_diff = np.diff(X_log_ret)
+
+        # Model requires shape of [None, 15, 1], thus gotta change shape.
+        X_lr_diff = np.expand_dims(X_lr_diff, axis=(0, 2))
+        X_lr_diff_tensor = tf.convert_to_tensor(X_lr_diff)
+
+        _logger.info(f"X_log_ret_diff_tensor type: {X_lr_diff_tensor.shape}")
+
+        pred = self.model.predict(X_lr_diff_tensor)[0]
+        return (X[-1] * np.exp(pred + X_log_ret[-1]))[0]
 
     def save(self, *, origin_pwd: bool = False) -> None:
         """Function that saves a serialized model.
@@ -228,7 +214,7 @@ class LSTMBTCPredictor(BasePredictor):
         model_dir = f"{self.name}"
         if origin_pwd:
             model_dir = (
-                get_original_cwd() + f"/btc_predictor/saved_models{model_dir}"
+                get_original_cwd() + f"/btc_predictor/saved_models/{model_dir}"
             )
 
         self.model.save(model_dir, save_format="tf")
