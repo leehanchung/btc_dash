@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Any, Tuple
+from typing import Tuple
 
 import numpy as np
 
-from btc_predictor.datasets import DataReader
+from btc_predictor.datasets import BaseDataset
 
 
 class ModelLoadingError(Exception):
@@ -54,7 +54,7 @@ class BasePredictor(ABC):
     """
 
     @abstractmethod
-    def train(self, *, data: DataReader) -> None:
+    def train(self, *, data: BaseDataset) -> None:
         """Function that accept input training data and train the model
 
         Args:
@@ -68,7 +68,7 @@ class BasePredictor(ABC):
         pass
 
     @abstractmethod
-    def eval(self, *, data: DataReader) -> Tuple[float]:
+    def eval(self, *, data: BaseDataset) -> Tuple[float]:
         """Function that accept input training data and train the model
 
         Args:
@@ -83,7 +83,7 @@ class BasePredictor(ABC):
         pass
 
     @abstractmethod
-    def predict(self, *, input_features: Any) -> np.ndarray:
+    def predict(self, *, X: np.ndarray) -> np.ndarray:
         """Function that accept input data for the model to generate a prediction
 
         Args:
@@ -97,7 +97,7 @@ class BasePredictor(ABC):
         pass
 
     @abstractmethod
-    def save(self) -> None:
+    def save(self, *, origin_pwd: bool = False) -> None:
         """Function that saves a serialized model.
 
         Args:
@@ -109,7 +109,7 @@ class BasePredictor(ABC):
         pass
 
     @abstractmethod
-    def load(self, *, model_name: str) -> None:
+    def load(self, *, model_name: str, origin_pwd: bool = False) -> None:
         """Function that loads pretrained weights for making a prediction.
 
         Args:
