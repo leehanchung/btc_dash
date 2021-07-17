@@ -51,11 +51,11 @@ def train(params: DictConfig) -> None:
 
     # btc_predictor.train(data=candles)
     # rmse, dir_acc, mean_dir_acc = btc_predictor.eval(data=candles)
-    # logger.info(f"RMSE {rmse}")
-    # logger.info(f"Directional accuracy: {dir_acc}")
-    # logger.info(f"Mean directional accuracy {mean_dir_acc}")
+    # _logger.info(f"RMSE {rmse}")
+    # _logger.info(f"Directional accuracy: {dir_acc}")
+    # _logger.info(f"Mean directional accuracy {mean_dir_acc}")
 
-    # logger.info(f"Saving model {btc_predictor.name}...")
+    # _logger.info(f"Saving model {btc_predictor.name}...")
     # btc_predictor.save()
 
     _logger.info("Loading model...")

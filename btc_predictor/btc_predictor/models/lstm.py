@@ -86,7 +86,7 @@ class LSTMBTCPredictor(BasePredictor):
 
         train = time_series_data[: self.TRAIN_SIZE]
         val = time_series_data[
-            self.TRAIN_SIZE : self.VAL_SIZE + self.TRAIN_SIZE
+            self.TRAIN_SIZE: self.VAL_SIZE + self.TRAIN_SIZE
         ]
         _logger.info(f"train first 20: {train[:20]}")
         _logger.info(f"val first 20: {val[:20]}")
@@ -136,7 +136,10 @@ class LSTMBTCPredictor(BasePredictor):
 
         time_series_data = self._preproc(df=df)
 
-        test = time_series_data[self.VAL_SIZE + self.TRAIN_SIZE :]
+        skip_num_index = self.VAL_SIZE + self.TRAIN_SIZE
+        eval_df = df.iloc[skip_num_index:, :][:46]
+        test = time_series_data[skip_num_index:]
+        _logger.info(test)
         test_tfds = util.create_tfds_from_np(
             data=test,
             window_size=self.WINDOW_SIZE,
@@ -146,17 +149,39 @@ class LSTMBTCPredictor(BasePredictor):
         # evaluate
         test_y_true = np.array([])
         test_y_pred = np.array([])
-        for x, y in test_tfds.take(self.WALK_FORWARD):
+        test_y_close_true = np.array([])
+        test_y_close_pred = np.array([])
+        # i = 0
+        for i, (X, y) in enumerate(test_tfds.take(self.WALK_FORWARD)):
+            _logger.info(X)
+            _logger.info(y)
+            log_return_diff = X.numpy().squeeze()[-1]
+            pred = self.model.predict(X)[0]
             test_y_true = np.append(test_y_true, y[0].numpy())
-            test_y_pred = np.append(test_y_pred, self.model.predict(x)[0])
+            test_y_pred = np.append(test_y_pred, pred)
 
-        skip_num_index = self.VAL_SIZE + self.TRAIN_SIZE
-        eval_df = df.iloc[skip_num_index:, :][:46]
+            log_ret = eval_df["log_ret"].iloc[self.WINDOW_SIZE + i - 2]
+            close = eval_df["close"].iloc[self.WINDOW_SIZE + i - 2]
+            next_close = eval_df["close"].iloc[self.WINDOW_SIZE + i - 1]
+
+            pred_clos = self._postproc(pred=pred, log_ret=log_ret, close=close)
+            _logger.info(f"true: {log_return_diff}")
+            _logger.info(f"pred: {log_return_diff}")
+            _logger.info(f"log_ret: {log_ret}")
+            _logger.info(f"close: {close}")
+            _logger.info(f"actual_close: {next_close}")
+            _logger.info(f"pred_close: {pred_clos[0]}")
+            test_y_close_true = np.append(test_y_close_true, next_close)
+            test_y_close_pred = np.append(test_y_close_pred, pred_clos[0])
+            # i += 1
+
         true_close = eval_df["close"].to_numpy()
         true_log_ret = eval_df["log_ret"].to_numpy()
         true_log_ret_diff = eval_df["log_ret_diff"].to_numpy()
         # Logging code to print out how the fuck things line up.
-        _logger.info(f"eval_df:\n{eval_df}")
+        _logger.info(
+            f"eval_df:\n{eval_df[['close', 'log_ret', 'log_ret_diff']]}"
+        )
         _logger.info(f"true_close:\n{true_close}")
         _logger.info(f"log_ret:\n{true_log_ret}")
         _logger.info(f"log_ret_diff:\n{true_log_ret_diff}")
@@ -164,6 +189,9 @@ class LSTMBTCPredictor(BasePredictor):
         _logger.info(f"ts_true len:\n{len(test)}")
         _logger.info(f"y_true:\n{test_y_true}")
         _logger.info(f"y_pred:\n{test_y_pred}")
+
+        _logger.info(f"y_close_true:\n{test_y_close_true}")
+        _logger.info(f"y_close_pred:\n{test_y_close_pred}")
 
         rmse, dir_acc, mda = calculate_metrics(
             y_true=test_y_true, y_pred=test_y_pred
@@ -196,22 +224,19 @@ class LSTMBTCPredictor(BasePredictor):
         if not self.name:
             raise ModelSavingError("Model not trained; aborting save.")
 
-        try:
-            self.model.save(f"saved_model/{self.name}", save_format="tf")
-        except (ValueError, AttributeError):
-            raise ModelSavingError("Problem saving model weights.")
+        self.model.save(f"saved_model/{self.name}", save_format="tf")
 
-        try:
-            with open(f"saved_model/{self.name}/model_attr.json", "w") as f:
-                attrs = self.__dict__
-                attrs.pop("model", None)
-                attrs.pop("history", None)
-                json.dump(self.__dict__, f)
-        except (OSError, TypeError, Exception):
-            raise ModelSavingError("Problem saving model wrapper attributes.")
+        with open(f"saved_model/{self.name}/model_attr.json", "w") as f:
+            attrs = self.__dict__
+            attrs.pop("model", None)
+            attrs.pop("history", None)
+            json.dump(self.__dict__, f)
 
     def load(self, *, model_name: str) -> None:
         """Function that saves a serialized model.
+
+        TODO: NEED TO FUCKING MAKE SURE LOADING THE RIGHT FUCKING MODEL. THANKS
+        HYDRA CONFIG
 
         Args:
             model_name[str]
@@ -222,26 +247,19 @@ class LSTMBTCPredictor(BasePredictor):
         if not model_name or hasattr(self, "name"):
             raise ModelLoadingError("Model name not specified")
 
-        try:
-            if HydraConfig.initialized():
-                model_name = get_original_cwd() + f"/{model_name}"
+        if HydraConfig.initialized():
+            model_name = get_original_cwd() + f"/{model_name}"
 
-            with open(f"{model_name}/model_attr.json", "r") as f:
-                attrs = json.load(f)
-                for attr, value in attrs.items():
-                    setattr(self, attr, value)
-        except (OSError, TypeError, Exception):
-            raise ModelLoadingError(
-                "Problem loading model wrapper attributes."
-            )
+        with open(f"{model_name}/model_attr.json", "r") as f:
+            attrs = json.load(f)
+            for attr, value in attrs.items():
+                setattr(self, attr, value)
 
-        try:
-            self.model = tf.keras.models.load_model(model_name)
-        except (ValueError, AttributeError):
-            raise ModelLoadingError("Error loading Tensorflow Keras model.")
+        self.model = tf.keras.models.load_model(model_name)
 
     def _preproc(self, *, df: pd.DataFrame) -> np.ndarray:
-        """[summary]
+        """We are taking first differences of log return. Thus we calculate
+        log return, and take first differences.
 
         Args:
             data (pd.DataFrame): input dataframe containing 'close' field
@@ -254,5 +272,20 @@ class LSTMBTCPredictor(BasePredictor):
         df.dropna(inplace=True)
         return df["log_ret_diff"].to_numpy().astype("float16")
 
-    def _postproc(self, *, data: pd.DataFrame) -> float:
-        raise NotImplementedError
+    def _postproc(self, *, pred: float, log_ret: float, close: float) -> float:
+        """Take the predicted log return diff, log return, close, and return
+        the predicted close.
+
+        predicted log return = log return + predicted log return diff
+        predicted close = close * e^(predicted_log_return)
+
+        Args:
+            pred (float): [description]
+            log_ret (float): [description]
+            close (float): [description]
+
+        Returns:
+            float: [description]
+        """
+        next_log_ret = log_ret + pred
+        return close * np.exp(next_log_ret)
