@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Tuple
+from typing import Any, Tuple
 
 import numpy as np
 
@@ -49,9 +49,16 @@ class ModelDataError(Exception):
 
 
 class BasePredictor(ABC):
-    """BasePredictor provides an unified fit, eval, predict, load, and save API
-    to accomodate different data and modeling frameworks.
+    """Template for Predictors. BasePredictor provides an unified fit, eval,
+    predict, load, and save API to accomodate different combination of data and
+    model frameworks.
+
+    Predictors only gets its name and model from the train() and load() method,
+    where the data and the underlying model are fused together.
     """
+
+    model: Any = None
+    name: str = None
 
     @abstractmethod
     def train(self, *, data: BaseDataset) -> None:
@@ -65,7 +72,7 @@ class BasePredictor(ABC):
         Returns:
             None
         """
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def eval(self, *, data: BaseDataset) -> Tuple[float]:
@@ -80,7 +87,7 @@ class BasePredictor(ABC):
             Tuple[float]: a tuple of RMSE, directional accuracy, and mean
             directional accuracy scores.
         """
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def predict(self, *, X: np.ndarray) -> np.ndarray:
@@ -94,7 +101,7 @@ class BasePredictor(ABC):
         Returns:
             prediction: Prediction of the model. Numpy array of shape (1,).
         """
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def save(self, *, origin_pwd: bool = False) -> None:
@@ -106,7 +113,7 @@ class BasePredictor(ABC):
         Returns:
             None
         """
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def load(self, *, model_name: str, origin_pwd: bool = False) -> None:
@@ -118,4 +125,4 @@ class BasePredictor(ABC):
         Returns:
             bool: success of fail
         """
-        pass
+        raise NotImplementedError

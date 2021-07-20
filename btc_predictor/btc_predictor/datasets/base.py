@@ -11,7 +11,7 @@ class DataReadingError(Exception):
 
 
 class BaseDataset(ABC):
-    """Base Dataset template for datasets. We characterize btcusd time series
+    """Template for Dataset classes. We characterize btcusd time series
     data using source, start_time, end_time, and resolution.
     """
 
@@ -28,7 +28,7 @@ class BaseDataset(ABC):
         start_time: int = None,
         limit: int = 10000
     ) -> None:
-        pass
+        raise NotImplementedError
 
     @property
     def pd(self) -> pd.DataFrame:
