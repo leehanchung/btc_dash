@@ -22,9 +22,7 @@ _logger.addHandler(console_handler)
 
 ##############################################################################
 #
-#
-# Credit Offering page CTR model configs and model loading
-#
+# Loading BTC Predictor based on experiment config
 #
 ##############################################################################
 BTC_PREDICTOR_CONFIG = "experiments/btc_predictor_sample.yaml"

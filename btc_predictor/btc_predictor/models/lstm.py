@@ -241,7 +241,7 @@ class LSTMBTCPredictor(BasePredictor):
         if self.model:
             raise ModelLoadingError("Model already exists!")
 
-        if not model_name or hasattr(self, "name"):
+        if not model_name or not hasattr(self, "name"):
             raise ModelLoadingError("Model name not specified")
 
         model_dir = f"{model_name}"
