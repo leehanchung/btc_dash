@@ -18,7 +18,9 @@ def load_wo_hydra(*, config_file: str) -> BasePredictor:
     """
     _logger.info("Loading model without Hydra Config...")
     params = OmegaConf.load(config_file)
-    model = LSTMBTCPredictor(params=params)
-    model.load(model_file=params.model_file, origin_pwd=True)
+    model = LSTMBTCPredictor(
+        model_args=params.model_params, train_args=params.train_params
+    )
+    model.load(model_name=params.model_params.model_name, origin_pwd=True)
 
     return model
