@@ -32,13 +32,13 @@ Resources:
           Properties:
             Path: /invoke
             Method: post
-            RestApiId: !Ref BTCPredictorFunctionApi
+            RestApiId: !Ref BTCPredictorApi
     Metadata:
       DockerTag: python3.7-v1
-      DockerContext: api_serverless/
+      DockerContext: .
       Dockerfile: Dockerfile
 
-  BTCPredictorFunctionApi:
+  BTCPredictorApi:
     Type: AWS::Serverless::Api
     Properties:
       StageName: !Sub ${ApiStageName}
@@ -47,9 +47,9 @@ Outputs:
   BTCPredictorApi:
     Description: "API Gateway endpoint URL for Prod stage for BTC Predictor function"
     Value: !Sub "https://${BTCPredictorApi}.execute-api.${AWS::Region}.amazonaws.com/${ApiStageName}/invoke/"
-  BTCPredictorFunction:
-    Description: "BTC Predictor API Lambda Function ARN"
-    Value: !GetAtt BTCPredictorFunction.Arn
-  BTCPredictorFunctionIamRole:
-    Description: "Implicit IAM Role created for BTC Predictor function"
-    Value: !GetAtt BTCPredictorFunctionRole.Arn
+  # BTCPredictorFunction:
+  #   Description: "BTC Predictor API Lambda Function ARN"
+  #   Value: !GetAtt BTCPredictorFunction.Arn
+  # BTCPredictorFunctionIamRole:
+  #   Description: "Implicit IAM Role created for BTC Predictor function"
+  #   Value: !GetAtt BTCPredictorFunctionRole.Arn
