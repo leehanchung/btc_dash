@@ -5,8 +5,8 @@ from typing import Dict, Tuple
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from hydra.utils import get_original_cwd
 
+from btc_predictor.config import config
 from btc_predictor.datasets import BaseDataset, util
 from btc_predictor.models import (
     BasePredictor,
@@ -213,9 +213,7 @@ class LSTMBTCPredictor(BasePredictor):
 
         model_dir = f"{self.name}"
         if origin_pwd:
-            model_dir = (
-                get_original_cwd() + f"/btc_predictor/saved_models/{model_dir}"
-            )
+            model_dir = f"{config.PACKAGE_ROOT}/saved_models/{model_dir}"
 
         self.model.save(model_dir, save_format="tf")
 
@@ -246,9 +244,8 @@ class LSTMBTCPredictor(BasePredictor):
 
         model_dir = f"{model_name}"
         if origin_pwd:
-            model_dir = (
-                get_original_cwd() + f"/btc_predictor/saved_models/{model_dir}"
-            )
+            model_dir = f"{config.PACKAGE_ROOT}/saved_models/{model_dir}"
+
         _logger.info(f"load model dir {model_dir}")
         with open(f"{model_dir}/model_attr.json", "r") as f:
             attrs = json.load(f)
