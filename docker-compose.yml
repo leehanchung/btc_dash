@@ -1,4 +1,4 @@
-version: "3.7"
+iversion: "3.7"
 
 services:
   frontend:
@@ -9,46 +9,15 @@ services:
       - ./frontend:/usr/src/frontend
     ports:
       - 8000:8000
-
-  backend:
+  lambdas:
     build:
-      context: ./backend
+      context: ./btc_predictor
       dockerfile: Dockerfile
-    env_file: ./backend/.env
-    volumes:
-      - ./backend:/usr/src/backend
-    ports:
-      - 5000:5000
-    depends_on:
-      - db  
+    image: btc_predictor:local
+    volumnes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint:
+      sam local start-lambda --host 0.0.0.0 --port 3001
+    networks:
+      - lambda
 
-  db:
-    image: postgres:latest
-    environment:
-      # TODO: POSTGRES_USER is not the same as POSTGRES_DB, Postgres will
-      # throw FATAL: role/database does not exist error. To bypass, set them
-      # to the same name for now.
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: ${POSTGRES_DB:-postgres}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    ports:
-      - 5432:5432
-
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-root@admin.org}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASS:-admin}
-      PGADMIN_LISTEN_PORT: 5050
-    volumes:
-      - pgadmin:/root/.pgadmin
-    ports:
-      - 5050:5050
-    depends_on: 
-      - db
-
-volumes:
-  postgres_data:
-  pgadmin:
