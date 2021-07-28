@@ -1,4 +1,4 @@
-# import json
+import json
 import logging
 import sys
 from typing import Dict
@@ -6,7 +6,8 @@ from typing import Dict
 # import numpy as np
 # import pandas as pd
 
-from btc_predictor.models.utils import load_wo_hydra
+import btc_predictor
+from btc_predictor.models.lstm import load_wo_hydra
 
 
 # Set Logging
@@ -29,13 +30,53 @@ BTC_PREDICTOR_CONFIG = "experiments/btc_predictor_sample.yaml"
 BTC_PREDICTOR = load_wo_hydra(config_file=BTC_PREDICTOR_CONFIG)
 
 
+# VERSION_PATH = "VERSION"
+# with open(VERSION_PATH, "r") as version_file:
+#     __version__ = version_file.read().strip()
+__version__ = f"BTC_PREDICTOR.{btc_predictor.__version__}"
+
+
+def generate_failure_response(msg: str) -> Dict:
+    return {
+        "status": "failed",
+        "data": [],
+        "error": f"{msg}",
+        "version": f"{__version__}",
+        "headers": {"Content-Type": "application/json"},
+    }
+
+
+def generate_output_dict(*, body: float) -> Dict:
+    return {
+        "statusCode": 200,
+        "body": body,
+    }
+
+
 def lambda_handler(event: Dict, context) -> Dict:
-    raise NotImplementedError
 
+    _logger.info(f"Loaded model name: {BTC_PREDICTOR.name}")
 
-def main():
-    raise NotImplementedError
+    if not event:
+        response = generate_failure_response("Empty event")
+        return generate_output_dict(body=response)
 
+    # Loads event body
+    try:
+        if "body" in event and event.get("body"):
+            data = json.loads(event["body"])
+    except Exception:
+        response = generate_failure_response("Failed loading event")
+        return generate_output_dict(body=response)
 
-if __name__ == "__main__":
-    main()
+    # Model inference and error handling
+    preds = BTC_PREDICTOR.predict(X=data)
+
+    response = {
+        "status": "success",
+        "data": preds,
+        "error": "",
+        "version": f"{__version__}",
+    }
+
+    return generate_output_dict(body=response)

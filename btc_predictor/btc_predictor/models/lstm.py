@@ -3,6 +3,7 @@ import logging
 from typing import Dict, Tuple
 
 import numpy as np
+from omegaconf import OmegaConf
 import pandas as pd
 import tensorflow as tf
 
@@ -286,3 +287,22 @@ class LSTMBTCPredictor(BasePredictor):
         """
         next_log_ret = log_ret + pred
         return close * np.exp(next_log_ret)
+
+
+def load_wo_hydra(*, config_file: str) -> BasePredictor:
+    """Helper function to loadinitialize [summary]
+
+    Args:
+        config_file (str): [description]
+
+    Returns:
+        BasePredictor: [description]
+    """
+    _logger.info("Loading model without Hydra Config...")
+    params = OmegaConf.load(config_file)
+    model = LSTMBTCPredictor(
+        model_args=params.model_params, train_args=params.train_params
+    )
+    model.load(model_name=params.model_params.model_name, origin_pwd=True)
+
+    return model
