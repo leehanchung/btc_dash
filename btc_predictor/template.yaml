@@ -47,9 +47,9 @@ Outputs:
   BTCPredictorApi:
     Description: "API Gateway endpoint URL for Prod stage for BTC Predictor function"
     Value: !Sub "https://${BTCPredictorApi}.execute-api.${AWS::Region}.amazonaws.com/${ApiStageName}/invoke/"
-  # BTCPredictorFunction:
-  #   Description: "BTC Predictor API Lambda Function ARN"
-  #   Value: !GetAtt BTCPredictorFunction.Arn
-  # BTCPredictorFunctionIamRole:
-  #   Description: "Implicit IAM Role created for BTC Predictor function"
-  #   Value: !GetAtt BTCPredictorFunctionRole.Arn
+  BTCPredictorFunction:
+    Description: "BTC Predictor API Lambda Function ARN"
+    Value: !GetAtt BTCPredictorFunction.Arn
+  BTCPredictorFunctionIamRole:
+    Description: "Implicit IAM Role created for BTC Predictor function"
+    Value: !GetAtt BTCPredictorFunctionRole.Arn

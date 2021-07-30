@@ -28,11 +28,6 @@ _logger.addHandler(console_handler)
 ##############################################################################
 BTC_PREDICTOR_CONFIG = "experiments/btc_predictor_sample.yaml"
 BTC_PREDICTOR = load_wo_hydra(config_file=BTC_PREDICTOR_CONFIG)
-
-
-# VERSION_PATH = "VERSION"
-# with open(VERSION_PATH, "r") as version_file:
-#     __version__ = version_file.read().strip()
 __version__ = f"BTC_PREDICTOR.{btc_predictor.__version__}"
 
 
