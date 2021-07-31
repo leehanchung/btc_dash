@@ -16,8 +16,8 @@ Parameters:
 
 Globals:
   Function:
-    Timeout: 10
-    MemorySize: 128
+    Timeout: 1500
+    MemorySize: 2048
 
 Resources:
   BTCPredictorFunction:

@@ -8,6 +8,7 @@ RUN python3.7 -m pip install -r requirements.txt -t .
 FROM baseimage as finalimage
 
 COPY btc_predictor ./btc_predictor
+COPY experiments ./experiments
 COPY api/app.py ./
 
 CMD ["app.lambda_handler"]

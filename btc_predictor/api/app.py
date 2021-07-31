@@ -44,7 +44,7 @@ def generate_failure_response(msg: str) -> Dict:
 def generate_output_dict(*, body: float) -> Dict:
     return {
         "statusCode": 200,
-        "body": body,
+        "body": json.dumps(body),
     }
 
 
@@ -69,7 +69,7 @@ def lambda_handler(event: Dict, context) -> Dict:
 
     response = {
         "status": "success",
-        "data": preds,
+        "data": str(preds),
         "error": "",
         "version": f"{__version__}",
     }
