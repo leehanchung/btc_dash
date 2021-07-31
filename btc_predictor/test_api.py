@@ -4,7 +4,7 @@ import time
 
 # import requests
 
-from api_serverless import app
+from api import app
 
 
 _logger = logging.getLogger(__name__)

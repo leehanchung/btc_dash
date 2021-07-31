@@ -3,9 +3,9 @@ import logging
 from typing import Dict, Tuple
 
 import numpy as np
-from omegaconf import OmegaConf
 import pandas as pd
 import tensorflow as tf
+from omegaconf import OmegaConf
 
 from btc_predictor.config import config
 from btc_predictor.datasets import BaseDataset, util
