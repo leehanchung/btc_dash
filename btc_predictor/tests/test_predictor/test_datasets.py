@@ -16,6 +16,7 @@ def test_bitfinex_candles_api():
 
     candles.load(start_time=1610000000000, limit=10)
 
-    assert candles.start_time == datetime.fromtimestamp(1610000000000 // 1000).strftime("%Y%m%d")
+    assert candles.start_time == datetime.fromtimestamp(1610000000000 // 1000)\
+                                         .strftime("%Y%m%d")
     assert isinstance(candles.data, pd.DataFrame)
     assert candles.data.shape[0] == 10

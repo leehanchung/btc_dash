@@ -72,6 +72,7 @@ def lambda_handler(event: Dict, context) -> Dict:
         "data": str(preds),
         "error": "",
         "version": f"{__version__}",
+        "headers": {"Content-Type": "application/json"},
     }
 
     return generate_output_dict(body=response)
