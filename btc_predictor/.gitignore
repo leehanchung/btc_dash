@@ -1,3 +1,2 @@
-experiments/
 outputs/
-saved_models/
+.aws-sam/

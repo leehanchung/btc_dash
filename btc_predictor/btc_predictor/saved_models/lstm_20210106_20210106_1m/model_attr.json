@@ -1,0 +1,1 @@
+{"model_args": {"input_shape": [29, 1], "dropout": 0.4, "num_forward": 1}, "TRAIN_SIZE": 5000, "VAL_SIZE": 1000, "WINDOW_SIZE": 16, "BATCH_SIZE": 256, "EPOCHS": 20, "EVALUATION_INTERVAL": 64, "VALIDATION_STEPS": 64, "WALK_FORWARD": 30, "start_time": "20210106", "end_time": "20210106", "resolution": "1m", "name": "lstm_20210106_20210106_1m"}
