@@ -4,10 +4,10 @@ import pandas as pd
 import pmdarima as pm
 from pmdarima.arima import auto_arima
 
-from btc_predictor.models import BasePredictor
+from btc_predictor.models import BaseModelHandler
 
 
-class ARIMABTCPredictor(BasePredictor):
+class ARIMABTCPredictor(BaseModelHandler):
     def stepwise_arima(*, df: pd.Series, config: Dict) -> pm.arima.arima.ARIMA:
         """Read parquet data file using pyarrow into a pandas dataframe
 

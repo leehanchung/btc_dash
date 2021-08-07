@@ -48,8 +48,8 @@ class ModelDataError(Exception):
         return f"{self.message}"
 
 
-class BasePredictor(ABC):
-    """Template for Predictors. BasePredictor provides an unified fit, eval,
+class BaseModelHandler(ABC):
+    """Template for Predictors. BaseModelHandler provides an unified fit, eval,
     predict, load, and save API to accomodate different combination of data and
     model frameworks.
 

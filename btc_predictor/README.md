@@ -2,13 +2,13 @@
 
 # Predictor Design
 
-To support multiple different sources of data and multiple different ways of modeling, we designed  two template classes: BaseDataset and BasePredictor.
+To support multiple different sources of data and multiple different ways of modeling, we designed  two template classes: BaseDataset and BaseModelHandler.
 
 We extend BaseDataset template for a particular data source and use start_time, end_time, and resolution to characterize the data.
 
 Modeling can be done using any modeling library of choice.
 
-We then uses the BasePredictor template to bridge models and data together. The BasePredictors have the basic `train`, `eval`, `predict`, `load`, and `save` methods.
+We then uses the BaseModelHandler template to bridge models and data together. The BaseModelHandlers have the basic `train`, `eval`, `predict`, `load`, and `save` methods.
 
 # Deployment
 We deploy BTC Predictor machine learning model to AWS Lambda via AWS SAM CLI.

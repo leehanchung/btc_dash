@@ -6,7 +6,7 @@ from omegaconf import DictConfig
 
 # from btc_predictor.config import logging_config
 from btc_predictor.datasets import BitfinexCandlesAPIData
-from btc_predictor.models import LSTMBTCPredictor
+from btc_predictor.models import LSTMModelHandler
 
 
 _logger = logging.getLogger(__name__)
@@ -41,7 +41,7 @@ def train(params: DictConfig) -> None:
     candles = BitfinexCandlesAPIData()
     candles.load(start_time=1610000000000)
 
-    btc_predictor = LSTMBTCPredictor(
+    btc_predictor = LSTMModelHandler(
         model_args=model_params,
         train_args=train_params
     )
@@ -56,7 +56,7 @@ def train(params: DictConfig) -> None:
     btc_predictor.save()
 
     _logger.info("Loading model...")
-    model = LSTMBTCPredictor(
+    model = LSTMModelHandler(
         model_args=model_params,
         train_args=train_params
     )

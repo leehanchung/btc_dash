@@ -1,6 +1,6 @@
 import pytest
 
-from btc_predictor.models import BasePredictor
+from btc_predictor.models import BaseModelHandler
 
 
 class MockDataset:

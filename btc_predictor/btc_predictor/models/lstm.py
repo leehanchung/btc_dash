@@ -10,7 +10,7 @@ from omegaconf import OmegaConf
 from btc_predictor.config import config
 from btc_predictor.datasets import BaseDataset, util
 from btc_predictor.models import (
-    BasePredictor,
+    BaseModelHandler,
     ModelLoadingError,
     ModelSavingError,
     ModelTrainingError,
@@ -47,7 +47,7 @@ class LSTMModel(tf.keras.Model):
         return self.dense(x)
 
 
-class LSTMBTCPredictor(BasePredictor):
+class LSTMModelHandler(BaseModelHandler):
     """Predictor Wrapper that predicts, trains, save and load LSTM models"""
 
     def __init__(self, *, model_args: Dict = None, train_args: Dict = None):
@@ -289,18 +289,18 @@ class LSTMBTCPredictor(BasePredictor):
         return close * np.exp(next_log_ret)
 
 
-def load_wo_hydra(*, config_file: str) -> BasePredictor:
+def load_wo_hydra(*, config_file: str) -> BaseModelHandler:
     """Helper function to loadinitialize [summary]
 
     Args:
         config_file (str): [description]
 
     Returns:
-        BasePredictor: [description]
+        BaseModelHandler: [description]
     """
     _logger.info("Loading model without Hydra Config...")
     params = OmegaConf.load(config_file)
-    model = LSTMBTCPredictor(
+    model = LSTMModelHandler(
         model_args=params.model_params, train_args=params.train_params
     )
     model.load(model_name=params.model_params.model_name, origin_pwd=True)

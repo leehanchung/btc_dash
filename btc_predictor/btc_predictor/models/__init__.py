@@ -1,9 +1,9 @@
 # flake8: noqa
 from .base import (
-    BasePredictor,
+    BaseModelHandler,
     ModelLoadingError,
     ModelSavingError,
     ModelTrainingError,
 )
-from .lstm import LSTMBTCPredictor
+from .lstm import LSTMModelHandler
 from .pmdarima import ARIMABTCPredictor
