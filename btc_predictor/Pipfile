@@ -22,6 +22,7 @@ pmdarima = "==1.8.2"
 hydra-core = "*"
 seaborn = "*"
 wandb = "*"
+jinja2 = "*"
 
 [requires]
 python_version = "3.7"

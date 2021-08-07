@@ -1,2 +1,3 @@
 outputs/
 .aws-sam/
+samconfig.toml

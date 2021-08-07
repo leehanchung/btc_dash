@@ -1,0 +1,11 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "BTCPredictorApi"
+s3_bucket = "btc-dash"
+s3_prefix = "aws-sam/BTCPredictorApi"
+region = "us-west-2"
+capabilities = "CAPABILITY_IAM"
+image_repositories = ["BTCPredictorFunction={{ AWS_ACCOUNT_ID }}.dkr.ecr.us-west-2.amazonaws.com/btc-predictor-function"]
+confirm_changeset = false
