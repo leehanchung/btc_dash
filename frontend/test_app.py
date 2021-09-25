@@ -6,11 +6,13 @@ from dash_extensions import WebSocket
 
 # Create example app.
 app = Dash(prevent_initial_callbacks=True)
-app.layout = html.Div([
-    # dcc.Input(id="input", autoComplete="off"), html.Div(id="message"),
-    WebSocket(url="wss://api-pub.bitfinex.com/ws/2", id="ws")
-    # WebSocket(url="wss://echo.websocket.org", id="ws")
-])
+app.layout = html.Div(
+    [
+        # dcc.Input(id="input", autoComplete="off"), html.Div(id="message"),
+        WebSocket(url="wss://api-pub.bitfinex.com/ws/2", id="ws")
+        # WebSocket(url="wss://echo.websocket.org", id="ws")
+    ]
+)
 
 # from typing import Any
 # import json
@@ -40,7 +42,7 @@ app.layout = html.Div([
 #                 ws_metadata[key] = value
 #         continue
 
-#     # other than headers, the results will be a list of length two, first item is chanId and  
+#     # other than headers, the results will be a list of length two, first item is chanId and
 #     # second component will be
 #     #   1. string 'hb'
 #     #   2. array of length 1
@@ -80,5 +82,5 @@ def message(e):
     return f"Response from websocket: {e['data']}"
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run_server()

@@ -1,8 +1,7 @@
 import flask
+from btc_dash.config import BaseConfig
 from flask.app import Flask
 from werkzeug.utils import find_modules, import_string
-
-from btc_dash.config import BaseConfig
 
 
 def register_blueprints(*, server: Flask) -> None:

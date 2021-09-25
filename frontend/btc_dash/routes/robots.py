@@ -1,6 +1,5 @@
 from flask import Blueprint, current_app
 
-
 robots = Blueprint(
     "robots",
     __name__,

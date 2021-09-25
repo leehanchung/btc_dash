@@ -1,10 +1,9 @@
-from dash import Dash
-from dash.dependencies import Input, Output
 import numpy as np
 import plotly.graph_objs as go
-
 from btc_dash import config
 from btc_dash.bitfinex_api import bitfinex_candles_api
+from dash import Dash
+from dash.dependencies import Input, Output
 
 
 def register_momentum_callback(app: Dash):

@@ -1,7 +1,6 @@
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 
-
 navbar = dbc.NavbarSimple(
     brand="BTCUSD Predictor",
     brand_href="/",

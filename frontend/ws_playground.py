@@ -1,8 +1,9 @@
 import json
+
 from btc_dash.bitfinex_api import (
     BitfinexSocketManager,
     BitfinexWebsocketError,
-    OrderedBuffer
+    OrderedBuffer,
 )
 
 
@@ -46,7 +47,7 @@ def main():
             raise BitfinexWebsocketError
             break
 
-        print('[INFO] Stepping...')
+        print("[INFO] Stepping...")
         if not isinstance(msg[1], list):
             continue
         elif all(isinstance(item, list) for item in msg[1]):
@@ -57,13 +58,13 @@ def main():
             print("[DEBUG] Regular entry...")
             buffer.update(msg[1])
         else:
-            print(f'[ERROR] WTF {msg[1]}')
+            print(f"[ERROR] WTF {msg[1]}")
             raise BitfinexWebsocketError
             break
 
         print(buffer)
 
-    print('closing websocket...')
+    print("closing websocket...")
     ws.close()
 
 

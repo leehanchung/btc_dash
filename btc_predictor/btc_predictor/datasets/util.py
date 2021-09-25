@@ -34,9 +34,7 @@ def create_tfds_from_np(
         stride=stride_size,
         drop_remainder=True,
     )
-    data = data.flat_map(
-        lambda window: window.batch(window_size, drop_remainder=True)
-    )
+    data = data.flat_map(lambda window: window.batch(window_size, drop_remainder=True))
     data = data.map(lambda window: (window[:-1], tf.reshape(window[-1:], [])))
     data = data.shuffle(batch_size).batch(batch_size).cache().repeat()
 

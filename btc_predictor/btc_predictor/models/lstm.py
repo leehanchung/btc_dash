@@ -85,9 +85,7 @@ class LSTMBTCPredictor(BasePredictor):
         time_series_data = self._preproc(df=data.pd)
 
         train = time_series_data[: self.TRAIN_SIZE]
-        val = time_series_data[
-            self.TRAIN_SIZE : self.VAL_SIZE + self.TRAIN_SIZE
-        ]
+        val = time_series_data[self.TRAIN_SIZE : self.VAL_SIZE + self.TRAIN_SIZE]
 
         train_tfds = util.create_tfds_from_np(
             data=train,
@@ -169,9 +167,7 @@ class LSTMBTCPredictor(BasePredictor):
         _logger.debug(f"y_close_true:\n{test_y_close_true}")
         _logger.debug(f"y_close_pred:\n{test_y_close_pred}")
 
-        rmse, dir_acc, mda = calculate_metrics(
-            y_true=test_y_true, y_pred=test_y_pred
-        )
+        rmse, dir_acc, mda = calculate_metrics(y_true=test_y_true, y_pred=test_y_pred)
 
         return rmse, dir_acc, mda
 

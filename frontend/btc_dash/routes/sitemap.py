@@ -1,7 +1,6 @@
 from urllib.parse import urlparse
 
-from flask import Blueprint, render_template, make_response, request
-
+from flask import Blueprint, make_response, render_template, request
 
 sitemap = Blueprint(
     "sitemap",

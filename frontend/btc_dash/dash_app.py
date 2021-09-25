@@ -1,13 +1,15 @@
 import dash
 import dash_bootstrap_components as dbc
-from flask.app import Flask
 
 # from btc_dash import server
-from btc_dash.dash_callbacks import register_display_pages_callback
-from btc_dash.dash_callbacks import register_confusion_callback
-from btc_dash.dash_callbacks import register_ohlcv_callback
-from btc_dash.dash_callbacks import register_momentum_callback
+from btc_dash.dash_callbacks import (
+    register_confusion_callback,
+    register_display_pages_callback,
+    register_momentum_callback,
+    register_ohlcv_callback,
+)
 from btc_dash.dash_layouts import layout
+from flask.app import Flask
 
 
 def create_dash_app(*, flask_server: Flask) -> Flask:

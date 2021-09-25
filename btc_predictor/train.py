@@ -8,7 +8,6 @@ from omegaconf import DictConfig
 from btc_predictor.datasets import BitfinexCandlesAPIData
 from btc_predictor.models import LSTMBTCPredictor
 
-
 _logger = logging.getLogger(__name__)
 
 
@@ -30,10 +29,7 @@ train_params = {
 }
 
 
-@hydra.main(
-    config_path="experiments",
-    config_name="btc_predictor_sample.yaml"
-)
+@hydra.main(config_path="experiments", config_name="btc_predictor_sample.yaml")
 def train(params: DictConfig) -> None:
     # data_file = "btc_predictor/datasets/Bitstamp_BTCUSD_d.csv"
     # data = DataReader(data_file=data_file)
@@ -41,10 +37,7 @@ def train(params: DictConfig) -> None:
     candles = BitfinexCandlesAPIData()
     candles.load(start_time=1610000000000)
 
-    btc_predictor = LSTMBTCPredictor(
-        model_args=model_params,
-        train_args=train_params
-    )
+    btc_predictor = LSTMBTCPredictor(model_args=model_params, train_args=train_params)
 
     btc_predictor.train(data=candles)
     rmse, dir_acc, mean_dir_acc = btc_predictor.eval(data=candles)
@@ -56,10 +49,7 @@ def train(params: DictConfig) -> None:
     btc_predictor.save()
 
     _logger.info("Loading model...")
-    model = LSTMBTCPredictor(
-        model_args=model_params,
-        train_args=train_params
-    )
+    model = LSTMBTCPredictor(model_args=model_params, train_args=train_params)
 
     model.load(model_name="lstm_20210106_20210106_1m", origin_pwd=False)
     _logger.info(f"Loaded model name: {model.name}")
@@ -68,9 +58,27 @@ def train(params: DictConfig) -> None:
     _logger.info(f"Directional accuracy: {dir_acc}")
     _logger.info(f"Mean directional accuracy {mean_dir_acc}")
 
-    X_test = np.array([35581, 35787, 35702, 35786, 35576, 35427,
-        35356.49956215, 35499, 35417, 35461, 35500, 35535, 35620, 35466, 35422,
-        35385.847202, 35389])
+    X_test = np.array(
+        [
+            35581,
+            35787,
+            35702,
+            35786,
+            35576,
+            35427,
+            35356.49956215,
+            35499,
+            35417,
+            35461,
+            35500,
+            35535,
+            35620,
+            35466,
+            35422,
+            35385.847202,
+            35389,
+        ]
+    )
 
     pred = model.predict(X=X_test)
     _logger.info(f"pred: {pred}")

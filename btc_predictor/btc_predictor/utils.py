@@ -87,9 +87,7 @@ def show_plot(
                 )
         else:
             # plot the historical data
-            plt.plot(
-                time_steps, plot_data[i].flatten(), marker[i], label=labels[i]
-            )
+            plt.plot(time_steps, plot_data[i].flatten(), marker[i], label=labels[i])
     plt.legend()
     plt.xlim([time_steps[0], (future + 10)])
     plt.xlabel("Time-Step")
@@ -111,9 +109,7 @@ def flatten_values(*, series: pd.Series) -> pd.Series:
     return series
 
 
-def mean_directional_accuracy(
-    *, y_true: np.ndarray, y_pred: np.ndarray
-) -> float:
+def mean_directional_accuracy(*, y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """Calculate the mean directional accuracy of y_pred vs y_true
 
     Args:
@@ -134,9 +130,7 @@ def mean_directional_accuracy(
     return np.mean(directional_increase_count)
 
 
-def print_metrics(
-    *, y_true: List[np.ndarray], y_pred: List[np.ndarray]
-) -> None:
+def print_metrics(*, y_true: List[np.ndarray], y_pred: List[np.ndarray]) -> None:
     """Convenience function for displaying RMSE and directional accuracy
 
     Args:
@@ -223,9 +217,7 @@ def cv_score(
     from sklearn.metrics import log_loss
 
     if cvGen is None:
-        cvGen = PurgedKFold(
-            n_splits=cv, t1=t1, pctEmbargo=pctEmbargo
-        )  # purged
+        cvGen = PurgedKFold(n_splits=cv, t1=t1, pctEmbargo=pctEmbargo)  # purged
     score = []
     for train, test in cvGen.split(X=X):
         fit = clf.fit(

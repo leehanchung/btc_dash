@@ -1,7 +1,7 @@
-from dash import Dash
-from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 from btc_dash.dash_layouts import dashboard, process
+from dash import Dash
+from dash.dependencies import Input, Output
 
 
 def register_display_pages_callback(app: Dash):
@@ -16,9 +16,7 @@ def register_display_pages_callback(app: Dash):
 
     """
 
-    @app.callback(
-        Output("page-content", "children"), [Input("url", "pathname")]
-    )
+    @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
     def display_page(pathname: str) -> dbc.Row:
         """
         Genererate confusion matrix of prediction directions.

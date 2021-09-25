@@ -22,11 +22,7 @@ class BaseDataset(ABC):
 
     @abstractmethod
     def load(
-        self,
-        *,
-        filename: str = None,
-        start_time: int = None,
-        limit: int = 10000
+        self, *, filename: str = None, start_time: int = None, limit: int = 10000
     ) -> None:
         raise NotImplementedError
 
