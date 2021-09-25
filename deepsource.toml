@@ -1,0 +1,12 @@
+version = 1
+
+[[analyzers]]
+name = "python"
+enabled = true
+
+  [analyzers.meta]
+  runetime_version = "3.8.2"
+
+[[analyzers]]
+name = "test-coverage"
+enabled = true
