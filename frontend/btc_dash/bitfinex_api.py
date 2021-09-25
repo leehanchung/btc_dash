@@ -5,9 +5,7 @@ from typing import List, Union
 
 import pandas as pd
 import requests
-
-from websocket import create_connection, WebSocket
-
+from websocket import WebSocket, create_connection
 
 _logger = logging.getLogger(__name__)
 

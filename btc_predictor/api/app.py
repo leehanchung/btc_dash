@@ -3,11 +3,11 @@ import logging
 import sys
 from typing import Dict
 
-# import numpy as np
-# import pandas as pd
-
 import btc_predictor
 from btc_predictor.models.lstm import load_wo_hydra
+
+# import numpy as np
+# import pandas as pd
 
 
 # Set Logging

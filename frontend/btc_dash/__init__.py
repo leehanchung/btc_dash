@@ -6,8 +6,8 @@
 import logging
 
 from btc_dash.config import PACKAGE_ROOT, config, get_console_handler
-from btc_dash.flask_server import create_flask_server
 from btc_dash.dash_app import create_dash_app
+from btc_dash.flask_server import create_flask_server
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)

@@ -1,17 +1,15 @@
 import logging
 import warnings
 
-from dash import Dash
 import numpy as np
 import pandas as pd
-from dash.dependencies import Input, Output
 import plotly.graph_objs as go
-from statsmodels.tsa.arima_model import ARIMA
-from statsmodels.tools.sm_exceptions import ValueWarning
-
 from btc_dash import config
 from btc_dash.bitfinex_api import bitfinex_candles_api
-
+from dash import Dash
+from dash.dependencies import Input, Output
+from statsmodels.tools.sm_exceptions import ValueWarning
+from statsmodels.tsa.arima_model import ARIMA
 
 _logger = logging.getLogger(__name__)
 

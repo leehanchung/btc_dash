@@ -1,12 +1,10 @@
-from dash import Dash
 import numpy as np
-from dash.dependencies import Input, Output
-from dash.dependencies import State
 import plotly.graph_objs as go
-from sklearn.metrics import confusion_matrix
-
 from btc_dash import config
 from btc_dash.bitfinex_api import bitfinex_candles_api
+from dash import Dash
+from dash.dependencies import Input, Output, State
+from sklearn.metrics import confusion_matrix
 
 
 def register_confusion_callback(app: Dash):

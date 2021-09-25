@@ -7,7 +7,6 @@ import sys
 import pandas as pd
 from dotenv import load_dotenv
 
-
 load_dotenv()
 PACKAGE_ROOT = pathlib.Path(__file__).resolve().parent.parent
 
